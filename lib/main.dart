@@ -1,14 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:fetch/fetch.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   FetchConfig.setBaseUrl('http://3.127.125.21/');
 
   runApp(Orditori());
+}
+
+Future<String?> readToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('api_key');
 }
 
 class Orditori extends StatelessWidget {
@@ -19,7 +26,24 @@ class Orditori extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
       ),
-      home: Home(),
+      home: FutureBuilder(
+        future: readToken(),
+        builder: (context, AsyncSnapshot<String?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final apiKey = snapshot.data;
+
+            if (apiKey == null) {
+              return Settings();
+            } else {
+              return Home();
+            }
+          } else if (snapshot.hasError) {
+            return Text(snapshot.data.toString());
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 }
@@ -33,8 +57,11 @@ class Home extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => Settings()));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => Settings(),
+                ),
+              );
             },
           ),
         ],
@@ -53,11 +80,11 @@ class Notebooks extends StatefulWidget {
 }
 
 class _NotebooksState extends State<Notebooks> {
-  late final notebooks = fetch(
-    '/notebooks?key=9f34ff36-990d-43f0-ba76-9a395a9d7c84',
-  )
-      .then((value) => value.json())
-      .then((r) => json.decode(r['contents'])['values'][0]['entries']);
+  late final notebooks = readToken().then((t) => fetch(
+        '/notebooks?key=$t',
+      )
+          .then((value) => value.json())
+          .then((r) => json.decode(r['contents'])['values'][0]['entries']));
 
   @override
   Widget build(BuildContext context) {
@@ -108,12 +135,76 @@ class _NotebooksState extends State<Notebooks> {
   }
 }
 
-class Settings extends StatelessWidget {
+class Settings extends StatefulWidget {
+  @override
+  _SettingsState createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(
+          onPressed: () {
+            Navigator.of(context).maybePop().then((value) => {
+                  if (!value)
+                    {
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (c) => Home()))
+                    }
+                });
+          },
+        ),
         title: Text('Settings'),
+      ),
+      body: Column(
+        children: [
+          FutureBuilder(
+              future: readToken(),
+              builder: (context, snapshot) {
+                return ListTile(
+                  title: Text("API Key"),
+                  subtitle: snapshot.data != null
+                      ? Text(
+                          snapshot.data.toString(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : null,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.paste),
+                        tooltip: 'Paste',
+                        onPressed: () async {
+                          final token = await Clipboard.getData('text/plain');
+                          final prefs = await SharedPreferences.getInstance();
+                          if (token?.text != null) {
+                            await prefs.setString('api_key', token!.text!);
+                          }
+
+                          setState(() {});
+                        },
+                      ),
+                      IconButton(
+                        tooltip: 'Copy',
+                        icon: Icon(Icons.copy),
+                        onPressed: () async {
+                          await Clipboard.setData(
+                            ClipboardData(text: snapshot.data!.toString()),
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Token copied!")));
+                        },
+                      )
+                    ],
+                  ),
+                );
+              }),
+        ],
       ),
     );
   }

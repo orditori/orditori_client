@@ -27,6 +27,7 @@ dependencies:
     path: ../fetch
   cupertino_icons: ^1.0.2
   intl: ^0.17.0-nullsafety.2
+  shared_preferences: ^2.0.0-nullsafety
 
 dev_dependencies:
   flutter_test:
