@@ -1,4 +1,4 @@
-package com.lesnitsky.orditory
+package com.lesnitsky.orditori
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,4 +1,4 @@
-# orditory
+# orditori
 
 A new Flutter project.
 
