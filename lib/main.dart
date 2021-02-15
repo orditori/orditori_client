@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:fetch/fetch.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,15 @@ class Orditori extends StatelessWidget {
       theme: ThemeData(
         accentColor: Colors.pink,
         brightness: Brightness.dark,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32),
+              ),
+            ),
+          ),
+        ),
         bottomSheetTheme: BottomSheetThemeData(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
@@ -58,6 +68,18 @@ class Orditori extends StatelessWidget {
   }
 }
 
+final loadReq = ValueNotifier<double>(0.0);
+final _r = Random();
+
+void reloadNotebooks() {
+  var v = _r.nextDouble();
+  while (loadReq.value == v) {
+    v = _r.nextDouble();
+  }
+
+  loadReq.value = v;
+}
+
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -85,21 +107,41 @@ class Home extends StatelessWidget {
 final _fmt = DateFormat.yMd();
 
 class Notebooks extends StatefulWidget {
+  const Notebooks({Key? key}) : super(key: key);
   @override
   _NotebooksState createState() => _NotebooksState();
 }
 
 class _NotebooksState extends State<Notebooks> {
-  late final token;
-  late final Future<dynamic> notebooks = readToken().then((t) {
-    token = t!;
+  late String token;
+  late final Future<dynamic> notebooks = _load();
 
-    return fetch(
-      '/notebooks?key=$t',
-    )
-        .then((value) => value.json())
-        .then((r) => json.decode(r['contents'])['values'][0]['entries']);
-  });
+  @override
+  void initState() {
+    loadReq.addListener(_load);
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    loadReq.removeListener(_load);
+    super.dispose();
+  }
+
+  _load() {
+    return readToken().then((t) {
+      token = t!;
+      final r = fetch(
+        '/notebooks?key=$t',
+      )
+          .then((value) => value.json())
+          .then((r) => json.decode(r['contents'])['values'][0]['entries']);
+
+      r.whenComplete(() => setState(() {}));
+
+      return r;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +164,12 @@ class _NotebooksState extends State<Notebooks> {
                 final def = {
                   'values': [
                     {
-                      'definition': _def,
+                      'contentItems': [
+                        {
+                          'values': [_def],
+                          'tag': 'DefinitionItem'
+                        }
+                      ],
                       'addedDate': DateTime.now().toIso8601String(),
                       'word': {
                         'tag': 'Word',
@@ -248,7 +295,10 @@ class _SearchBarState extends State<SearchBar> {
                     ),
                   )
                 : Icon(Icons.search),
-            label: Text('Search'),
+            label: Text(
+              'Search',
+              style: TextStyle(height: 1),
+            ),
             onPressed: _search,
           )
         ],
@@ -319,31 +369,73 @@ class _NotesListState extends State<NotesList> {
   @override
   Widget build(BuildContext context) {
     final items = widget.notes.reversed.toList();
+    final groupedByDate =
+        items.fold<List<dynamic>>([{}], (previousValue, element) {
+      final item = element['values'][0];
+      final k = _fmt.format(DateTime.parse(item['addedDate']));
 
-    return ListView.builder(
+      if (previousValue.last['addedDate'] == null) {
+        previousValue.last['addedDate'] = k;
+        previousValue.last['values'] = [item];
+        return previousValue;
+      }
+
+      if (previousValue.last['addedDate'] == k) {
+        previousValue.last['values'].add(item);
+        return previousValue;
+      }
+
+      previousValue.add({
+        'addedDate': k,
+        'values': [item],
+      });
+
+      return previousValue;
+    }).toList();
+
+    return ListView.separated(
         controller: ctrl,
-        itemCount: items.length,
         reverse: true,
+        itemCount: groupedByDate.length,
+        separatorBuilder: (context, index) {
+          return Container(height: 1, color: Colors.white.withAlpha(10));
+        },
         itemBuilder: (context, index) {
-          final item = items[index]['values'][0];
-          final def = item['definition'];
-          Widget leading = SizedBox(width: 50);
-          final date = _fmt.format(DateTime.parse(item['addedDate']));
+          final g = groupedByDate[index];
 
-          if (prevDate != date) {
-            leading = DateTile(date: DateTime.parse(item['addedDate']));
-          }
-
-          prevDate = date;
-
-          return ListTile(
-            leading: leading,
-            trailing: Chip(
-              label: Text(def['language']['code']),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: DateTile(
+                    date: _fmt.parse(g['addedDate']),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: List<Widget>.from(g['values'].reversed.map((i) {
+                      return ListTile(
+                        isThreeLine: true,
+                        title: Text(i['word']['values'][0]['string'].trim()),
+                        subtitle: Text(i['contentItems'][0]['values'][0]
+                                ['definition']
+                            .trim()
+                            .toString()),
+                        trailing: Chip(
+                          label: Text(
+                            i['contentItems'][0]['values'][0]['language']
+                                ['code'],
+                          ),
+                        ),
+                      );
+                    })),
+                  ),
+                ),
+              ],
             ),
-            title: Text(item['word']['values'][0]['string']),
-            subtitle: Text((def['definition'] as String)),
-            isThreeLine: true,
           );
         });
   }
@@ -400,6 +492,7 @@ class _SettingsState extends State<Settings> {
                           }
 
                           setState(() {});
+                          reloadNotebooks();
                         },
                       ),
                       IconButton(
