@@ -60,10 +60,10 @@ packages:
   fetch:
     dependency: "direct main"
     description:
-      path: "../fetch"
-      relative: true
-    source: path
-    version: "0.0.3"
+      name: fetch
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.4"
   ffi:
     dependency: transitive
     description:
