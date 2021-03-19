@@ -530,7 +530,8 @@ class WordTile extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
-                        child: Text('≝', style: TextStyle(fontSize: 30)),
+                        child: Text('≝',
+                            style: TextStyle(fontSize: 30, height: 0.8)),
                       ),
                       Expanded(
                         child: Padding(
