@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:orditori/model/language.dart';
+import 'package:orditori/models/language.dart';
 
 import 'example.dart';
 
