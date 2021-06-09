@@ -17,7 +17,6 @@ class AuthBinding extends Binding<AuthState> {
 
   Future<String?> readToken() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
     return prefs.getString('api_key');
   }
 

@@ -87,6 +87,7 @@ class NotesList extends StatelessWidget {
                                     .toList(),
                                 onDelete: () async {
                                   context.mutation(DeleteNote(entries[i].id));
+                                  Navigator.of(context).pop();
                                 },
                               ),
                               if (i != entries.length - 1) Divider(),

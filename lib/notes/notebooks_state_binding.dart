@@ -29,10 +29,14 @@ class NotebooksStateBinding extends Binding<NotebookState> {
         '/notebookEntries/${mutation.payload}/?apiKey=$token',
         method: 'DELETE',
       );
-      final entries = state.entries
-        ..removeWhere((element) => element.id == mutation.payload);
 
-      yield state.copyWith(entries: entries);
+      yield state.copyWith(
+        entries: [
+          ...state.entries
+              .where((element) => element.id != mutation.payload)
+              .toList()
+        ],
+      );
     };
   }
 
@@ -85,9 +89,7 @@ class NotebooksStateBinding extends Binding<NotebookState> {
             definitions: [m.payload],
           );
 
-          state.entries.add(e);
-
-          yield state.copyWith(entries: state.entries);
+          yield state.copyWith(entries: [...state.entries, e]);
         });
 
         return state;
