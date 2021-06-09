@@ -4,14 +4,7 @@ import 'package:microfrontends/microfrontends.dart';
 import 'package:orditori/auth/auth_state.dart';
 import 'package:orditori/auth/binding.dart';
 
-import 'home.dart';
-
-class Settings extends StatefulWidget {
-  @override
-  _SettingsState createState() => _SettingsState();
-}
-
-class _SettingsState extends State<Settings> {
+class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

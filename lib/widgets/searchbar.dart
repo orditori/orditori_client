@@ -32,7 +32,6 @@ class _SearchBarState extends State<SearchBar> {
               ),
             ),
           );
-      final word = ctrl.text;
 
       ctrl.clear();
       final def = await showModalBottomSheet(
