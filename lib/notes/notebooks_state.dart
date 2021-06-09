@@ -6,7 +6,7 @@ class NotebookState {
 
   NotebookState({required this.id, required this.entries});
 
-  copyWith({
+  NotebookState copyWith({
     int? id,
     List<NotebookEntry>? entries,
   }) {

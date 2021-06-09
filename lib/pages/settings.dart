@@ -16,19 +16,6 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(
-          onPressed: () async {
-            final v = await Navigator.of(context).maybePop();
-
-            if (!v) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (c) => Home(),
-                ),
-              );
-            }
-          },
-        ),
         title: Text('Settings'),
       ),
       body: Column(children: [

@@ -1,8 +1,7 @@
-import 'package:fetch/fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:orditori/models/notebookentry.dart';
 import 'package:microfrontends/microfrontends.dart';
-import 'package:orditori/notes/notes_state_binding.dart';
+import 'package:orditori/notes/notebooks_state_binding.dart';
 import 'package:orditori/widgets/format.dart';
 import 'package:orditori/widgets/word_tile.dart';
 
@@ -15,89 +14,90 @@ class DateGroup {
 
 class NotesList extends StatelessWidget {
   final ctrl = ScrollController();
+
   @override
   Widget build(BuildContext context) {
-    return context.subscribe<List<NotebookEntry>>(builder: (context, value, _) {
-      final items = value.reversed.toList();
+    return context.subscribe<List<NotebookEntry>>(
+      builder: (context, value, _) {
+        final items = value.reversed.toList();
 
-      final groupedByDate =
-          items.fold<List<DateGroup>>([], (previousValue, element) {
-        final k = dateFormat.format(DateTime.parse(element.addedDate));
+        final groupedByDate =
+            items.fold<List<DateGroup>>([], (previousValue, element) {
+          final k = dateFormat.format(DateTime.parse(element.addedDate));
 
-        if (previousValue.isEmpty) {
-          previousValue.add(DateGroup()
-            ..date = k
-            ..entries = [element]);
+          if (previousValue.isEmpty) {
+            previousValue.add(DateGroup()
+              ..date = k
+              ..entries = [element]);
+            return previousValue;
+          }
+
+          if (previousValue.last.date == k) {
+            previousValue.last.entries.add(element);
+            return previousValue;
+          }
+
+          previousValue.add(
+            DateGroup()
+              ..date = k
+              ..entries = [element],
+          );
+
           return previousValue;
-        }
+        }).toList();
 
-        if (previousValue.last.date == k) {
-          previousValue.last.entries.add(element);
-          return previousValue;
-        }
+        return ListView.separated(
+            controller: ctrl,
+            reverse: true,
+            itemCount: groupedByDate.length,
+            separatorBuilder: (context, index) {
+              return Container(height: 1, color: Colors.white.withAlpha(10));
+            },
+            itemBuilder: (context, index) {
+              final g = groupedByDate[index];
+              final entries = g.entries.reversed
+                  .toList()
+                  .where((e) => e.definitions.isNotEmpty)
+                  .toList();
 
-        previousValue.add(
-          DateGroup()
-            ..date = k
-            ..entries = [element],
-        );
-
-        return previousValue;
-      }).toList();
-
-      return ListView.separated(
-          controller: ctrl,
-          reverse: true,
-          itemCount: groupedByDate.length,
-          separatorBuilder: (context, index) {
-            return Container(height: 1, color: Colors.white.withAlpha(10));
-          },
-          itemBuilder: (context, index) {
-            final g = groupedByDate[index];
-            final entries = g.entries.reversed
-                .toList()
-                .where((e) => e.definitions.isNotEmpty)
-                .toList();
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: DateTile(
-                      date: dateFormat.parse(g.date!),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: DateTile(date: dateFormat.parse(g.date!)),
                     ),
-                  ),
-                  Expanded(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          for (int i = 0; i < entries.length; i++) ...[
-                            WordTile(
-                              language: entries[i].definitions.first.language,
-                              word: entries[i].definitions.first.word,
-                              definition:
-                                  entries[i].definitions.first.definition,
-                              examples: entries[i]
-                                  .definitions
-                                  .first
-                                  .examples
-                                  .map((e) => e.string)
-                                  .toList(),
-                              onDelete: () async {
-                                context.mutation(DeleteNote(entries[i].id));
-                              },
-                            ),
-                            if (i != entries.length - 1) Divider(),
-                          ]
-                        ]),
-                  ),
-                ],
-              ),
-            );
-          });
-    });
+                    Expanded(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            for (int i = 0; i < entries.length; i++) ...[
+                              WordTile(
+                                language: entries[i].definitions.first.language,
+                                word: entries[i].definitions.first.word,
+                                definition:
+                                    entries[i].definitions.first.definition,
+                                examples: entries[i]
+                                    .definitions
+                                    .first
+                                    .examples
+                                    .map((e) => e.string)
+                                    .toList(),
+                                onDelete: () async {
+                                  context.mutation(DeleteNote(entries[i].id));
+                                },
+                              ),
+                              if (i != entries.length - 1) Divider(),
+                            ]
+                          ]),
+                    ),
+                  ],
+                ),
+              );
+            });
+      },
+    );
   }
 }

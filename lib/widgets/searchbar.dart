@@ -1,13 +1,12 @@
 import 'package:fetch/fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:orditori/models/definition.dart';
+import 'package:orditori/notes/notebooks_state_binding.dart';
+import 'package:microfrontends/microfrontends.dart';
 
 import 'def_picker.dart';
 
 class SearchBar extends StatefulWidget {
-  final Function(String word, Definition def) onPicked;
-
-  const SearchBar({Key? key, required this.onPicked}) : super(key: key);
   @override
   _SearchBarState createState() => _SearchBarState();
 }
@@ -43,7 +42,7 @@ class _SearchBarState extends State<SearchBar> {
           });
 
       if (def != null) {
-        widget.onPicked(word, def);
+        context.mutation(AddDefinition(def));
       }
     } catch (err) {
       print(err);

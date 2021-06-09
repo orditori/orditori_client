@@ -17,6 +17,7 @@ class AuthBinding extends Binding<AuthState> {
 
   Future<String?> readToken() async {
     final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
     return prefs.getString('api_key');
   }
 
@@ -40,12 +41,15 @@ class AuthBinding extends Binding<AuthState> {
         (ctrl, state, params) => Token((state as Authenticated).token),
       )
       ..mutation<UpdateToken>(
-        (ctrl, state, mutation) => Authenticated(mutation!.payload),
-      )
-      ..observer<UpdateToken, AuthState>(
-          (ownState, mutation, oldState, newState) async* {
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setString('api_key', mutation.payload);
-      });
+        (ctrl, state, mutation) {
+          ctrl.run(() async* {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('api_key', mutation!.payload);
+            yield Authenticated(mutation.payload);
+          });
+
+          return state;
+        },
+      );
   }
 }

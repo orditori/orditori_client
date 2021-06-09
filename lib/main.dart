@@ -1,6 +1,7 @@
 import 'package:fetch/fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:microfrontends/microfrontends.dart';
+import 'package:orditori/notes/notebooks_state_binding.dart';
 
 import 'auth/auth_state.dart';
 import 'auth/binding.dart';
@@ -20,13 +21,22 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AuthBinding(
       child: context.subscribe<AuthState>(
-        builder: (context, authState, child) {
-          if (authState is Unresolved) return Container();
-          if (authState is Failed) return Text(authState.errorMessage);
-          if (authState is Unauthenticated) return Settings();
-          if (authState is Authenticated) return Home();
-          throw new Exception('Unknown auth state ${authState.runtimeType}');
+        builder: (context, state, child) {
+          if (state is Unresolved) return Container();
+          if (state is Authenticated) {
+            return NotebooksStateBinding(child: child!);
+          }
+
+          return child!;
         },
+        child: context.subscribe<AuthState>(
+          builder: (context, authState, child) {
+            if (authState is Failed) return Text(authState.errorMessage);
+            if (authState is Unauthenticated) return Settings();
+            if (authState is Authenticated) return Home();
+            throw new Exception('Unknown auth state ${authState.runtimeType}');
+          },
+        ),
       ),
     );
   }
