@@ -1,7 +1,7 @@
 import 'package:fetch/fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:orditori/models/definition.dart';
-import 'package:orditori/notes/notebooks_state_binding.dart';
+import 'package:orditori/domains/notebooks/notebooks_state_binding.dart';
 import 'package:microfrontends/microfrontends.dart';
 
 import 'def_picker.dart';

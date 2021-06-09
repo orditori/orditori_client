@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orditori/models/notebookentry.dart';
 import 'package:microfrontends/microfrontends.dart';
-import 'package:orditori/notes/notebooks_state_binding.dart';
+import 'package:orditori/domains/notebooks/notebooks_state_binding.dart';
 import 'package:orditori/widgets/format.dart';
 import 'package:orditori/widgets/word_tile.dart';
 

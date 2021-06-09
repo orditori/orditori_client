@@ -4,11 +4,11 @@ import 'package:fetch/fetch.dart' hide Response;
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:microfrontends/microfrontends.dart';
-import 'package:orditori/auth/binding.dart';
+import 'package:orditori/domains/auth/binding.dart';
 import 'package:orditori/models/definition.dart';
 import 'package:orditori/models/notebookentry.dart';
 import 'package:orditori/models/response.dart';
-import 'package:orditori/notes/notebooks_state.dart';
+import 'package:orditori/domains/notebooks/notebooks_state.dart';
 
 class DeleteNote extends Mutation<int> {
   DeleteNote(int payload) : super(payload);
@@ -21,7 +21,8 @@ class AddDefinition extends Mutation<Definition> {
 final fmt = DateFormat('yyyy-MM-ddTHH:mm:ss.mmm');
 
 class NotebooksStateBinding extends Binding<NotebookState> {
-  NotebooksStateBinding({required Widget child}) : super(child: child);
+  NotebooksStateBinding({Key? key, required Widget child})
+      : super(key: key, child: child);
 
   deleteEntry(String token, NotebookState state, DeleteNote mutation) {
     return () async* {
