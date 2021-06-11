@@ -1,14 +1,10 @@
 import 'package:microfrontends/microfrontends.dart';
 import 'package:orditori/models/definition.dart';
 
-class SearchState {}
+class SearchState extends Async<SearchState> {
+  final List<Definition> definitiaons;
 
-class LoadingSearchState extends SearchState {}
-
-class LoadedSearchState extends SearchState {
-  final List<Definition> definitions;
-
-  LoadedSearchState(this.definitions);
+  SearchState(this.definitiaons);
 }
 
 class Search extends Mutation<String> {

@@ -20,7 +20,7 @@ class AddDefinition extends Mutation<Definition> {
 
 final fmt = DateFormat('yyyy-MM-ddTHH:mm:ss.mmm');
 
-class NotebooksStateBinding extends Binding<NotebookState> {
+class NotebooksStateBinding extends StateBinding<NotebookState> {
   NotebooksStateBinding({Key? key, required Widget child})
       : super(key: key, child: child);
 

@@ -12,7 +12,7 @@ class UpdateToken extends Mutation<String> {
   UpdateToken(String payload) : super(payload);
 }
 
-class AuthBinding extends Binding<AuthState> {
+class AuthBinding extends StateBinding<AuthState> {
   AuthBinding({required Widget child}) : super(child: child);
 
   Future<String?> readToken() async {
@@ -22,7 +22,7 @@ class AuthBinding extends Binding<AuthState> {
 
   @override
   StateContainer<AuthState> create(BuildContext context) {
-    return container<AuthState>(Unresolved())
+    return container(Unresolved())
       ..boot((context) async* {
         try {
           final token = await readToken();

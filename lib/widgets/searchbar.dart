@@ -19,7 +19,7 @@ class SearchBar extends StatelessWidget {
     return SearchStateBinding(
       child: TextEditingControllerBinding<String>(
         child: Builder(builder: (context) {
-          return context.subscribe<SearchState>(
+          return context.subscribe<Async<SearchState>>(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -38,9 +38,9 @@ class SearchBar extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton.icon(
-                    icon: context.subscribe<SearchState>(
+                    icon: context.subscribe<Async<SearchState>>(
                       builder: (context, value, _) {
-                        if (value is LoadingSearchState)
+                        if (value is Loading<SearchState>)
                           return Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 4.0),
@@ -66,21 +66,18 @@ class SearchBar extends StatelessWidget {
                 ],
               ),
             ),
-            builder: (context, state, child) {
-              if (state is LoadedSearchState) {
+            builder: (context, value, child) {
+              if (value is Loaded<SearchState>) {
                 ctrl.clear();
 
                 SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
                   showModalBottomSheet(
                     context: context,
                     builder: (_) {
-                      final search = StateContainer.of<SearchState>(context);
-                      final notes = StateContainer.of<NotebookState>(context);
-                      final defs = state.definitions;
+                      final defs = value.state.definitiaons;
 
                       return DefPicker(defs: defs)
-                          .withContainer(search)
-                          .withContainer(notes);
+                          .withContainer<NotebookState>(context);
                     },
                   );
                 });
