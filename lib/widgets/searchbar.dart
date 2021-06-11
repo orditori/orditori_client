@@ -19,7 +19,7 @@ class SearchBar extends StatelessWidget {
     return SearchStateBinding(
       child: TextEditingControllerBinding<String>(
         child: Builder(builder: (context) {
-          return context.subscribe<Async<SearchState>>(
+          return context.subscribeAsync<SearchState>(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -38,7 +38,7 @@ class SearchBar extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton.icon(
-                    icon: context.subscribe<Async<SearchState>>(
+                    icon: context.subscribeAsync<SearchState>(
                       builder: (context, value, _) {
                         if (value is Loading<SearchState>)
                           return Padding(

@@ -8,7 +8,7 @@ class SearchStateBinding extends AsyncStateBinding<SearchState> {
   SearchStateBinding({required Widget child}) : super(child: child);
 
   @override
-  StateContainer<Async<SearchState>> create(BuildContext context) {
+  AsyncStateContainer<SearchState> create(BuildContext context) {
     return container(Uninitialized<SearchState>())
       ..query<List<Definition>>((ctrl, state, params) =>
           (state as Loaded<SearchState>).state.definitiaons)
@@ -16,9 +16,7 @@ class SearchStateBinding extends AsyncStateBinding<SearchState> {
         final text = mutation!.payload;
         if (text.isEmpty) return state;
 
-        ctrl.run(() async* {
-          yield Loading<SearchState>();
-
+        ctrl.load(() async {
           final data = await fetch('/definitions?query=$text')
               .then((res) => res.json())
               .then(
@@ -27,7 +25,7 @@ class SearchStateBinding extends AsyncStateBinding<SearchState> {
                 ),
               );
 
-          yield Loaded(SearchState(data));
+          return SearchState(data);
         });
 
         return state;
