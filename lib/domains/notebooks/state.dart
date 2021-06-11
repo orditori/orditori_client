@@ -8,7 +8,7 @@ import 'package:orditori/domains/auth/binding.dart';
 import 'package:orditori/models/definition.dart';
 import 'package:orditori/models/notebookentry.dart';
 import 'package:orditori/models/response.dart';
-import 'package:orditori/domains/notebooks/notebooks_state.dart';
+import 'package:orditori/domains/notebooks/binding.dart';
 
 class DeleteNote extends Mutation<int> {
   DeleteNote(int payload) : super(payload);

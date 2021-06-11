@@ -1,9 +1,9 @@
 import 'package:fetch/fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:microfrontends/microfrontends.dart';
-import 'package:orditori/domains/notebooks/notebooks_state_binding.dart';
+import 'package:orditori/domains/notebooks/state.dart';
 
-import 'domains/auth/auth_state.dart';
+import 'domains/auth/state.dart';
 import 'domains/auth/binding.dart';
 import 'pages/home.dart';
 import 'pages/settings.dart';

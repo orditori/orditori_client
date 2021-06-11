@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:microfrontends/microfrontends.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'auth_state.dart';
+import 'state.dart';
 
 class Token extends Boxed<String> {
   Token(String payload) : super(payload);

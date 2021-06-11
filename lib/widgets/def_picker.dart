@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:orditori/domains/notebooks/state.dart';
 import 'package:orditori/models/definition.dart';
+import 'package:microfrontends/microfrontends.dart';
 
 class DefPicker extends StatelessWidget {
   final List<Definition> defs;
@@ -36,7 +38,8 @@ class DefPicker extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
-                  Navigator.of(context).pop(def);
+                  Navigator.of(context).pop();
+                  context.mutation(AddDefinition(def));
                 },
               );
             },

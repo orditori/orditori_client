@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:microfrontends/microfrontends.dart';
-import 'package:orditori/domains/notebooks/notebooks_state.dart';
+import 'package:orditori/domains/notebooks/binding.dart';
 
 import 'notes_list.dart';
 import 'searchbar.dart';

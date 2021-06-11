@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orditori/domains/auth/auth_state.dart';
+import 'package:orditori/domains/auth/state.dart';
 import 'package:orditori/widgets/notebooks.dart';
 import 'package:microfrontends/microfrontends.dart';
 

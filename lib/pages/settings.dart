@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:microfrontends/microfrontends.dart';
-import 'package:orditori/domains/auth/auth_state.dart';
+import 'package:orditori/domains/auth/state.dart';
 import 'package:orditori/domains/auth/binding.dart';
 
 class Settings extends StatelessWidget {
