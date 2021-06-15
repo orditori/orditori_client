@@ -1,12 +1,16 @@
 import 'package:fetch/fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:microfrontends/microfrontends.dart';
-import 'package:orditori/domains/notebooks/state.dart';
+import 'package:orditori/domains/notebooks/state_container.dart';
 
 import 'domains/auth/state.dart';
-import 'domains/auth/binding.dart';
+import 'domains/auth/state_container.dart';
 import 'pages/home.dart';
 import 'pages/settings.dart';
+
+// Tokens:
+// prod: 9f34ff36-990d-43f0-ba76-9a395a9d7c84
+// dev: 8d550686-1b37-40b5-bd05-13c36d8518fc
 
 void main() {
   FetchConfig.setBaseUrl('http://3.127.125.21/');
@@ -19,14 +23,14 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AuthBinding(
+    return AuthStateContainer().mount(
       child: context.subscribe<AuthState>(
         builder: (context, state, child) {
           if (state is Unresolved) return Container();
           if (state is Failed) return Text(state.errorMessage);
           if (state is Authenticated) {
             return context.subscribe<Token>(builder: (context, v, _) {
-              return NotebooksStateBinding(
+              return NotebooksStateContainer().mount(
                 key: GlobalKey(),
                 child: child!,
               );

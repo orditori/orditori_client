@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:orditori/domains/notebooks/binding.dart';
-import 'package:orditori/domains/search/binding.dart';
+import 'package:orditori/domains/auth/state.dart';
+import 'package:orditori/domains/notebooks/state.dart';
+import 'package:orditori/domains/search/state_container.dart';
 import 'package:orditori/domains/search/state.dart';
 import 'package:microfrontends/microfrontends.dart';
 import 'package:orditori/widgets/def_picker.dart';
@@ -16,8 +17,8 @@ class SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SearchStateBinding(
-      child: TextEditingControllerBinding<String>(
+    return SearchStateContainer().mount(
+      child: TextEditingControllerStateContainer<String>(ctrl).mount(
         child: Builder(builder: (context) {
           return context.subscribeAsync<SearchState>(
             child: Padding(
@@ -77,7 +78,8 @@ class SearchBar extends StatelessWidget {
                       final defs = value.state.definitiaons;
 
                       return DefPicker(defs: defs)
-                          .withContainer<NotebookState>(context);
+                          .withContainer<NotebookState>(context)
+                          .withContainer<AuthState>(context);
                     },
                   );
                 });
@@ -86,7 +88,6 @@ class SearchBar extends StatelessWidget {
             },
           );
         }),
-        controller: ctrl,
       ),
     );
   }

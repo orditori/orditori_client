@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orditori/domains/notebooks/state.dart';
+import 'package:orditori/domains/notebooks/state_container.dart';
 import 'package:orditori/models/definition.dart';
 import 'package:microfrontends/microfrontends.dart';
 
