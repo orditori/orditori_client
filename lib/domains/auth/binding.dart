@@ -21,7 +21,7 @@ class AuthBinding extends StateBinding<AuthState> {
   }
 
   @override
-  StateContainer<AuthState> create(BuildContext context) {
+  create(BuildContext context) {
     return container(Unresolved())
       ..boot((context) async* {
         try {

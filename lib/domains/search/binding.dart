@@ -8,7 +8,7 @@ class SearchStateBinding extends AsyncStateBinding<SearchState> {
   SearchStateBinding({required Widget child}) : super(child: child);
 
   @override
-  AsyncStateContainer<SearchState> create(BuildContext context) {
+  create(BuildContext context) {
     return container(Uninitialized<SearchState>())
       ..query<List<Definition>>((ctrl, state, params) =>
           (state as Loaded<SearchState>).state.definitiaons)
