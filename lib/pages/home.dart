@@ -14,11 +14,13 @@ class Home extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) {
-                  return Settings().withContainer<AuthState>(context);
-                },
-              ));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return Settings().withContainer<AuthState>(context);
+                  },
+                ),
+              );
             },
           ),
         ],
