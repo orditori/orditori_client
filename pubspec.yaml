@@ -27,9 +27,8 @@ dependencies:
   fetch: ^0.0.4
   freezed_annotation: ^0.14.1
   intl: ^0.17.0-nullsafety.2
+  microfrontends: ^0.0.3
   shared_preferences: ^2.0.0-nullsafety
-  microfrontends:
-    path: ../microfrontends
 
 dev_dependencies:
   flutter_test:
