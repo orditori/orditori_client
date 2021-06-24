@@ -323,7 +323,7 @@ packages:
       path: "../microfrontends"
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.4"
   mime:
     dependency: transitive
     description:
