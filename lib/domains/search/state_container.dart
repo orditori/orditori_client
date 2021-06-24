@@ -34,6 +34,9 @@ class SearchStateContainer extends AsyncStateContainer<SearchState> {
 
       return state;
     });
+
+    mutation<ResetSearch>((ctrl, value, arg) => Uninitialized<SearchState>());
+
     return super.mutations(context);
   }
 }

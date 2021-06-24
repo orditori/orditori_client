@@ -7,87 +7,87 @@ import 'package:orditori/domains/search/state.dart';
 import 'package:microfrontends/microfrontends.dart';
 import 'package:orditori/widgets/def_picker.dart';
 
-class SearchBar extends StatelessWidget {
-  final ctrl = TextEditingController();
+import 'loading_indicator.dart';
 
+abstract class SearchQuery {}
+
+final ctrl = TextEditingController();
+
+class SearchBar extends StatelessWidget {
   search(BuildContext context) {
-    final q = Search(context.query<TextQuery<String>>()!.text);
-    context.mutation(q);
+    final query = context.query<TextQuery<SearchQuery>>()!;
+    final m = Search(query.text);
+    context.mutation(m);
   }
+
+  showDefsPicker(BuildContext context, SearchState state) => (_) async {
+        await showModalBottomSheet(
+          context: context,
+          builder: (_) {
+            final defs = state.definitiaons;
+
+            return DefPicker(defs: defs)
+                .withContainer<NotebookState>(context)
+                .withContainer<AuthState>(context);
+          },
+        );
+
+        context.mutation(ResetSearch());
+      };
 
   @override
   Widget build(BuildContext context) {
-    return SearchStateContainer().mount(
-      child: TextEditingControllerStateContainer<String>(ctrl).mount(
-        child: Builder(builder: (context) {
-          return context.subscribeAsync<SearchState>(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: ctrl,
-                      keyboardAppearance: Brightness.dark,
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
-                        hintText: 'Type a word',
-                        border: InputBorder.none,
-                      ),
-                      onSubmitted: (_) => search(context),
-                      textInputAction: TextInputAction.search,
+    return TextEditingControllerStateContainer<SearchQuery>(ctrl).mount(
+      child: SearchStateContainer().mount(
+        builder: (context) => context.subscribeAsync<SearchState>(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: ctrl,
+                    keyboardAppearance: Brightness.dark,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      hintText: 'Type a word',
+                      border: InputBorder.none,
                     ),
+                    onSubmitted: (_) => search(context),
+                    textInputAction: TextInputAction.search,
                   ),
-                  ElevatedButton.icon(
-                    icon: context.subscribeAsync<SearchState>(
-                      builder: (context, value, _) {
-                        if (value is Loading<SearchState>)
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 4.0),
-                            child: SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 1,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            ),
-                          );
+                ),
+                ElevatedButton.icon(
+                  icon: context.subscribeAsync<SearchState>(
+                    builder: (context, value, _) {
+                      if (value is Loading<SearchState>) {
+                        return const Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: LoadingIndicator(),
+                        );
+                      }
 
-                        return Icon(Icons.search);
-                      },
-                    ),
-                    label: Text('Search', style: TextStyle(height: 1)),
-                    onPressed: () {
-                      search(context);
+                      return Icon(Icons.search);
                     },
-                  )
-                ],
-              ),
+                  ),
+                  label: Text('Search', style: TextStyle(height: 1)),
+                  onPressed: () {
+                    search(context);
+                  },
+                )
+              ],
             ),
-            builder: (context, value, child) {
-              if (value is Loaded<SearchState>) {
-                ctrl.clear();
-
-                SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (_) {
-                      final defs = value.state.definitiaons;
-
-                      return DefPicker(defs: defs)
-                          .withContainer<NotebookState>(context)
-                          .withContainer<AuthState>(context);
-                    },
-                  );
-                });
-              }
-              return child!;
-            },
-          );
-        }),
+          ),
+          builder: (context, value, child) {
+            if (value is Loaded<SearchState>) {
+              ctrl.clear();
+              SchedulerBinding.instance!.addPostFrameCallback(
+                showDefsPicker(context, value.state),
+              );
+            }
+            return child!;
+          },
+        ),
       ),
     );
   }

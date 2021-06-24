@@ -320,9 +320,9 @@ packages:
   microfrontends:
     dependency: "direct main"
     description:
-      name: microfrontends
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../microfrontends"
+      relative: true
+    source: path
     version: "0.0.3"
   mime:
     dependency: transitive

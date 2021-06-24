@@ -10,3 +10,7 @@ class SearchState extends Async<SearchState> {
 class Search extends Mutation<String> {
   Search(String payload) : super(payload);
 }
+
+class ResetSearch extends Mutation<Null> {
+  ResetSearch() : super(null);
+}
