@@ -52,12 +52,6 @@ class Notebooks extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         }
 
-        final items = state.entries;
-
-        if (items.isEmpty) {
-          return Center(child: Text('No notebooks'));
-        }
-
         return child!;
       },
     );
