@@ -2,14 +2,16 @@ import 'package:fetch/fetch.dart';
 import 'package:microfrontends/microfrontends.dart';
 import 'package:orditori/domains/search/state.dart';
 import 'package:orditori/models/definition.dart';
+import 'package:orditori/widgets/searchbar.dart';
 
-class SearchStateContainer extends AsyncStateContainer<SearchState> {
-  SearchStateContainer() : super(Uninitialized<SearchState>());
+class SearchStateContainer extends AsyncStateContainer<DefinitionsSearchState> {
+  SearchStateContainer() : super(Uninitialized<DefinitionsSearchState>());
 
   @override
   queries(StateContainerContext context) {
     query(
-      (ctrl, value, arg) => (state as Loaded<SearchState>).state.definitiaons,
+      (ctrl, value, arg) =>
+          (state as Loaded<DefinitionsSearchState>).state.definitiaons,
     );
     return super.queries(context);
   }
@@ -29,13 +31,14 @@ class SearchStateContainer extends AsyncStateContainer<SearchState> {
               ),
             );
 
-        return SearchState(data);
+        return DefinitionsSearchState(data);
       });
 
       return state;
     });
 
-    mutation<ResetSearch>((ctrl, value, arg) => Uninitialized<SearchState>());
+    mutation<ResetSearch>(
+        (ctrl, value, arg) => Uninitialized<DefinitionsSearchState>());
 
     return super.mutations(context);
   }

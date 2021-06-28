@@ -15,7 +15,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.7+8
+version: 1.0.8+8
 
 environment:
   sdk: ">=2.12.0-0.0.dev <3.0.0"
@@ -27,7 +27,9 @@ dependencies:
   fetch: ^0.0.4
   freezed_annotation: ^0.14.1
   intl: ^0.17.0-nullsafety.2
-  microfrontends: ^0.0.4
+  # microfrontends:
+  #   path: ../microfrontends
+  microfrontends: ^0.0.5
   shared_preferences: ^2.0.0-nullsafety
 
 dev_dependencies:
@@ -36,10 +38,6 @@ dev_dependencies:
   build_runner: ^1.11.0
   freezed: ^0.14.1
   json_serializable: ^4.0.2
-
-dependency_overrides:
-  microfrontends:
-    path: ../microfrontends
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
