@@ -1,0 +1,597 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "0.0.1",
+    "title": "Definition Example Exercise API",
+    "description": "This is an API for definition example exercises"
+  },
+  "paths": {
+    "/notebooks": {
+      "get": {
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `apiKey`" },
+          "200": {
+            "schema": { "$ref": "#/definitions/NotebookR" },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/notebookEntries": {
+      "post": {
+        "consumes": ["application/json;charset=utf-8"],
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          },
+          {
+            "required": true,
+            "schema": { "$ref": "#/definitions/NotebookEntryW" },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `body` or `apiKey`" },
+          "200": { "schema": { "type": "integer" }, "description": "" }
+        }
+      }
+    },
+    "/notebookEntries/{entryId}": {
+      "delete": {
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          },
+          {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "required": true,
+            "in": "path",
+            "name": "entryId",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "404": { "description": "`entryId` not found" },
+          "400": { "description": "Invalid `apiKey`" },
+          "200": {
+            "schema": {
+              "example": [],
+              "items": {},
+              "maxItems": 0,
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/definitions": {
+      "get": {
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          { "required": true, "in": "query", "name": "query", "type": "string" }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `query`" },
+          "200": {
+            "schema": {
+              "items": { "$ref": "#/definitions/Definition" },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/definitionExamples": {
+      "post": {
+        "consumes": ["application/json;charset=utf-8"],
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          },
+          {
+            "required": true,
+            "schema": { "$ref": "#/definitions/DefinitionExampleW" },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `body` or `apiKey`" },
+          "200": { "schema": { "type": "integer" }, "description": "" }
+        }
+      }
+    },
+    "/definitionContentItems": {
+      "post": {
+        "consumes": ["application/json;charset=utf-8"],
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          },
+          {
+            "required": true,
+            "schema": { "$ref": "#/definitions/DefinitionContentItemW" },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `body` or `apiKey`" },
+          "200": { "schema": { "type": "integer" }, "description": "" }
+        }
+      }
+    },
+    "/exercises/definition/random": {
+      "get": {
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `apiKey`" },
+          "200": {
+            "schema": { "$ref": "#/definitions/DefinitionExerciseR" },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/exercises/definition/solutions": {
+      "post": {
+        "consumes": ["application/json;charset=utf-8"],
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          },
+          {
+            "required": true,
+            "schema": { "$ref": "#/definitions/ExerciseSolution" },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `body` or `apiKey`" },
+          "200": {
+            "schema": { "$ref": "#/definitions/SolutionCheckResult" },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/exercises/definition/scores": {
+      "get": {
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `apiKey`" },
+          "200": {
+            "schema": {
+              "items": { "$ref": "#/definitions/DefinitionExerciseStats" },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/exercises/example/random": {
+      "get": {
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `apiKey`" },
+          "200": {
+            "schema": { "$ref": "#/definitions/DefinitionExampleExerciseR" },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/exercises/example/solutions": {
+      "post": {
+        "consumes": ["application/json;charset=utf-8"],
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          },
+          {
+            "required": true,
+            "schema": { "$ref": "#/definitions/ExerciseSolution" },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `body` or `apiKey`" },
+          "200": {
+            "schema": { "$ref": "#/definitions/SolutionCheckResult" },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/exercises/example/scores": {
+      "get": {
+        "produces": ["application/json;charset=utf-8"],
+        "parameters": [
+          {
+            "format": "uuid",
+            "required": true,
+            "in": "query",
+            "name": "apiKey",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `apiKey`" },
+          "200": {
+            "schema": {
+              "items": { "$ref": "#/definitions/DefinitionExerciseStats" },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "NotebookR": {
+      "description": "A notebook with its entries",
+      "required": ["id", "apiKey", "revision", "formatVersion", "entries"],
+      "properties": {
+        "id": { "type": "integer" },
+        "apiKey": { "$ref": "#/definitions/UUID" },
+        "revision": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "formatVersion": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "entries": {
+          "items": { "$ref": "#/definitions/NotebookEntryR" },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "ID": {
+      "required": ["untyped"],
+      "properties": { "untyped": { "$ref": "#/definitions/RowID" } },
+      "type": "object"
+    },
+    "RowID": {
+      "maximum": 9223372036854775807,
+      "minimum": -9223372036854775808,
+      "type": "integer"
+    },
+    "UUID": {
+      "example": "00000000-0000-0000-0000-000000000000",
+      "format": "uuid",
+      "type": "string"
+    },
+    "NotebookEntryR": {
+      "description": "A notebook entry",
+      "required": ["id", "addedDate", "definitions"],
+      "properties": {
+        "id": { "type": "integer" },
+        "addedDate": { "$ref": "#/definitions/UTCTime" },
+        "definitions": {
+          "items": { "$ref": "#/definitions/DefinitionContentItemR" },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "UTCTime": {
+      "example": "2016-07-22T00:00:00Z",
+      "format": "yyyy-mm-ddThh:MM:ssZ",
+      "type": "string"
+    },
+    "DefinitionContentItemR": {
+      "description": "A notebook entry definition item",
+      "required": ["id", "word", "language", "definition", "examples"],
+      "properties": {
+        "id": { "type": "integer" },
+        "word": { "type": "string" },
+        "language": { "$ref": "#/definitions/Language" },
+        "definition": { "type": "string" },
+        "examples": {
+          "items": { "$ref": "#/definitions/DefinitionExample" },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "Language": {
+      "description": "A language with its ISO639-3 code and name in English",
+      "required": ["code", "name"],
+      "properties": {
+        "code": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "type": "object"
+    },
+    "DefinitionExample": {
+      "description": "A notebook entry definition example",
+      "required": ["id", "definition", "string"],
+      "properties": {
+        "id": { "type": "integer" },
+        "definition": { "type": "integer" },
+        "string": { "type": "string" },
+        "translation": { "type": "string" }
+      },
+      "type": "object"
+    },
+    "NotebookEntryW": {
+      "description": "A notebook entry payload",
+      "required": ["notebook", "addedDate"],
+      "properties": {
+        "notebook": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "addedDate": { "$ref": "#/definitions/UTCTime" }
+      },
+      "type": "object"
+    },
+    "Definition": {
+      "description": "Unified format for definitions retrieved from a definition source (e.g. Wiktionary)",
+      "required": ["word", "language", "definition", "examples"],
+      "properties": {
+        "word": { "type": "string" },
+        "language": { "$ref": "#/definitions/Language" },
+        "definition": { "type": "string" },
+        "examples": {
+          "items": { "$ref": "#/definitions/Example" },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "Example": {
+      "description": "An example for a definition",
+      "required": ["string"],
+      "properties": {
+        "string": { "type": "string" },
+        "translation": { "type": "string" }
+      },
+      "type": "object"
+    },
+    "DefinitionExampleW": {
+      "description": "A definition example payload",
+      "required": ["definition", "string"],
+      "properties": {
+        "definition": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "string": { "type": "string" },
+        "translation": { "type": "string" }
+      },
+      "type": "object"
+    },
+    "DefinitionContentItemW": {
+      "description": "A definition content item payload",
+      "required": ["entry", "word", "language", "definition"],
+      "properties": {
+        "entry": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "word": { "type": "string" },
+        "language": { "$ref": "#/definitions/Language" },
+        "definition": { "type": "string" }
+      },
+      "type": "object"
+    },
+    "DefinitionExerciseR": {
+      "description": "A definition-based exercise",
+      "required": ["id", "language", "definition", "difficultyScore"],
+      "properties": {
+        "id": { "type": "integer" },
+        "language": { "$ref": "#/definitions/Language" },
+        "definition": { "type": "string" },
+        "difficultyScore": { "format": "double", "type": "number" }
+      },
+      "example": {
+        "definition": "later today, shortly, in a moment",
+        "difficultyScore": 0.37,
+        "language": { "name": "Dutch", "code": "nld" },
+        "id": 0
+      },
+      "type": "object"
+    },
+    "SolutionCheckResult": {
+      "description": "A result of checking correctness of a solution",
+      "properties": {
+        "Incorrect": { "type": "string" },
+        "Correct": {
+          "items": { "$ref": "#/definitions/FuzzyCompareToken" },
+          "type": "array"
+        }
+      },
+      "maxProperties": 1,
+      "minProperties": 1,
+      "type": "object"
+    },
+    "FuzzyCompareToken": {
+      "description": "A result of checking correctness of a solution ",
+      "properties": {
+        "Character": { "type": "string" },
+        "Issue": { "$ref": "#/definitions/FuzzyCompareIssue" }
+      },
+      "example": { "tag": "Character", "contents": "ß" },
+      "maxProperties": 1,
+      "minProperties": 1,
+      "type": "object"
+    },
+    "FuzzyCompareIssue": {
+      "description": "Partial character match when fuzzy-comparing strings",
+      "required": ["expected", "actual"],
+      "properties": {
+        "expected": { "type": "string" },
+        "actual": { "type": "string" }
+      },
+      "example": { "actual": "ue", "expected": "Ü" },
+      "type": "object"
+    },
+    "ExerciseSolution": {
+      "description": "A user's solution to an exercise, text input",
+      "required": ["exercise", "input"],
+      "properties": {
+        "exercise": { "type": "integer" },
+        "input": { "type": "string" }
+      },
+      "example": { "input": "straks", "exercise": 0 },
+      "type": "object"
+    },
+    "DefinitionExerciseStats": {
+      "description": "Solution and difficulty statistics for a definition-based exercise",
+      "required": [
+        "id",
+        "definition",
+        "difficultyScore",
+        "correct",
+        "incorrect"
+      ],
+      "properties": {
+        "id": { "type": "integer" },
+        "definition": { "$ref": "#/definitions/DefinitionContentItem" },
+        "difficultyScore": { "format": "double", "type": "number" },
+        "correct": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "incorrect": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "DefinitionContentItem": {
+      "description": "A word definition (a notebook entry content item)",
+      "required": ["id", "entry", "word", "language", "definition"],
+      "properties": {
+        "id": { "type": "integer" },
+        "entry": { "type": "integer" },
+        "word": { "type": "string" },
+        "language": { "type": "string" },
+        "definition": { "type": "string" }
+      },
+      "type": "object"
+    },
+    "DefinitionExampleExerciseR": {
+      "description": "A definition example exercise",
+      "required": [
+        "id",
+        "language",
+        "definition",
+        "example",
+        "difficultyScore"
+      ],
+      "properties": {
+        "id": { "type": "integer" },
+        "language": { "$ref": "#/definitions/Language" },
+        "definition": { "type": "string" },
+        "example": {
+          "items": { "$ref": "#/definitions/StringOrGap" },
+          "type": "array"
+        },
+        "difficultyScore": { "format": "double", "type": "number" }
+      },
+      "type": "object"
+    },
+    "StringOrGap": {
+      "description": "A token in a string with gaps",
+      "properties": {
+        "Gap": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "String": { "type": "string" }
+      },
+      "maxProperties": 1,
+      "minProperties": 1,
+      "type": "object"
+    }
+  }
+}
