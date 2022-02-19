@@ -134,6 +134,8 @@ class _AsyncWidgetState<T> extends State<AsyncWidget> {
   ResultBuilder<T> get builder => widget.builder ?? _defaultBuilder;
   ErrorBuilder get errorBuilder => widget.errorBuilder ?? _defaultErrorBuilder;
 
+  bool _debugNeedsReload = true;
+
   @override
   void initState() {
     AsyncWidget._widgets[T] = this;
@@ -165,7 +167,9 @@ class _AsyncWidgetState<T> extends State<AsyncWidget> {
 
   @override
   void didUpdateWidget(covariant AsyncWidget oldWidget) {
-    setState(() => _load());
+    if (_debugNeedsReload) {
+      setState(() => _load());
+    }
     super.didUpdateWidget(oldWidget);
   }
 
@@ -173,6 +177,13 @@ class _AsyncWidgetState<T> extends State<AsyncWidget> {
   void dispose() {
     AsyncWidget._widgets.remove(T);
     super.dispose();
+  }
+
+  @override
+  void reassemble() {
+    _debugNeedsReload = false;
+    super.reassemble();
+    _debugNeedsReload = false;
   }
 
   @override
@@ -352,7 +363,7 @@ class DateTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 60,
+      width: 40,
       child: Column(
         children: [
           Text(month),
@@ -460,6 +471,7 @@ class _AppPagesState extends State<AppPages> {
           ],
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
       floatingActionButton: pageIndex == 0
           ? FloatingActionButton(
               child: const Icon(Icons.search),
@@ -500,6 +512,7 @@ class NotebookEntriesListState extends State<NotebookEntriesList> {
   Widget build(BuildContext context) {
     return AnimatedList(
       reverse: true,
+      padding: const EdgeInsets.only(bottom: 20),
       initialItemCount: widget.entries.length,
       itemBuilder: (context, index, _) {
         final item = widget.entries[index];
@@ -511,7 +524,7 @@ class NotebookEntriesListState extends State<NotebookEntriesList> {
         final nextDate =
             formatDate(DateTime.parse((nextItem ?? item).addedDate!));
 
-        Widget leading = const SizedBox(width: 60);
+        Widget leading = const SizedBox(width: 40);
 
         if (nextDate != date || nextItem == null) {
           final ch = date.split(' ');
@@ -544,12 +557,12 @@ class DefinitionTile extends StatelessWidget {
         children: [
           Chip(label: Text(def.language!.code!)),
           const SizedBox(width: 8),
-          Text(def.word!)
+          SelectableText(def.word!)
         ],
       ),
       subtitle: Padding(
         padding: const EdgeInsets.only(left: 60.0),
-        child: Text(def.definition!),
+        child: SelectableText(def.definition!),
       ),
     );
   }
@@ -639,42 +652,52 @@ class DefTile extends StatelessWidget {
               children: [
                 Chip(label: Text(def.language!.code!)),
                 const SizedBox(width: 8),
-                Expanded(child: Text(def.definition!)),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: onBookmarkPressed,
-                  child: Icon(
-                    isSaved
-                        ? Icons.bookmark_added_sharp
-                        : Icons.bookmark_add_outlined,
-                    color: Theme.of(context).colorScheme.primary,
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: SelectableText(def.definition!),
+                )),
+                const SizedBox(width: 16),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: GestureDetector(
+                    onTap: onBookmarkPressed,
+                    child: Icon(
+                      isSaved
+                          ? Icons.bookmark_added_sharp
+                          : Icons.bookmark_add_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ),
               ],
             ),
             if (def.examples?.isNotEmpty ?? false)
-              IntrinsicHeight(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: 8),
-                    Text(
-                      'Examples:',
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                    ...(def.examples?.map(
-                          (e) => Padding(
-                            padding:
-                                const EdgeInsets.all(8.0).copyWith(bottom: 0),
-                            child: Text(
-                              e.$String!,
-                              style:
-                                  const TextStyle(fontStyle: FontStyle.italic),
-                            ),
+              Padding(
+                padding: const EdgeInsets.all(8.0).copyWith(bottom: 0),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Divider(),
+                      SizedBox(height: 8),
+                      Text(
+                        'Examples:',
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      ...(def.examples!.map(
+                        (e) => Padding(
+                          padding:
+                              const EdgeInsets.all(8.0).copyWith(bottom: 0),
+                          child: Text(
+                            e.$String!,
+                            style: const TextStyle(fontStyle: FontStyle.italic),
                           ),
-                        ) ??
-                        [])
-                  ],
+                        ),
+                      )),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
                 ),
               )
           ],
@@ -820,74 +843,81 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: ctrl,
-              autofocus: true,
-              onSubmitted: (_) => _search(),
-              decoration: InputDecoration(
-                icon: const Icon(Icons.search),
-                hintText: 'Search',
-                suffix: TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0).copyWith(top: 0),
+              child: TextField(
+                controller: ctrl,
+                autofocus: true,
+                onSubmitted: (_) => _search(),
+                decoration: InputDecoration(
+                  icon: const Icon(Icons.search),
+                  hintText: 'Search',
+                  suffix: GestureDetector(
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: error != null
-                ? Center(child: Text(error!))
-                : hasResult && items.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          final def = items[index];
-                          final isSaved = defsSet.contains(def.definition);
+            Expanded(
+              child: error != null
+                  ? Center(child: Text(error!))
+                  : hasResult && items.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: items.length,
+                          itemBuilder: (context, index) {
+                            final def = items[index];
+                            final isSaved = defsSet.contains(def.definition);
 
-                          return DefTile(
-                            def: def,
-                            isSaved: isSaved,
-                            onBookmarkPressed: () {
-                              if (isSaved) return;
-                              _addDefinition(def);
-                            },
-                          );
-                        },
-                      )
-                    : hasResult
-                        ? Center(
-                            child: Text('Nothing found for "${ctrl.text}"'))
-                        : const SizedBox(),
-          ),
-          ValueListenableBuilder<TextEditingValue>(
-            valueListenable: ctrl,
-            builder: (context, value, _) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
-                  onPressed: value.text.isEmpty ? null : _search,
-                  child: SizedBox(
-                    height: 16,
-                    width: isSearching ? 16 : null,
-                    child: isSearching
-                        ? const LoadingIndicator(
-                            color: Colors.white,
-                            strokeWidth: 1,
-                          )
-                        : const Text('Search'),
+                            return DefTile(
+                              def: def,
+                              isSaved: isSaved,
+                              onBookmarkPressed: () {
+                                if (isSaved) return;
+                                _addDefinition(def);
+                              },
+                            );
+                          },
+                        )
+                      : hasResult
+                          ? Center(
+                              child: Text('Nothing found for "${ctrl.text}"'))
+                          : const SizedBox(),
+            ),
+            ValueListenableBuilder<TextEditingValue>(
+              valueListenable: ctrl,
+              builder: (context, value, _) {
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    onPressed: value.text.isEmpty ? null : _search,
+                    child: SizedBox(
+                      height: 16,
+                      width: isSearching ? 16 : null,
+                      child: isSearching
+                          ? const LoadingIndicator(
+                              color: Colors.white,
+                              strokeWidth: 1,
+                            )
+                          : const Text('Search'),
+                    ),
                   ),
-                ),
-              );
-            },
-          )
-        ],
+                );
+              },
+            )
+          ],
+        ),
       ),
     );
   }
