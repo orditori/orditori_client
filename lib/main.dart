@@ -475,6 +475,7 @@ class _AppPagesState extends State<AppPages> {
         onTap: _setPageIndex,
         items: navItems,
       ),
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: PageView(
           controller: ctrl,
@@ -874,12 +875,21 @@ class _SearchState extends State<Search> {
                       decoration: InputDecoration(hintText: 'Search'),
                     ),
                   ),
-                  TextButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      ctrl.clear();
+                  ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: ctrl,
+                    builder: (context, value, _) {
+                      return AnimatedOpacity(
+                        opacity: value.text.isEmpty ? 0 : 1,
+                        duration: const Duration(milliseconds: 200),
+                        child: TextButton(
+                          child: Text('Clear'),
+                          onPressed: () {
+                            ctrl.clear();
+                          },
+                        ),
+                      );
                     },
-                  ),
+                  )
                 ],
               ),
             ),
