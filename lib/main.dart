@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'swagger_generated_code/orditori.swagger.dart';
 
 late Orditori _client;
-const apiKey = '9f34ff36-990d-43f0-ba76-9a395a9d7c84';
 
 void main() {
   _client = Orditori.create(baseUrl: 'http://3.127.125.21');
@@ -27,34 +26,47 @@ class App extends StatelessWidget {
       ),
       error: const SizedBox(),
       loading: const SizedBox(),
-      builder: (context, value) => MaterialApp(
-        title: 'Orditori',
-        theme: ThemeData(
-          brightness: value,
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ButtonStyle(
-              padding: MaterialStateProperty.all(
-                const EdgeInsets.all(20.0),
-              ),
-              shape: MaterialStateProperty.all(
-                const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10.0),
+      builder: (context, value) {
+        SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness:
+                value == Brightness.dark ? Brightness.light : Brightness.dark,
+          ),
+        );
+
+        return MaterialApp(
+          title: 'Orditori',
+          theme: ThemeData(
+            brightness: value,
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(
+                  const EdgeInsets.all(20.0),
+                ),
+                shape: MaterialStateProperty.all(
+                  const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          cardTheme: const CardTheme(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10.0),
+            inputDecorationTheme: InputDecorationTheme(
+              border: InputBorder.none,
+            ),
+            cardTheme: const CardTheme(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10.0),
+                ),
               ),
             ),
           ),
-        ),
-        home: const Home(),
-      ),
+          home: const Home(),
+        );
+      },
     );
   }
 }
@@ -407,8 +419,10 @@ class Notebooks extends StatelessWidget {
       ];
     });
 
-    final entries =
-        g.reversed.expand((element) => element.entries.reversed).toList();
+    final entries = g.reversed
+        .expand((element) => element.entries.reversed)
+        .where((element) => element.definitions?.isNotEmpty ?? false)
+        .toList();
 
     final child = NotebookEntriesList(
       key: notebooksKey,
@@ -784,7 +798,7 @@ class _SearchState extends State<Search> {
     final d = DateTime.now().toIso8601String().substring(0, 23) + 'Z';
 
     final res = await _client.notebookEntriesPost(
-      apiKey: apiKey,
+      apiKey: getToken(context),
       body: NotebookEntryW(
         addedDate: d,
         notebook: widget.notebookId,
@@ -814,7 +828,7 @@ class _SearchState extends State<Search> {
 
     try {
       final res = await _client.definitionContentItemsPost(
-        apiKey: apiKey,
+        apiKey: getToken(context),
         body: body,
       );
 
@@ -849,25 +863,24 @@ class _SearchState extends State<Search> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0).copyWith(top: 0),
-              child: TextField(
-                controller: ctrl,
-                autofocus: true,
-                onSubmitted: (_) => _search(),
-                decoration: InputDecoration(
-                  icon: const Icon(Icons.search),
-                  hintText: 'Search',
-                  suffix: GestureDetector(
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+              child: Row(
+                children: [
+                  BackButton(),
+                  Expanded(
+                    child: TextField(
+                      controller: ctrl,
+                      autofocus: true,
+                      onSubmitted: (_) => _search(),
+                      decoration: InputDecoration(hintText: 'Search'),
                     ),
-                    onTap: () {
-                      Navigator.of(context).pop();
+                  ),
+                  TextButton(
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      ctrl.clear();
                     },
                   ),
-                ),
+                ],
               ),
             ),
             Expanded(
