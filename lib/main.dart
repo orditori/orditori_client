@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -96,11 +97,13 @@ class AsyncWidget<T> extends StatefulWidget {
   final ErrorBuilder? errorBuilder;
 
   final Widget loading;
+  final bool showDataWhenLoading;
 
   const AsyncWidget({
     Key? key,
     required this.load,
     required this.loading,
+    this.showDataWhenLoading = false,
     this.child,
     this.builder,
     this.error,
@@ -147,6 +150,7 @@ class _AsyncWidgetState<T> extends State<AsyncWidget> {
   ErrorBuilder get errorBuilder => widget.errorBuilder ?? _defaultErrorBuilder;
 
   bool _debugNeedsReload = true;
+  Widget? prevBuiltWidget;
 
   @override
   void initState() {
@@ -157,30 +161,32 @@ class _AsyncWidgetState<T> extends State<AsyncWidget> {
   }
 
   void _reload() {
+    setState(_load);
+  }
+
+  void _done(T value) {
+    _state = AsyncState.success;
     setState(() {
-      _load();
+      this.value = value;
+    });
+  }
+
+  void _onError(Object? error) {
+    _state = AsyncState.error;
+    setState(() {
+      this.error = error;
     });
   }
 
   void _load() {
     _state = AsyncState.loading;
-
-    widget
-        .load()
-        .then((value) => setState(() {
-              _state = AsyncState.success;
-              this.value = value;
-            }))
-        .catchError((err) => setState(() {
-              _state = AsyncState.error;
-              error = err;
-            }));
+    widget.load().then(_done).catchError(_onError);
   }
 
   @override
   void didUpdateWidget(covariant AsyncWidget oldWidget) {
     if (_debugNeedsReload) {
-      setState(() => _load());
+      setState(_load);
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -202,12 +208,18 @@ class _AsyncWidgetState<T> extends State<AsyncWidget> {
   Widget build(BuildContext context) {
     switch (_state) {
       case AsyncState.loading:
-        return widget.loading;
+        if (widget.showDataWhenLoading && prevBuiltWidget != null) {
+          return prevBuiltWidget!;
+        } else {
+          return widget.loading;
+        }
       case AsyncState.success:
-        return _Provider<T>(
+        prevBuiltWidget = _Provider<T>(
           value: value,
           child: builder(context, value),
         );
+
+        return prevBuiltWidget!;
       case AsyncState.error:
         return errorBuilder(context, error);
     }
@@ -311,7 +323,6 @@ class TokenPrompt extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextField(
-                        autofocus: true,
                         controller: ctrl,
                         decoration: const InputDecoration(
                           hintText: 'API Token',
@@ -466,8 +477,16 @@ class _AppPagesState extends State<AppPages> {
   Widget build(BuildContext context) {
     const navItems = [
       BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Notes'),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.play_arrow_rounded),
+        label: 'Excersise',
+      ),
       BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
     ];
+
+    if (pageIndex != 1) {
+      fn.unfocus();
+    }
 
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
@@ -475,13 +494,14 @@ class _AppPagesState extends State<AppPages> {
         onTap: _setPageIndex,
         items: navItems,
       ),
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: pageIndex != 0,
       body: SafeArea(
         child: PageView(
           controller: ctrl,
           onPageChanged: _setPageIndex,
           children: [
             Notebooks(notebooksKey: _notebooksKey),
+            Exercises(),
             const Settings(),
           ],
         ),
@@ -941,6 +961,206 @@ class _SearchState extends State<Search> {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class Exercises extends StatelessWidget {
+  const Exercises({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final token = getToken(context);
+    return AsyncWidget<Response<DefinitionExerciseR>>(
+      load: () => _client.exercisesDefinitionRandomGet(apiKey: token),
+      loading: const SizedBox(),
+      errorBuilder: (_, err) => Text(err.toString()),
+      showDataWhenLoading: true,
+      builder: (context, value) {
+        return DefinitionExcersise(
+          exercise: value!.body!,
+        );
+      },
+    );
+  }
+}
+
+class DefinitionExcersise extends StatelessWidget {
+  final DefinitionExerciseR exercise;
+
+  const DefinitionExcersise({
+    Key? key,
+    required this.exercise,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Chip(label: Text(exercise.language!.name!)),
+          ),
+          Expanded(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: SizedBox(
+                  height: 100,
+                  child: AutoSizeText(
+                    exercise.definition!,
+                    minFontSize: 16,
+                    stepGranularity: 4,
+                    maxFontSize: 32,
+                    style: TextStyle(fontSize: 32),
+                    maxLines: 4,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          ExerciseControls(exerciesId: exercise.id!),
+        ],
+      ),
+    );
+  }
+}
+
+final fn = FocusNode();
+
+class ExerciseControls extends StatefulWidget {
+  final int exerciesId;
+  const ExerciseControls({Key? key, required this.exerciesId})
+      : super(key: key);
+
+  @override
+  _ExerciseControlsState createState() => _ExerciseControlsState();
+}
+
+class _ExerciseControlsState extends State<ExerciseControls> {
+  final ctrl = TextEditingController();
+  SolutionCheckResult? result = null;
+
+  @override
+  void didUpdateWidget(covariant ExerciseControls oldWidget) {
+    if (oldWidget.exerciesId != widget.exerciesId) {
+      ctrl.clear();
+      result = null;
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  Future<void> _submit() async {
+    if (result == null) {
+      final result = await _client.exercisesDefinitionSolutionsPost(
+        apiKey: getToken(context),
+        body: ExerciseSolution(
+          exercise: widget.exerciesId,
+          input: ctrl.text,
+        ),
+      );
+
+      setState(() {
+        this.result = result.body!;
+      });
+    } else {
+      setState(() {
+        result = null;
+      });
+      AsyncWidget.reload<Response<DefinitionExerciseR>>();
+
+      fn.requestFocus();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextField(
+          focusNode: fn,
+          autocorrect: false,
+          controller: ctrl,
+          decoration: InputDecoration(
+            hintText: 'Answer',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onSubmitted: (_) => _submit(),
+        ),
+        SizedBox(height: 16),
+        Container(
+          height: 60,
+          child: ExerciseResult(result: result),
+        ),
+        SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: _submit,
+          child: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: ctrl,
+            builder: (_, value, __) {
+              return Text(
+                result != null
+                    ? 'Next'
+                    : value.text.isEmpty
+                        ? 'Skip'
+                        : 'Submit',
+              );
+            },
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class ExerciseResult extends StatelessWidget {
+  final SolutionCheckResult? result;
+
+  const ExerciseResult({
+    Key? key,
+    required this.result,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    late Widget child;
+
+    if (result == null) {
+      child = SizedBox();
+    } else if (result!.incorrect != null) {
+      child = Container(
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(child: Text(result!.incorrect!)),
+      );
+    } else {
+      child = Container(
+        decoration: BoxDecoration(
+          color: Colors.green,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(child: Text('Correct!')),
+      );
+    }
+
+    return AnimatedScale(
+      scale: result == null ? 0 : 1,
+      curve: Curves.easeInOutBack,
+      duration: const Duration(milliseconds: 200),
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 150),
+        opacity: result == null ? 0 : 1,
+        child: child,
       ),
     );
   }

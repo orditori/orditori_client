@@ -200,12 +200,15 @@ Map<String, dynamic> _$DefinitionExerciseRToJson(
 
 SolutionCheckResult _$SolutionCheckResultFromJson(Map<String, dynamic> json) =>
     SolutionCheckResult(
-      incorrect: json['Incorrect'] as String?,
-      correct: (json['Correct'] as List<dynamic>?)
-              ?.map(
-                  (e) => FuzzyCompareToken.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
+      incorrect:
+          json['tag'] == 'Incorrect' ? json['contents'] as String? : null,
+      correct: json['tag'] == 'Correct'
+          ? (json['contents'] as List<dynamic>?)
+                  ?.map((e) =>
+                      FuzzyCompareToken.fromJson(e as Map<String, dynamic>))
+                  .toList() ??
+              []
+          : null,
     );
 
 Map<String, dynamic> _$SolutionCheckResultToJson(
