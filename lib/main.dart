@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
@@ -5,9 +8,10 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'swagger_generated_code/orditori.swagger.dart';
+import 'swagger_generated_code/orditori.swagger.dart' hide SolutionCheckResult;
 
 late Orditori _client;
+const baseUrl = 'http://3.127.125.21';
 
 void main() {
   _client = Orditori.create(baseUrl: 'http://3.127.125.21');
@@ -167,6 +171,13 @@ class _AsyncWidgetState<T> extends State<AsyncWidget> {
   void _done(T value) {
     _state = AsyncState.success;
     setState(() {
+      if (value == null) {
+        print('value null');
+      }
+
+      if (value is Response && value.body == null) {
+        print('body null');
+      }
       this.value = value;
     });
   }
@@ -452,56 +463,45 @@ class AppPages extends StatefulWidget {
   State<AppPages> createState() => _AppPagesState();
 }
 
-class _AppPagesState extends State<AppPages> {
-  int pageIndex = 0;
-  late final ctrl = PageController(
-    initialPage: getToken(context).isEmpty ? 1 : 0,
-  );
+class _AppPagesState extends State<AppPages>
+    with SingleTickerProviderStateMixin {
+  late int pageIndex = getToken(context).isEmpty ? 1 : 0;
+
+  late final ctrl = TabController(
+    initialIndex: pageIndex,
+    length: 3,
+    vsync: this,
+  )..addListener(onChange);
+
   final _notebooksKey = GlobalKey<NotebookEntriesListState>();
 
-  void _setPageIndex(int index) {
+  onChange() {
     setState(() {
-      pageIndex = index;
+      pageIndex = ctrl.index;
     });
-
-    if (ctrl.page != index) {
-      ctrl.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    const navItems = [
-      BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Notes'),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.play_arrow_rounded),
-        label: 'Excersise',
-      ),
-      BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-    ];
-
-    if (pageIndex != 1) {
-      fn.unfocus();
-    }
-
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: pageIndex,
-        onTap: _setPageIndex,
-        items: navItems,
+      bottomNavigationBar: TabBar(
+        controller: ctrl,
+        labelColor: Theme.of(context).colorScheme.secondary,
+        unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
+        indicatorSize: TabBarIndicatorSize.label,
+        indicatorWeight: 1,
+        tabs: [
+          Tab(icon: Icon(Icons.book)),
+          Tab(icon: Icon(Icons.play_arrow_rounded)),
+          Tab(icon: Icon(Icons.settings)),
+        ],
       ),
-      // resizeToAvoidBottomInset: pageIndex != 0,
       body: SafeArea(
-        child: PageView(
+        child: TabBarView(
           controller: ctrl,
-          onPageChanged: _setPageIndex,
           children: [
             Notebooks(notebooksKey: _notebooksKey),
-            Exercises(),
+            const Exercises(),
             const Settings(),
           ],
         ),
@@ -689,12 +689,12 @@ class DefTile extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
+                  padding: const EdgeInsets.only(top: 6.0),
                   child: SelectableText(def.definition!),
                 )),
                 const SizedBox(width: 16),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                   child: GestureDetector(
                     onTap: onBookmarkPressed,
                     child: Icon(
@@ -759,7 +759,7 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   bool hasResult = false;
   bool isSearching = false;
-  List<Definition> items = [];
+  List<DefinitionsWithSource> items = [];
   String? error;
   NotebookEntryR? entry;
   Set<String> defsSet = {};
@@ -837,7 +837,8 @@ class _SearchState extends State<Search> {
     });
   }
 
-  Future<void> _addDefinition(Definition def) async {
+  Future<void> _addDefinition(
+      Definition def, int sourceId, String sourceLink) async {
     if (entry == null) await _addEntry();
 
     final body = DefinitionContentItemW(
@@ -845,6 +846,8 @@ class _SearchState extends State<Search> {
       definition: def.definition,
       entry: entry!.id,
       language: def.language,
+      definitionSource: sourceId,
+      sourceLink: sourceLink,
     );
 
     try {
@@ -854,11 +857,11 @@ class _SearchState extends State<Search> {
       );
 
       entry!.definitions!.add(DefinitionContentItemR(
-        id: res.body!,
-        definition: def.definition,
-        language: def.language,
-        word: def.word,
-      ));
+          id: res.body!,
+          definition: def.definition,
+          language: def.language,
+          word: def.word,
+          definitionSource: sourceId));
 
       _buildDefinitionsMap();
 
@@ -914,29 +917,14 @@ class _SearchState extends State<Search> {
               ),
             ),
             Expanded(
-              child: error != null
-                  ? Center(child: Text(error!))
-                  : hasResult && items.isNotEmpty
-                      ? ListView.builder(
-                          itemCount: items.length,
-                          itemBuilder: (context, index) {
-                            final def = items[index];
-                            final isSaved = defsSet.contains(def.definition);
-
-                            return DefTile(
-                              def: def,
-                              isSaved: isSaved,
-                              onBookmarkPressed: () {
-                                if (isSaved) return;
-                                _addDefinition(def);
-                              },
-                            );
-                          },
-                        )
-                      : hasResult
-                          ? Center(
-                              child: Text('Nothing found for "${ctrl.text}"'))
-                          : const SizedBox(),
+              child: SearchResults(
+                items: items,
+                query: ctrl.text,
+                definitionsSet: defsSet,
+                error: error,
+                hasResult: hasResult,
+                onAdd: _addDefinition,
+              ),
             ),
             ValueListenableBuilder<TextEditingValue>(
               valueListenable: ctrl,
@@ -966,6 +954,100 @@ class _SearchState extends State<Search> {
   }
 }
 
+class SearchResults extends StatelessWidget {
+  final String? error;
+  final bool hasResult;
+  final String query;
+  final Set<String> definitionsSet;
+  final List<DefinitionsWithSource> items;
+  final void Function(Definition def, int sourceId, String link) onAdd;
+
+  const SearchResults({
+    Key? key,
+    this.error,
+    this.hasResult = false,
+    required this.query,
+    required this.items,
+    required this.onAdd,
+    this.definitionsSet = const {},
+  }) : super(key: key);
+
+  Iterable<Widget> getItems(BuildContext context) sync* {
+    int outerCursor = 0;
+    int innerCursor = 0;
+
+    while (true) {
+      if (outerCursor >= items.length) return;
+
+      final group = items[outerCursor];
+
+      if (innerCursor == 0 && group.definitions!.isNotEmpty) {
+        yield Padding(
+          padding: const EdgeInsets.all(8.0).copyWith(
+            left: 16,
+            top: outerCursor != 0 ? 16 : 8,
+          ),
+          child: Text(
+            group.definitionSource!.name!,
+            style: Theme.of(context)
+                .textTheme
+                .overline!
+                .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        );
+      }
+
+      if (innerCursor >= group.definitions!.length) {
+        innerCursor = 0;
+        outerCursor++;
+        continue;
+      }
+
+      final def = group.definitions![innerCursor];
+
+      yield DefTile(
+        def: def,
+        isSaved: definitionsSet.contains(def.definition),
+        onBookmarkPressed: () {
+          if (!definitionsSet.contains(def.definition)) {
+            onAdd(
+              def,
+              group.definitionSource!.id!,
+              def.sourceLink!,
+            );
+          }
+        },
+      );
+
+      innerCursor++;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (error != null) {
+      return Center(
+        child: Text(error!),
+      );
+    }
+
+    if (hasResult && items.every((element) => element.definitions!.isEmpty)) {
+      return Center(
+        child: Text('Nothing found for "$query"'),
+      );
+    }
+
+    final children = getItems(context).toList();
+
+    return ListView.builder(
+      itemCount: children.length,
+      itemBuilder: (context, index) {
+        return children[index];
+      },
+    );
+  }
+}
+
 class Exercises extends StatelessWidget {
   const Exercises({Key? key}) : super(key: key);
 
@@ -973,23 +1055,37 @@ class Exercises extends StatelessWidget {
   Widget build(BuildContext context) {
     final token = getToken(context);
     return AsyncWidget<Response<DefinitionExerciseR>>(
-      load: () => _client.exercisesDefinitionRandomGet(apiKey: token),
+      load: () async {
+        while (true) {
+          final res = await _client.exercisesDefinitionRandomGet(apiKey: token);
+          if (res.body != null) {
+            return res;
+          } else {
+            await Future.delayed(const Duration(milliseconds: 200));
+          }
+        }
+      },
       loading: const SizedBox(),
       errorBuilder: (_, err) => Text(err.toString()),
       showDataWhenLoading: true,
       builder: (context, value) {
-        return DefinitionExcersise(
-          exercise: value!.body!,
+        if (value!.body == null) {
+          AsyncWidget.reload<Response<DefinitionExerciseR>>();
+          return const SizedBox();
+        }
+        return DefinitionExercise(
+          key: ValueKey(value.body?.id),
+          exercise: value.body!,
         );
       },
     );
   }
 }
 
-class DefinitionExcersise extends StatelessWidget {
+class DefinitionExercise extends StatelessWidget {
   final DefinitionExerciseR exercise;
 
-  const DefinitionExcersise({
+  const DefinitionExercise({
     Key? key,
     required this.exercise,
   }) : super(key: key);
@@ -1041,6 +1137,26 @@ class ExerciseControls extends StatefulWidget {
   _ExerciseControlsState createState() => _ExerciseControlsState();
 }
 
+class SolutionCheckResult {
+  const SolutionCheckResult();
+
+  factory SolutionCheckResult.fromJson(Map<String, dynamic> data) {
+    if (data["tag"] == "Incorrect") {
+      return IncorrectResult(data["contents"]);
+    } else {
+      return Correct();
+    }
+  }
+}
+
+class Correct extends SolutionCheckResult {}
+
+class IncorrectResult extends SolutionCheckResult {
+  final String value;
+
+  IncorrectResult(this.value);
+}
+
 class _ExerciseControlsState extends State<ExerciseControls> {
   final ctrl = TextEditingController();
   SolutionCheckResult? result = null;
@@ -1057,16 +1173,24 @@ class _ExerciseControlsState extends State<ExerciseControls> {
 
   Future<void> _submit() async {
     if (result == null) {
-      final result = await _client.exercisesDefinitionSolutionsPost(
-        apiKey: getToken(context),
-        body: ExerciseSolution(
-          exercise: widget.exerciesId,
-          input: ctrl.text,
-        ),
+      final solution = ExerciseSolutionDefinitionExercise(
+        exercise: widget.exerciesId,
+        input: ctrl.text,
+      );
+
+      final url =
+          '$baseUrl/exercises/definition/solutions?apiKey=${getToken(context)}';
+
+      final res = await http.post(
+        Uri.parse(url),
+        body: jsonEncode(solution.toJson()),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       );
 
       setState(() {
-        this.result = result.body!;
+        this.result = SolutionCheckResult.fromJson(jsonDecode(res.body));
       });
     } else {
       setState(() {
@@ -1135,13 +1259,13 @@ class ExerciseResult extends StatelessWidget {
 
     if (result == null) {
       child = SizedBox();
-    } else if (result!.incorrect != null) {
+    } else if (result is IncorrectResult) {
       child = Container(
         decoration: BoxDecoration(
           color: Colors.red,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Center(child: Text(result!.incorrect!)),
+        child: Center(child: Text((result as IncorrectResult).value)),
       );
     } else {
       child = Container(

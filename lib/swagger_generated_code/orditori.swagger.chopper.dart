@@ -36,21 +36,23 @@ class _$Orditori extends Orditori {
   }
 
   @override
-  Future<Response<List<Object>>> _notebookEntriesEntryIdDelete(
+  Future<Response<dynamic>> _notebookEntriesEntryIdDelete(
       {required String? apiKey, required int? entryId}) {
     final $url = '/notebookEntries/${entryId}';
     final $params = <String, dynamic>{'apiKey': apiKey};
     final $request =
         Request('DELETE', $url, client.baseUrl, parameters: $params);
-    return client.send<List<Object>, Object>($request);
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override
-  Future<Response<List<Definition>>> _definitionsGet({required String? query}) {
+  Future<Response<List<DefinitionsWithSource>>> _definitionsGet(
+      {required String? query}) {
     final $url = '/definitions';
     final $params = <String, dynamic>{'query': query};
     final $request = Request('GET', $url, client.baseUrl, parameters: $params);
-    return client.send<List<Definition>, Definition>($request);
+    return client
+        .send<List<DefinitionsWithSource>, DefinitionsWithSource>($request);
   }
 
   @override
@@ -77,16 +79,17 @@ class _$Orditori extends Orditori {
 
   @override
   Future<Response<DefinitionExerciseR>> _exercisesDefinitionRandomGet(
-      {required String? apiKey}) {
+      {required String? apiKey, String? language}) {
     final $url = '/exercises/definition/random';
-    final $params = <String, dynamic>{'apiKey': apiKey};
+    final $params = <String, dynamic>{'apiKey': apiKey, 'language': language};
     final $request = Request('GET', $url, client.baseUrl, parameters: $params);
     return client.send<DefinitionExerciseR, DefinitionExerciseR>($request);
   }
 
   @override
   Future<Response<SolutionCheckResult>> _exercisesDefinitionSolutionsPost(
-      {required String? apiKey, required ExerciseSolution? body}) {
+      {required String? apiKey,
+      required ExerciseSolutionDefinitionExercise? body}) {
     final $url = '/exercises/definition/solutions';
     final $params = <String, dynamic>{'apiKey': apiKey};
     final $body = body;
@@ -96,13 +99,13 @@ class _$Orditori extends Orditori {
   }
 
   @override
-  Future<Response<List<DefinitionExerciseStats>>> _exercisesDefinitionScoresGet(
-      {required String? apiKey}) {
+  Future<Response<List<DefinitionExerciseStatsDefinitionExercise>>>
+      _exercisesDefinitionScoresGet({required String? apiKey}) {
     final $url = '/exercises/definition/scores';
     final $params = <String, dynamic>{'apiKey': apiKey};
     final $request = Request('GET', $url, client.baseUrl, parameters: $params);
-    return client
-        .send<List<DefinitionExerciseStats>, DefinitionExerciseStats>($request);
+    return client.send<List<DefinitionExerciseStatsDefinitionExercise>,
+        DefinitionExerciseStatsDefinitionExercise>($request);
   }
 
   @override
@@ -117,7 +120,8 @@ class _$Orditori extends Orditori {
 
   @override
   Future<Response<SolutionCheckResult>> _exercisesExampleSolutionsPost(
-      {required String? apiKey, required ExerciseSolution? body}) {
+      {required String? apiKey,
+      required ExerciseSolutionDefinitionExampleExercise? body}) {
     final $url = '/exercises/example/solutions';
     final $params = <String, dynamic>{'apiKey': apiKey};
     final $body = body;
@@ -127,12 +131,21 @@ class _$Orditori extends Orditori {
   }
 
   @override
-  Future<Response<List<DefinitionExerciseStats>>> _exercisesExampleScoresGet(
-      {required String? apiKey}) {
+  Future<Response<List<DefinitionExerciseStatsDefinitionExampleExercise>>>
+      _exercisesExampleScoresGet({required String? apiKey}) {
     final $url = '/exercises/example/scores';
     final $params = <String, dynamic>{'apiKey': apiKey};
     final $request = Request('GET', $url, client.baseUrl, parameters: $params);
-    return client
-        .send<List<DefinitionExerciseStats>, DefinitionExerciseStats>($request);
+    return client.send<List<DefinitionExerciseStatsDefinitionExampleExercise>,
+        DefinitionExerciseStatsDefinitionExampleExercise>($request);
+  }
+
+  @override
+  Future<Response<UserStatisticsR>> _userStatisticsGet(
+      {required String? apiKey}) {
+    final $url = '/userStatistics';
+    final $params = <String, dynamic>{'apiKey': apiKey};
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client.send<UserStatisticsR, UserStatisticsR>($request);
   }
 }

@@ -42,18 +42,13 @@ abstract class Orditori extends ChopperService {
 
   ///
   ///@param apiKey
-  ///@param body
   Future<chopper.Response<int>> notebookEntriesPost(
       {required String? apiKey, required NotebookEntryW? body}) {
-    generatedMapping.putIfAbsent(
-        NotebookEntryW, () => NotebookEntryW.fromJsonFactory);
-
     return _notebookEntriesPost(apiKey: apiKey, body: body);
   }
 
   ///
   ///@param apiKey
-  ///@param body
   @Post(path: '/notebookEntries')
   Future<chopper.Response<int>> _notebookEntriesPost(
       {@Query('apiKey') required String? apiKey,
@@ -62,7 +57,7 @@ abstract class Orditori extends ChopperService {
   ///
   ///@param apiKey
   ///@param entryId
-  Future<chopper.Response<List<Object>>> notebookEntriesEntryIdDelete(
+  Future<chopper.Response> notebookEntriesEntryIdDelete(
       {required String? apiKey, required int? entryId}) {
     return _notebookEntriesEntryIdDelete(apiKey: apiKey, entryId: entryId);
   }
@@ -71,15 +66,16 @@ abstract class Orditori extends ChopperService {
   ///@param apiKey
   ///@param entryId
   @Delete(path: '/notebookEntries/{entryId}')
-  Future<chopper.Response<List<Object>>> _notebookEntriesEntryIdDelete(
+  Future<chopper.Response> _notebookEntriesEntryIdDelete(
       {@Query('apiKey') required String? apiKey,
       @Path('entryId') required int? entryId});
 
   ///
   ///@param query
-  Future<chopper.Response<List<Definition>>> definitionsGet(
+  Future<chopper.Response<List<DefinitionsWithSource>>> definitionsGet(
       {required String? query}) {
-    generatedMapping.putIfAbsent(Definition, () => Definition.fromJsonFactory);
+    generatedMapping.putIfAbsent(
+        DefinitionsWithSource, () => DefinitionsWithSource.fromJsonFactory);
 
     return _definitionsGet(query: query);
   }
@@ -87,23 +83,18 @@ abstract class Orditori extends ChopperService {
   ///
   ///@param query
   @Get(path: '/definitions')
-  Future<chopper.Response<List<Definition>>> _definitionsGet(
+  Future<chopper.Response<List<DefinitionsWithSource>>> _definitionsGet(
       {@Query('query') required String? query});
 
   ///
   ///@param apiKey
-  ///@param body
   Future<chopper.Response<int>> definitionExamplesPost(
       {required String? apiKey, required DefinitionExampleW? body}) {
-    generatedMapping.putIfAbsent(
-        DefinitionExampleW, () => DefinitionExampleW.fromJsonFactory);
-
     return _definitionExamplesPost(apiKey: apiKey, body: body);
   }
 
   ///
   ///@param apiKey
-  ///@param body
   @Post(path: '/definitionExamples')
   Future<chopper.Response<int>> _definitionExamplesPost(
       {@Query('apiKey') required String? apiKey,
@@ -111,18 +102,13 @@ abstract class Orditori extends ChopperService {
 
   ///
   ///@param apiKey
-  ///@param body
   Future<chopper.Response<int>> definitionContentItemsPost(
       {required String? apiKey, required DefinitionContentItemW? body}) {
-    generatedMapping.putIfAbsent(
-        DefinitionContentItemW, () => DefinitionContentItemW.fromJsonFactory);
-
     return _definitionContentItemsPost(apiKey: apiKey, body: body);
   }
 
   ///
   ///@param apiKey
-  ///@param body
   @Post(path: '/definitionContentItems')
   Future<chopper.Response<int>> _definitionContentItemsPost(
       {@Query('apiKey') required String? apiKey,
@@ -130,28 +116,29 @@ abstract class Orditori extends ChopperService {
 
   ///
   ///@param apiKey
+  ///@param language
   Future<chopper.Response<DefinitionExerciseR>> exercisesDefinitionRandomGet(
-      {required String? apiKey}) {
+      {required String? apiKey, String? language}) {
     generatedMapping.putIfAbsent(
         DefinitionExerciseR, () => DefinitionExerciseR.fromJsonFactory);
 
-    return _exercisesDefinitionRandomGet(apiKey: apiKey);
+    return _exercisesDefinitionRandomGet(apiKey: apiKey, language: language);
   }
 
   ///
   ///@param apiKey
+  ///@param language
   @Get(path: '/exercises/definition/random')
   Future<chopper.Response<DefinitionExerciseR>> _exercisesDefinitionRandomGet(
-      {@Query('apiKey') required String? apiKey});
+      {@Query('apiKey') required String? apiKey,
+      @Query('language') String? language});
 
   ///
   ///@param apiKey
-  ///@param body
   Future<chopper.Response<SolutionCheckResult>>
       exercisesDefinitionSolutionsPost(
-          {required String? apiKey, required ExerciseSolution? body}) {
-    generatedMapping.putIfAbsent(
-        ExerciseSolution, () => ExerciseSolution.fromJsonFactory);
+          {required String? apiKey,
+          required ExerciseSolutionDefinitionExercise? body}) {
     generatedMapping.putIfAbsent(
         SolutionCheckResult, () => SolutionCheckResult.fromJsonFactory);
 
@@ -160,19 +147,18 @@ abstract class Orditori extends ChopperService {
 
   ///
   ///@param apiKey
-  ///@param body
   @Post(path: '/exercises/definition/solutions')
   Future<chopper.Response<SolutionCheckResult>>
       _exercisesDefinitionSolutionsPost(
           {@Query('apiKey') required String? apiKey,
-          @Body() required ExerciseSolution? body});
+          @Body() required ExerciseSolutionDefinitionExercise? body});
 
   ///
   ///@param apiKey
-  Future<chopper.Response<List<DefinitionExerciseStats>>>
+  Future<chopper.Response<List<DefinitionExerciseStatsDefinitionExercise>>>
       exercisesDefinitionScoresGet({required String? apiKey}) {
-    generatedMapping.putIfAbsent(
-        DefinitionExerciseStats, () => DefinitionExerciseStats.fromJsonFactory);
+    generatedMapping.putIfAbsent(DefinitionExerciseStatsDefinitionExercise,
+        () => DefinitionExerciseStatsDefinitionExercise.fromJsonFactory);
 
     return _exercisesDefinitionScoresGet(apiKey: apiKey);
   }
@@ -180,7 +166,7 @@ abstract class Orditori extends ChopperService {
   ///
   ///@param apiKey
   @Get(path: '/exercises/definition/scores')
-  Future<chopper.Response<List<DefinitionExerciseStats>>>
+  Future<chopper.Response<List<DefinitionExerciseStatsDefinitionExercise>>>
       _exercisesDefinitionScoresGet({@Query('apiKey') required String? apiKey});
 
   ///
@@ -201,11 +187,9 @@ abstract class Orditori extends ChopperService {
 
   ///
   ///@param apiKey
-  ///@param body
   Future<chopper.Response<SolutionCheckResult>> exercisesExampleSolutionsPost(
-      {required String? apiKey, required ExerciseSolution? body}) {
-    generatedMapping.putIfAbsent(
-        ExerciseSolution, () => ExerciseSolution.fromJsonFactory);
+      {required String? apiKey,
+      required ExerciseSolutionDefinitionExampleExercise? body}) {
     generatedMapping.putIfAbsent(
         SolutionCheckResult, () => SolutionCheckResult.fromJsonFactory);
 
@@ -214,18 +198,20 @@ abstract class Orditori extends ChopperService {
 
   ///
   ///@param apiKey
-  ///@param body
   @Post(path: '/exercises/example/solutions')
   Future<chopper.Response<SolutionCheckResult>> _exercisesExampleSolutionsPost(
       {@Query('apiKey') required String? apiKey,
-      @Body() required ExerciseSolution? body});
+      @Body() required ExerciseSolutionDefinitionExampleExercise? body});
 
   ///
   ///@param apiKey
-  Future<chopper.Response<List<DefinitionExerciseStats>>>
+  Future<
+          chopper
+              .Response<List<DefinitionExerciseStatsDefinitionExampleExercise>>>
       exercisesExampleScoresGet({required String? apiKey}) {
     generatedMapping.putIfAbsent(
-        DefinitionExerciseStats, () => DefinitionExerciseStats.fromJsonFactory);
+        DefinitionExerciseStatsDefinitionExampleExercise,
+        () => DefinitionExerciseStatsDefinitionExampleExercise.fromJsonFactory);
 
     return _exercisesExampleScoresGet(apiKey: apiKey);
   }
@@ -233,33 +219,51 @@ abstract class Orditori extends ChopperService {
   ///
   ///@param apiKey
   @Get(path: '/exercises/example/scores')
-  Future<chopper.Response<List<DefinitionExerciseStats>>>
+  Future<
+          chopper
+              .Response<List<DefinitionExerciseStatsDefinitionExampleExercise>>>
       _exercisesExampleScoresGet({@Query('apiKey') required String? apiKey});
+
+  ///
+  ///@param apiKey
+  Future<chopper.Response<UserStatisticsR>> userStatisticsGet(
+      {required String? apiKey}) {
+    generatedMapping.putIfAbsent(
+        UserStatisticsR, () => UserStatisticsR.fromJsonFactory);
+
+    return _userStatisticsGet(apiKey: apiKey);
+  }
+
+  ///
+  ///@param apiKey
+  @Get(path: '/userStatistics')
+  Future<chopper.Response<UserStatisticsR>> _userStatisticsGet(
+      {@Query('apiKey') required String? apiKey});
 }
 
 @JsonSerializable(explicitToJson: true)
 class NotebookR {
   NotebookR({
-    this.id,
-    this.apiKey,
-    this.revision,
-    this.formatVersion,
     this.entries,
+    this.id,
+    this.revision,
+    this.apiKey,
+    this.formatVersion,
   });
 
   factory NotebookR.fromJson(Map<String, dynamic> json) =>
       _$NotebookRFromJson(json);
 
-  @JsonKey(name: 'id')
-  final int? id;
-  @JsonKey(name: 'apiKey')
-  final String? apiKey;
-  @JsonKey(name: 'revision')
-  final int? revision;
-  @JsonKey(name: 'formatVersion')
-  final int? formatVersion;
   @JsonKey(name: 'entries', defaultValue: <NotebookEntryR>[])
   final List<NotebookEntryR>? entries;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'revision')
+  final int? revision;
+  @JsonKey(name: 'apiKey')
+  final String? apiKey;
+  @JsonKey(name: 'formatVersion')
+  final int? formatVersion;
   static const fromJsonFactory = _$NotebookRFromJson;
   static const toJsonFactory = _$NotebookRToJson;
   Map<String, dynamic> toJson() => _$NotebookRToJson(this);
@@ -268,94 +272,62 @@ class NotebookR {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is NotebookR &&
+            (identical(other.entries, entries) ||
+                const DeepCollectionEquality()
+                    .equals(other.entries, entries)) &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.apiKey, apiKey) ||
-                const DeepCollectionEquality().equals(other.apiKey, apiKey)) &&
             (identical(other.revision, revision) ||
                 const DeepCollectionEquality()
                     .equals(other.revision, revision)) &&
+            (identical(other.apiKey, apiKey) ||
+                const DeepCollectionEquality().equals(other.apiKey, apiKey)) &&
             (identical(other.formatVersion, formatVersion) ||
                 const DeepCollectionEquality()
-                    .equals(other.formatVersion, formatVersion)) &&
-            (identical(other.entries, entries) ||
-                const DeepCollectionEquality().equals(other.entries, entries)));
+                    .equals(other.formatVersion, formatVersion)));
   }
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(apiKey) ^
-      const DeepCollectionEquality().hash(revision) ^
-      const DeepCollectionEquality().hash(formatVersion) ^
       const DeepCollectionEquality().hash(entries) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(revision) ^
+      const DeepCollectionEquality().hash(apiKey) ^
+      const DeepCollectionEquality().hash(formatVersion) ^
       runtimeType.hashCode;
 }
 
 extension $NotebookRExtension on NotebookR {
   NotebookR copyWith(
-      {int? id,
-      String? apiKey,
+      {List<NotebookEntryR>? entries,
+      int? id,
       int? revision,
-      int? formatVersion,
-      List<NotebookEntryR>? entries}) {
+      String? apiKey,
+      int? formatVersion}) {
     return NotebookR(
+        entries: entries ?? this.entries,
         id: id ?? this.id,
-        apiKey: apiKey ?? this.apiKey,
         revision: revision ?? this.revision,
-        formatVersion: formatVersion ?? this.formatVersion,
-        entries: entries ?? this.entries);
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class Id {
-  Id({
-    this.untyped,
-  });
-
-  factory Id.fromJson(Map<String, dynamic> json) => _$IdFromJson(json);
-
-  @JsonKey(name: 'untyped')
-  final int? untyped;
-  static const fromJsonFactory = _$IdFromJson;
-  static const toJsonFactory = _$IdToJson;
-  Map<String, dynamic> toJson() => _$IdToJson(this);
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other is Id &&
-            (identical(other.untyped, untyped) ||
-                const DeepCollectionEquality().equals(other.untyped, untyped)));
-  }
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(untyped) ^ runtimeType.hashCode;
-}
-
-extension $IdExtension on Id {
-  Id copyWith({int? untyped}) {
-    return Id(untyped: untyped ?? this.untyped);
+        apiKey: apiKey ?? this.apiKey,
+        formatVersion: formatVersion ?? this.formatVersion);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class NotebookEntryR {
   NotebookEntryR({
-    this.id,
     this.addedDate,
+    this.id,
     this.definitions,
   });
 
   factory NotebookEntryR.fromJson(Map<String, dynamic> json) =>
       _$NotebookEntryRFromJson(json);
 
-  @JsonKey(name: 'id')
-  final int? id;
   @JsonKey(name: 'addedDate')
   final String? addedDate;
+  @JsonKey(name: 'id')
+  final int? id;
   @JsonKey(name: 'definitions', defaultValue: <DefinitionContentItemR>[])
   final List<DefinitionContentItemR>? definitions;
   static const fromJsonFactory = _$NotebookEntryRFromJson;
@@ -366,11 +338,11 @@ class NotebookEntryR {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is NotebookEntryR &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.addedDate, addedDate) ||
                 const DeepCollectionEquality()
                     .equals(other.addedDate, addedDate)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.definitions, definitions) ||
                 const DeepCollectionEquality()
                     .equals(other.definitions, definitions)));
@@ -378,18 +350,18 @@ class NotebookEntryR {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(addedDate) ^
+      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(definitions) ^
       runtimeType.hashCode;
 }
 
 extension $NotebookEntryRExtension on NotebookEntryR {
   NotebookEntryR copyWith(
-      {int? id, String? addedDate, List<DefinitionContentItemR>? definitions}) {
+      {String? addedDate, int? id, List<DefinitionContentItemR>? definitions}) {
     return NotebookEntryR(
-        id: id ?? this.id,
         addedDate: addedDate ?? this.addedDate,
+        id: id ?? this.id,
         definitions: definitions ?? this.definitions);
   }
 }
@@ -397,9 +369,11 @@ extension $NotebookEntryRExtension on NotebookEntryR {
 @JsonSerializable(explicitToJson: true)
 class DefinitionContentItemR {
   DefinitionContentItemR({
-    this.id,
-    this.word,
     this.language,
+    this.id,
+    this.sourceLink,
+    this.definitionSource,
+    this.word,
     this.definition,
     this.examples,
   });
@@ -407,12 +381,16 @@ class DefinitionContentItemR {
   factory DefinitionContentItemR.fromJson(Map<String, dynamic> json) =>
       _$DefinitionContentItemRFromJson(json);
 
-  @JsonKey(name: 'id')
-  final int? id;
-  @JsonKey(name: 'word')
-  final String? word;
   @JsonKey(name: 'language')
   final Language? language;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'sourceLink')
+  final String? sourceLink;
+  @JsonKey(name: 'definitionSource')
+  final int? definitionSource;
+  @JsonKey(name: 'word')
+  final String? word;
   @JsonKey(name: 'definition')
   final String? definition;
   @JsonKey(name: 'examples', defaultValue: <DefinitionExample>[])
@@ -425,13 +403,19 @@ class DefinitionContentItemR {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is DefinitionContentItemR &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.word, word) ||
-                const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.language, language) ||
                 const DeepCollectionEquality()
                     .equals(other.language, language)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.sourceLink, sourceLink) ||
+                const DeepCollectionEquality()
+                    .equals(other.sourceLink, sourceLink)) &&
+            (identical(other.definitionSource, definitionSource) ||
+                const DeepCollectionEquality()
+                    .equals(other.definitionSource, definitionSource)) &&
+            (identical(other.word, word) ||
+                const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
                     .equals(other.definition, definition)) &&
@@ -442,9 +426,11 @@ class DefinitionContentItemR {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(language) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(sourceLink) ^
+      const DeepCollectionEquality().hash(definitionSource) ^
+      const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(examples) ^
       runtimeType.hashCode;
@@ -452,15 +438,19 @@ class DefinitionContentItemR {
 
 extension $DefinitionContentItemRExtension on DefinitionContentItemR {
   DefinitionContentItemR copyWith(
-      {int? id,
+      {Language? language,
+      int? id,
+      String? sourceLink,
+      int? definitionSource,
       String? word,
-      Language? language,
       String? definition,
       List<DefinitionExample>? examples}) {
     return DefinitionContentItemR(
-        id: id ?? this.id,
-        word: word ?? this.word,
         language: language ?? this.language,
+        id: id ?? this.id,
+        sourceLink: sourceLink ?? this.sourceLink,
+        definitionSource: definitionSource ?? this.definitionSource,
+        word: word ?? this.word,
         definition: definition ?? this.definition,
         examples: examples ?? this.examples);
   }
@@ -469,17 +459,17 @@ extension $DefinitionContentItemRExtension on DefinitionContentItemR {
 @JsonSerializable(explicitToJson: true)
 class Language {
   Language({
-    this.code,
     this.name,
+    this.code,
   });
 
   factory Language.fromJson(Map<String, dynamic> json) =>
       _$LanguageFromJson(json);
 
-  @JsonKey(name: 'code')
-  final String? code;
   @JsonKey(name: 'name')
   final String? name;
+  @JsonKey(name: 'code')
+  final String? code;
   static const fromJsonFactory = _$LanguageFromJson;
   static const toJsonFactory = _$LanguageToJson;
   Map<String, dynamic> toJson() => _$LanguageToJson(this);
@@ -488,22 +478,22 @@ class Language {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is Language &&
-            (identical(other.code, code) ||
-                const DeepCollectionEquality().equals(other.code, code)) &&
             (identical(other.name, name) ||
-                const DeepCollectionEquality().equals(other.name, name)));
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.code, code) ||
+                const DeepCollectionEquality().equals(other.code, code)));
   }
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(code) ^
       const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(code) ^
       runtimeType.hashCode;
 }
 
 extension $LanguageExtension on Language {
-  Language copyWith({String? code, String? name}) {
-    return Language(code: code ?? this.code, name: name ?? this.name);
+  Language copyWith({String? name, String? code}) {
+    return Language(name: name ?? this.name, code: code ?? this.code);
   }
 }
 
@@ -511,9 +501,9 @@ extension $LanguageExtension on Language {
 class DefinitionExample {
   DefinitionExample({
     this.id,
+    this.translation,
     this.definition,
     this.$String,
-    this.translation,
   });
 
   factory DefinitionExample.fromJson(Map<String, dynamic> json) =>
@@ -521,12 +511,12 @@ class DefinitionExample {
 
   @JsonKey(name: 'id')
   final int? id;
+  @JsonKey(name: 'translation')
+  final String? translation;
   @JsonKey(name: 'definition')
   final int? definition;
   @JsonKey(name: 'string')
   final String? $String;
-  @JsonKey(name: 'translation')
-  final String? translation;
   static const fromJsonFactory = _$DefinitionExampleFromJson;
   static const toJsonFactory = _$DefinitionExampleToJson;
   Map<String, dynamic> toJson() => _$DefinitionExampleToJson(this);
@@ -537,51 +527,50 @@ class DefinitionExample {
         (other is DefinitionExample &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.translation, translation) ||
+                const DeepCollectionEquality()
+                    .equals(other.translation, translation)) &&
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
                     .equals(other.definition, definition)) &&
             (identical(other.$String, $String) ||
-                const DeepCollectionEquality()
-                    .equals(other.$String, $String)) &&
-            (identical(other.translation, translation) ||
-                const DeepCollectionEquality()
-                    .equals(other.translation, translation)));
+                const DeepCollectionEquality().equals(other.$String, $String)));
   }
 
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(translation) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash($String) ^
-      const DeepCollectionEquality().hash(translation) ^
       runtimeType.hashCode;
 }
 
 extension $DefinitionExampleExtension on DefinitionExample {
   DefinitionExample copyWith(
-      {int? id, int? definition, String? $String, String? translation}) {
+      {int? id, String? translation, int? definition, String? $String}) {
     return DefinitionExample(
         id: id ?? this.id,
+        translation: translation ?? this.translation,
         definition: definition ?? this.definition,
-        $String: $String ?? this.$String,
-        translation: translation ?? this.translation);
+        $String: $String ?? this.$String);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class NotebookEntryW {
   NotebookEntryW({
-    this.notebook,
     this.addedDate,
+    this.notebook,
   });
 
   factory NotebookEntryW.fromJson(Map<String, dynamic> json) =>
       _$NotebookEntryWFromJson(json);
 
-  @JsonKey(name: 'notebook')
-  final int? notebook;
   @JsonKey(name: 'addedDate')
   final String? addedDate;
+  @JsonKey(name: 'notebook')
+  final int? notebook;
   static const fromJsonFactory = _$NotebookEntryWFromJson;
   static const toJsonFactory = _$NotebookEntryWToJson;
   Map<String, dynamic> toJson() => _$NotebookEntryWToJson(this);
@@ -590,34 +579,81 @@ class NotebookEntryW {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is NotebookEntryW &&
-            (identical(other.notebook, notebook) ||
-                const DeepCollectionEquality()
-                    .equals(other.notebook, notebook)) &&
             (identical(other.addedDate, addedDate) ||
                 const DeepCollectionEquality()
-                    .equals(other.addedDate, addedDate)));
+                    .equals(other.addedDate, addedDate)) &&
+            (identical(other.notebook, notebook) ||
+                const DeepCollectionEquality()
+                    .equals(other.notebook, notebook)));
   }
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(notebook) ^
       const DeepCollectionEquality().hash(addedDate) ^
+      const DeepCollectionEquality().hash(notebook) ^
       runtimeType.hashCode;
 }
 
 extension $NotebookEntryWExtension on NotebookEntryW {
-  NotebookEntryW copyWith({int? notebook, String? addedDate}) {
+  NotebookEntryW copyWith({String? addedDate, int? notebook}) {
     return NotebookEntryW(
-        notebook: notebook ?? this.notebook,
-        addedDate: addedDate ?? this.addedDate);
+        addedDate: addedDate ?? this.addedDate,
+        notebook: notebook ?? this.notebook);
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class DefinitionsWithSource {
+  DefinitionsWithSource({
+    this.definitionSource,
+    this.definitions,
+  });
+
+  factory DefinitionsWithSource.fromJson(Map<String, dynamic> json) =>
+      _$DefinitionsWithSourceFromJson(json);
+
+  @JsonKey(name: 'definitionSource')
+  final DefinitionSource? definitionSource;
+  @JsonKey(name: 'definitions', defaultValue: <Definition>[])
+  final List<Definition>? definitions;
+  static const fromJsonFactory = _$DefinitionsWithSourceFromJson;
+  static const toJsonFactory = _$DefinitionsWithSourceToJson;
+  Map<String, dynamic> toJson() => _$DefinitionsWithSourceToJson(this);
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is DefinitionsWithSource &&
+            (identical(other.definitionSource, definitionSource) ||
+                const DeepCollectionEquality()
+                    .equals(other.definitionSource, definitionSource)) &&
+            (identical(other.definitions, definitions) ||
+                const DeepCollectionEquality()
+                    .equals(other.definitions, definitions)));
+  }
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(definitionSource) ^
+      const DeepCollectionEquality().hash(definitions) ^
+      runtimeType.hashCode;
+}
+
+extension $DefinitionsWithSourceExtension on DefinitionsWithSource {
+  DefinitionsWithSource copyWith(
+      {DefinitionSource? definitionSource, List<Definition>? definitions}) {
+    return DefinitionsWithSource(
+        definitionSource: definitionSource ?? this.definitionSource,
+        definitions: definitions ?? this.definitions);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class Definition {
   Definition({
-    this.word,
     this.language,
+    this.sourceLink,
+    this.word,
     this.definition,
     this.examples,
   });
@@ -625,10 +661,12 @@ class Definition {
   factory Definition.fromJson(Map<String, dynamic> json) =>
       _$DefinitionFromJson(json);
 
-  @JsonKey(name: 'word')
-  final String? word;
   @JsonKey(name: 'language')
   final Language? language;
+  @JsonKey(name: 'sourceLink')
+  final String? sourceLink;
+  @JsonKey(name: 'word')
+  final String? word;
   @JsonKey(name: 'definition')
   final String? definition;
   @JsonKey(name: 'examples', defaultValue: <Example>[])
@@ -641,11 +679,14 @@ class Definition {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is Definition &&
-            (identical(other.word, word) ||
-                const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.language, language) ||
                 const DeepCollectionEquality()
                     .equals(other.language, language)) &&
+            (identical(other.sourceLink, sourceLink) ||
+                const DeepCollectionEquality()
+                    .equals(other.sourceLink, sourceLink)) &&
+            (identical(other.word, word) ||
+                const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
                     .equals(other.definition, definition)) &&
@@ -656,8 +697,9 @@ class Definition {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(language) ^
+      const DeepCollectionEquality().hash(sourceLink) ^
+      const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(examples) ^
       runtimeType.hashCode;
@@ -665,13 +707,15 @@ class Definition {
 
 extension $DefinitionExtension on Definition {
   Definition copyWith(
-      {String? word,
-      Language? language,
+      {Language? language,
+      String? sourceLink,
+      String? word,
       String? definition,
       List<Example>? examples}) {
     return Definition(
-        word: word ?? this.word,
         language: language ?? this.language,
+        sourceLink: sourceLink ?? this.sourceLink,
+        word: word ?? this.word,
         definition: definition ?? this.definition,
         examples: examples ?? this.examples);
   }
@@ -680,17 +724,17 @@ extension $DefinitionExtension on Definition {
 @JsonSerializable(explicitToJson: true)
 class Example {
   Example({
-    this.$String,
     this.translation,
+    this.$String,
   });
 
   factory Example.fromJson(Map<String, dynamic> json) =>
       _$ExampleFromJson(json);
 
-  @JsonKey(name: 'string')
-  final String? $String;
   @JsonKey(name: 'translation')
   final String? translation;
+  @JsonKey(name: 'string')
+  final String? $String;
   static const fromJsonFactory = _$ExampleFromJson;
   static const toJsonFactory = _$ExampleToJson;
   Map<String, dynamic> toJson() => _$ExampleToJson(this);
@@ -699,46 +743,105 @@ class Example {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is Example &&
-            (identical(other.$String, $String) ||
-                const DeepCollectionEquality()
-                    .equals(other.$String, $String)) &&
             (identical(other.translation, translation) ||
                 const DeepCollectionEquality()
-                    .equals(other.translation, translation)));
+                    .equals(other.translation, translation)) &&
+            (identical(other.$String, $String) ||
+                const DeepCollectionEquality().equals(other.$String, $String)));
   }
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash($String) ^
       const DeepCollectionEquality().hash(translation) ^
+      const DeepCollectionEquality().hash($String) ^
       runtimeType.hashCode;
 }
 
 extension $ExampleExtension on Example {
-  Example copyWith({String? $String, String? translation}) {
+  Example copyWith({String? translation, String? $String}) {
     return Example(
-        $String: $String ?? this.$String,
-        translation: translation ?? this.translation);
+        translation: translation ?? this.translation,
+        $String: $String ?? this.$String);
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class DefinitionSource {
+  DefinitionSource({
+    this.name,
+    this.id,
+    this.scrapeUrl,
+    this.description,
+  });
+
+  factory DefinitionSource.fromJson(Map<String, dynamic> json) =>
+      _$DefinitionSourceFromJson(json);
+
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'scrapeUrl')
+  final String? scrapeUrl;
+  @JsonKey(name: 'description')
+  final String? description;
+  static const fromJsonFactory = _$DefinitionSourceFromJson;
+  static const toJsonFactory = _$DefinitionSourceToJson;
+  Map<String, dynamic> toJson() => _$DefinitionSourceToJson(this);
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is DefinitionSource &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.scrapeUrl, scrapeUrl) ||
+                const DeepCollectionEquality()
+                    .equals(other.scrapeUrl, scrapeUrl)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality()
+                    .equals(other.description, description)));
+  }
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(scrapeUrl) ^
+      const DeepCollectionEquality().hash(description) ^
+      runtimeType.hashCode;
+}
+
+extension $DefinitionSourceExtension on DefinitionSource {
+  DefinitionSource copyWith(
+      {String? name, int? id, String? scrapeUrl, String? description}) {
+    return DefinitionSource(
+        name: name ?? this.name,
+        id: id ?? this.id,
+        scrapeUrl: scrapeUrl ?? this.scrapeUrl,
+        description: description ?? this.description);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionExampleW {
   DefinitionExampleW({
+    this.translation,
     this.definition,
     this.$String,
-    this.translation,
   });
 
   factory DefinitionExampleW.fromJson(Map<String, dynamic> json) =>
       _$DefinitionExampleWFromJson(json);
 
+  @JsonKey(name: 'translation')
+  final String? translation;
   @JsonKey(name: 'definition')
   final int? definition;
   @JsonKey(name: 'string')
   final String? $String;
-  @JsonKey(name: 'translation')
-  final String? translation;
   static const fromJsonFactory = _$DefinitionExampleWFromJson;
   static const toJsonFactory = _$DefinitionExampleWToJson;
   Map<String, dynamic> toJson() => _$DefinitionExampleWToJson(this);
@@ -747,55 +850,60 @@ class DefinitionExampleW {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is DefinitionExampleW &&
+            (identical(other.translation, translation) ||
+                const DeepCollectionEquality()
+                    .equals(other.translation, translation)) &&
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
                     .equals(other.definition, definition)) &&
             (identical(other.$String, $String) ||
-                const DeepCollectionEquality()
-                    .equals(other.$String, $String)) &&
-            (identical(other.translation, translation) ||
-                const DeepCollectionEquality()
-                    .equals(other.translation, translation)));
+                const DeepCollectionEquality().equals(other.$String, $String)));
   }
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(translation) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash($String) ^
-      const DeepCollectionEquality().hash(translation) ^
       runtimeType.hashCode;
 }
 
 extension $DefinitionExampleWExtension on DefinitionExampleW {
   DefinitionExampleW copyWith(
-      {int? definition, String? $String, String? translation}) {
+      {String? translation, int? definition, String? $String}) {
     return DefinitionExampleW(
+        translation: translation ?? this.translation,
         definition: definition ?? this.definition,
-        $String: $String ?? this.$String,
-        translation: translation ?? this.translation);
+        $String: $String ?? this.$String);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionContentItemW {
   DefinitionContentItemW({
-    this.entry,
-    this.word,
     this.language,
+    this.sourceLink,
+    this.definitionSource,
+    this.word,
     this.definition,
+    this.entry,
   });
 
   factory DefinitionContentItemW.fromJson(Map<String, dynamic> json) =>
       _$DefinitionContentItemWFromJson(json);
 
-  @JsonKey(name: 'entry')
-  final int? entry;
-  @JsonKey(name: 'word')
-  final String? word;
   @JsonKey(name: 'language')
   final Language? language;
+  @JsonKey(name: 'sourceLink')
+  final String? sourceLink;
+  @JsonKey(name: 'definitionSource')
+  final int? definitionSource;
+  @JsonKey(name: 'word')
+  final String? word;
   @JsonKey(name: 'definition')
   final String? definition;
+  @JsonKey(name: 'entry')
+  final int? entry;
   static const fromJsonFactory = _$DefinitionContentItemWFromJson;
   static const toJsonFactory = _$DefinitionContentItemWToJson;
   Map<String, dynamic> toJson() => _$DefinitionContentItemWToJson(this);
@@ -804,43 +912,58 @@ class DefinitionContentItemW {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is DefinitionContentItemW &&
-            (identical(other.entry, entry) ||
-                const DeepCollectionEquality().equals(other.entry, entry)) &&
-            (identical(other.word, word) ||
-                const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.language, language) ||
                 const DeepCollectionEquality()
                     .equals(other.language, language)) &&
+            (identical(other.sourceLink, sourceLink) ||
+                const DeepCollectionEquality()
+                    .equals(other.sourceLink, sourceLink)) &&
+            (identical(other.definitionSource, definitionSource) ||
+                const DeepCollectionEquality()
+                    .equals(other.definitionSource, definitionSource)) &&
+            (identical(other.word, word) ||
+                const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
-                    .equals(other.definition, definition)));
+                    .equals(other.definition, definition)) &&
+            (identical(other.entry, entry) ||
+                const DeepCollectionEquality().equals(other.entry, entry)));
   }
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(entry) ^
-      const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(language) ^
+      const DeepCollectionEquality().hash(sourceLink) ^
+      const DeepCollectionEquality().hash(definitionSource) ^
+      const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(definition) ^
+      const DeepCollectionEquality().hash(entry) ^
       runtimeType.hashCode;
 }
 
 extension $DefinitionContentItemWExtension on DefinitionContentItemW {
   DefinitionContentItemW copyWith(
-      {int? entry, String? word, Language? language, String? definition}) {
+      {Language? language,
+      String? sourceLink,
+      int? definitionSource,
+      String? word,
+      String? definition,
+      int? entry}) {
     return DefinitionContentItemW(
-        entry: entry ?? this.entry,
-        word: word ?? this.word,
         language: language ?? this.language,
-        definition: definition ?? this.definition);
+        sourceLink: sourceLink ?? this.sourceLink,
+        definitionSource: definitionSource ?? this.definitionSource,
+        word: word ?? this.word,
+        definition: definition ?? this.definition,
+        entry: entry ?? this.entry);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionExerciseR {
   DefinitionExerciseR({
-    this.id,
     this.language,
+    this.id,
     this.definition,
     this.difficultyScore,
   });
@@ -848,10 +971,10 @@ class DefinitionExerciseR {
   factory DefinitionExerciseR.fromJson(Map<String, dynamic> json) =>
       _$DefinitionExerciseRFromJson(json);
 
-  @JsonKey(name: 'id')
-  final int? id;
   @JsonKey(name: 'language')
   final Language? language;
+  @JsonKey(name: 'id')
+  final int? id;
   @JsonKey(name: 'definition')
   final String? definition;
   @JsonKey(name: 'difficultyScore')
@@ -864,11 +987,11 @@ class DefinitionExerciseR {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is DefinitionExerciseR &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.language, language) ||
                 const DeepCollectionEquality()
                     .equals(other.language, language)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
                     .equals(other.definition, definition)) &&
@@ -879,8 +1002,8 @@ class DefinitionExerciseR {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(language) ^
+      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(difficultyScore) ^
       runtimeType.hashCode;
@@ -888,13 +1011,13 @@ class DefinitionExerciseR {
 
 extension $DefinitionExerciseRExtension on DefinitionExerciseR {
   DefinitionExerciseR copyWith(
-      {int? id,
-      Language? language,
+      {Language? language,
+      int? id,
       String? definition,
       double? difficultyScore}) {
     return DefinitionExerciseR(
-        id: id ?? this.id,
         language: language ?? this.language,
+        id: id ?? this.id,
         definition: definition ?? this.definition,
         difficultyScore: difficultyScore ?? this.difficultyScore);
   }
@@ -902,90 +1025,32 @@ extension $DefinitionExerciseRExtension on DefinitionExerciseR {
 
 @JsonSerializable(explicitToJson: true)
 class SolutionCheckResult {
-  SolutionCheckResult({
-    this.incorrect,
-    this.correct,
-  });
+  SolutionCheckResult();
 
   factory SolutionCheckResult.fromJson(Map<String, dynamic> json) =>
       _$SolutionCheckResultFromJson(json);
 
-  @JsonKey(name: 'Incorrect')
-  final String? incorrect;
-  @JsonKey(name: 'Correct', defaultValue: <FuzzyCompareToken>[])
-  final List<FuzzyCompareToken>? correct;
   static const fromJsonFactory = _$SolutionCheckResultFromJson;
   static const toJsonFactory = _$SolutionCheckResultToJson;
   Map<String, dynamic> toJson() => _$SolutionCheckResultToJson(this);
 
   @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other is SolutionCheckResult &&
-            (identical(other.incorrect, incorrect) ||
-                const DeepCollectionEquality()
-                    .equals(other.incorrect, incorrect)) &&
-            (identical(other.correct, correct) ||
-                const DeepCollectionEquality().equals(other.correct, correct)));
-  }
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(incorrect) ^
-      const DeepCollectionEquality().hash(correct) ^
-      runtimeType.hashCode;
-}
-
-extension $SolutionCheckResultExtension on SolutionCheckResult {
-  SolutionCheckResult copyWith(
-      {String? incorrect, List<FuzzyCompareToken>? correct}) {
-    return SolutionCheckResult(
-        incorrect: incorrect ?? this.incorrect,
-        correct: correct ?? this.correct);
-  }
+  int get hashCode => runtimeType.hashCode;
 }
 
 @JsonSerializable(explicitToJson: true)
 class FuzzyCompareToken {
-  FuzzyCompareToken({
-    this.character,
-    this.issue,
-  });
+  FuzzyCompareToken();
 
   factory FuzzyCompareToken.fromJson(Map<String, dynamic> json) =>
       _$FuzzyCompareTokenFromJson(json);
 
-  @JsonKey(name: 'Character')
-  final String? character;
-  @JsonKey(name: 'Issue')
-  final FuzzyCompareIssue? issue;
   static const fromJsonFactory = _$FuzzyCompareTokenFromJson;
   static const toJsonFactory = _$FuzzyCompareTokenToJson;
   Map<String, dynamic> toJson() => _$FuzzyCompareTokenToJson(this);
 
   @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other is FuzzyCompareToken &&
-            (identical(other.character, character) ||
-                const DeepCollectionEquality()
-                    .equals(other.character, character)) &&
-            (identical(other.issue, issue) ||
-                const DeepCollectionEquality().equals(other.issue, issue)));
-  }
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(character) ^
-      const DeepCollectionEquality().hash(issue) ^
-      runtimeType.hashCode;
-}
-
-extension $FuzzyCompareTokenExtension on FuzzyCompareToken {
-  FuzzyCompareToken copyWith({String? character, FuzzyCompareIssue? issue}) {
-    return FuzzyCompareToken(
-        character: character ?? this.character, issue: issue ?? this.issue);
-  }
+  int get hashCode => runtimeType.hashCode;
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -1032,27 +1097,29 @@ extension $FuzzyCompareIssueExtension on FuzzyCompareIssue {
 }
 
 @JsonSerializable(explicitToJson: true)
-class ExerciseSolution {
-  ExerciseSolution({
+class ExerciseSolutionDefinitionExercise {
+  ExerciseSolutionDefinitionExercise({
     this.exercise,
     this.input,
   });
 
-  factory ExerciseSolution.fromJson(Map<String, dynamic> json) =>
-      _$ExerciseSolutionFromJson(json);
+  factory ExerciseSolutionDefinitionExercise.fromJson(
+          Map<String, dynamic> json) =>
+      _$ExerciseSolutionDefinitionExerciseFromJson(json);
 
   @JsonKey(name: 'exercise')
   final int? exercise;
   @JsonKey(name: 'input')
   final String? input;
-  static const fromJsonFactory = _$ExerciseSolutionFromJson;
-  static const toJsonFactory = _$ExerciseSolutionToJson;
-  Map<String, dynamic> toJson() => _$ExerciseSolutionToJson(this);
+  static const fromJsonFactory = _$ExerciseSolutionDefinitionExerciseFromJson;
+  static const toJsonFactory = _$ExerciseSolutionDefinitionExerciseToJson;
+  Map<String, dynamic> toJson() =>
+      _$ExerciseSolutionDefinitionExerciseToJson(this);
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is ExerciseSolution &&
+        (other is ExerciseSolutionDefinitionExercise &&
             (identical(other.exercise, exercise) ||
                 const DeepCollectionEquality()
                     .equals(other.exercise, exercise)) &&
@@ -1067,109 +1134,121 @@ class ExerciseSolution {
       runtimeType.hashCode;
 }
 
-extension $ExerciseSolutionExtension on ExerciseSolution {
-  ExerciseSolution copyWith({int? exercise, String? input}) {
-    return ExerciseSolution(
+extension $ExerciseSolutionDefinitionExerciseExtension
+    on ExerciseSolutionDefinitionExercise {
+  ExerciseSolutionDefinitionExercise copyWith({int? exercise, String? input}) {
+    return ExerciseSolutionDefinitionExercise(
         exercise: exercise ?? this.exercise, input: input ?? this.input);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
-class DefinitionExerciseStats {
-  DefinitionExerciseStats({
+class DefinitionExerciseStatsDefinitionExercise {
+  DefinitionExerciseStatsDefinitionExercise({
+    this.correct,
     this.id,
+    this.incorrect,
     this.definition,
     this.difficultyScore,
-    this.correct,
-    this.incorrect,
   });
 
-  factory DefinitionExerciseStats.fromJson(Map<String, dynamic> json) =>
-      _$DefinitionExerciseStatsFromJson(json);
+  factory DefinitionExerciseStatsDefinitionExercise.fromJson(
+          Map<String, dynamic> json) =>
+      _$DefinitionExerciseStatsDefinitionExerciseFromJson(json);
 
+  @JsonKey(name: 'correct')
+  final int? correct;
   @JsonKey(name: 'id')
   final int? id;
+  @JsonKey(name: 'incorrect')
+  final int? incorrect;
   @JsonKey(name: 'definition')
   final DefinitionContentItem? definition;
   @JsonKey(name: 'difficultyScore')
   final double? difficultyScore;
-  @JsonKey(name: 'correct')
-  final int? correct;
-  @JsonKey(name: 'incorrect')
-  final int? incorrect;
-  static const fromJsonFactory = _$DefinitionExerciseStatsFromJson;
-  static const toJsonFactory = _$DefinitionExerciseStatsToJson;
-  Map<String, dynamic> toJson() => _$DefinitionExerciseStatsToJson(this);
+  static const fromJsonFactory =
+      _$DefinitionExerciseStatsDefinitionExerciseFromJson;
+  static const toJsonFactory =
+      _$DefinitionExerciseStatsDefinitionExerciseToJson;
+  Map<String, dynamic> toJson() =>
+      _$DefinitionExerciseStatsDefinitionExerciseToJson(this);
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is DefinitionExerciseStats &&
+        (other is DefinitionExerciseStatsDefinitionExercise &&
+            (identical(other.correct, correct) ||
+                const DeepCollectionEquality()
+                    .equals(other.correct, correct)) &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.incorrect, incorrect) ||
+                const DeepCollectionEquality()
+                    .equals(other.incorrect, incorrect)) &&
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
                     .equals(other.definition, definition)) &&
             (identical(other.difficultyScore, difficultyScore) ||
                 const DeepCollectionEquality()
-                    .equals(other.difficultyScore, difficultyScore)) &&
-            (identical(other.correct, correct) ||
-                const DeepCollectionEquality()
-                    .equals(other.correct, correct)) &&
-            (identical(other.incorrect, incorrect) ||
-                const DeepCollectionEquality()
-                    .equals(other.incorrect, incorrect)));
+                    .equals(other.difficultyScore, difficultyScore)));
   }
 
   @override
   int get hashCode =>
+      const DeepCollectionEquality().hash(correct) ^
       const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(incorrect) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(difficultyScore) ^
-      const DeepCollectionEquality().hash(correct) ^
-      const DeepCollectionEquality().hash(incorrect) ^
       runtimeType.hashCode;
 }
 
-extension $DefinitionExerciseStatsExtension on DefinitionExerciseStats {
-  DefinitionExerciseStats copyWith(
-      {int? id,
+extension $DefinitionExerciseStatsDefinitionExerciseExtension
+    on DefinitionExerciseStatsDefinitionExercise {
+  DefinitionExerciseStatsDefinitionExercise copyWith(
+      {int? correct,
+      int? id,
+      int? incorrect,
       DefinitionContentItem? definition,
-      double? difficultyScore,
-      int? correct,
-      int? incorrect}) {
-    return DefinitionExerciseStats(
-        id: id ?? this.id,
-        definition: definition ?? this.definition,
-        difficultyScore: difficultyScore ?? this.difficultyScore,
+      double? difficultyScore}) {
+    return DefinitionExerciseStatsDefinitionExercise(
         correct: correct ?? this.correct,
-        incorrect: incorrect ?? this.incorrect);
+        id: id ?? this.id,
+        incorrect: incorrect ?? this.incorrect,
+        definition: definition ?? this.definition,
+        difficultyScore: difficultyScore ?? this.difficultyScore);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionContentItem {
   DefinitionContentItem({
-    this.id,
-    this.entry,
-    this.word,
     this.language,
+    this.id,
+    this.sourceLink,
+    this.definitionSource,
+    this.word,
     this.definition,
+    this.entry,
   });
 
   factory DefinitionContentItem.fromJson(Map<String, dynamic> json) =>
       _$DefinitionContentItemFromJson(json);
 
-  @JsonKey(name: 'id')
-  final int? id;
-  @JsonKey(name: 'entry')
-  final int? entry;
-  @JsonKey(name: 'word')
-  final String? word;
   @JsonKey(name: 'language')
   final String? language;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'sourceLink')
+  final String? sourceLink;
+  @JsonKey(name: 'definitionSource')
+  final int? definitionSource;
+  @JsonKey(name: 'word')
+  final String? word;
   @JsonKey(name: 'definition')
   final String? definition;
+  @JsonKey(name: 'entry')
+  final int? entry;
   static const fromJsonFactory = _$DefinitionContentItemFromJson;
   static const toJsonFactory = _$DefinitionContentItemToJson;
   Map<String, dynamic> toJson() => _$DefinitionContentItemToJson(this);
@@ -1178,51 +1257,63 @@ class DefinitionContentItem {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is DefinitionContentItem &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.entry, entry) ||
-                const DeepCollectionEquality().equals(other.entry, entry)) &&
-            (identical(other.word, word) ||
-                const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.language, language) ||
                 const DeepCollectionEquality()
                     .equals(other.language, language)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.sourceLink, sourceLink) ||
+                const DeepCollectionEquality()
+                    .equals(other.sourceLink, sourceLink)) &&
+            (identical(other.definitionSource, definitionSource) ||
+                const DeepCollectionEquality()
+                    .equals(other.definitionSource, definitionSource)) &&
+            (identical(other.word, word) ||
+                const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
-                    .equals(other.definition, definition)));
+                    .equals(other.definition, definition)) &&
+            (identical(other.entry, entry) ||
+                const DeepCollectionEquality().equals(other.entry, entry)));
   }
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(entry) ^
-      const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(language) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(sourceLink) ^
+      const DeepCollectionEquality().hash(definitionSource) ^
+      const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(definition) ^
+      const DeepCollectionEquality().hash(entry) ^
       runtimeType.hashCode;
 }
 
 extension $DefinitionContentItemExtension on DefinitionContentItem {
   DefinitionContentItem copyWith(
-      {int? id,
-      int? entry,
+      {String? language,
+      int? id,
+      String? sourceLink,
+      int? definitionSource,
       String? word,
-      String? language,
-      String? definition}) {
+      String? definition,
+      int? entry}) {
     return DefinitionContentItem(
-        id: id ?? this.id,
-        entry: entry ?? this.entry,
-        word: word ?? this.word,
         language: language ?? this.language,
-        definition: definition ?? this.definition);
+        id: id ?? this.id,
+        sourceLink: sourceLink ?? this.sourceLink,
+        definitionSource: definitionSource ?? this.definitionSource,
+        word: word ?? this.word,
+        definition: definition ?? this.definition,
+        entry: entry ?? this.entry);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionExampleExerciseR {
   DefinitionExampleExerciseR({
-    this.id,
     this.language,
+    this.id,
     this.definition,
     this.example,
     this.difficultyScore,
@@ -1231,10 +1322,10 @@ class DefinitionExampleExerciseR {
   factory DefinitionExampleExerciseR.fromJson(Map<String, dynamic> json) =>
       _$DefinitionExampleExerciseRFromJson(json);
 
-  @JsonKey(name: 'id')
-  final int? id;
   @JsonKey(name: 'language')
   final Language? language;
+  @JsonKey(name: 'id')
+  final int? id;
   @JsonKey(name: 'definition')
   final String? definition;
   @JsonKey(name: 'example', defaultValue: <StringOrGap>[])
@@ -1249,11 +1340,11 @@ class DefinitionExampleExerciseR {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is DefinitionExampleExerciseR &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.language, language) ||
                 const DeepCollectionEquality()
                     .equals(other.language, language)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
                     .equals(other.definition, definition)) &&
@@ -1267,8 +1358,8 @@ class DefinitionExampleExerciseR {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(language) ^
+      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(example) ^
       const DeepCollectionEquality().hash(difficultyScore) ^
@@ -1277,14 +1368,14 @@ class DefinitionExampleExerciseR {
 
 extension $DefinitionExampleExerciseRExtension on DefinitionExampleExerciseR {
   DefinitionExampleExerciseR copyWith(
-      {int? id,
-      Language? language,
+      {Language? language,
+      int? id,
       String? definition,
       List<StringOrGap>? example,
       double? difficultyScore}) {
     return DefinitionExampleExerciseR(
-        id: id ?? this.id,
         language: language ?? this.language,
+        id: id ?? this.id,
         definition: definition ?? this.definition,
         example: example ?? this.example,
         difficultyScore: difficultyScore ?? this.difficultyScore);
@@ -1293,42 +1384,186 @@ extension $DefinitionExampleExerciseRExtension on DefinitionExampleExerciseR {
 
 @JsonSerializable(explicitToJson: true)
 class StringOrGap {
-  StringOrGap({
-    this.gap,
-    this.$String,
-  });
+  StringOrGap();
 
   factory StringOrGap.fromJson(Map<String, dynamic> json) =>
       _$StringOrGapFromJson(json);
 
-  @JsonKey(name: 'Gap')
-  final int? gap;
-  @JsonKey(name: 'String')
-  final String? $String;
   static const fromJsonFactory = _$StringOrGapFromJson;
   static const toJsonFactory = _$StringOrGapToJson;
   Map<String, dynamic> toJson() => _$StringOrGapToJson(this);
 
   @override
+  int get hashCode => runtimeType.hashCode;
+}
+
+@JsonSerializable(explicitToJson: true)
+class ExerciseSolutionDefinitionExampleExercise {
+  ExerciseSolutionDefinitionExampleExercise({
+    this.exercise,
+    this.input,
+  });
+
+  factory ExerciseSolutionDefinitionExampleExercise.fromJson(
+          Map<String, dynamic> json) =>
+      _$ExerciseSolutionDefinitionExampleExerciseFromJson(json);
+
+  @JsonKey(name: 'exercise')
+  final int? exercise;
+  @JsonKey(name: 'input')
+  final String? input;
+  static const fromJsonFactory =
+      _$ExerciseSolutionDefinitionExampleExerciseFromJson;
+  static const toJsonFactory =
+      _$ExerciseSolutionDefinitionExampleExerciseToJson;
+  Map<String, dynamic> toJson() =>
+      _$ExerciseSolutionDefinitionExampleExerciseToJson(this);
+
+  @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is StringOrGap &&
-            (identical(other.gap, gap) ||
-                const DeepCollectionEquality().equals(other.gap, gap)) &&
-            (identical(other.$String, $String) ||
-                const DeepCollectionEquality().equals(other.$String, $String)));
+        (other is ExerciseSolutionDefinitionExampleExercise &&
+            (identical(other.exercise, exercise) ||
+                const DeepCollectionEquality()
+                    .equals(other.exercise, exercise)) &&
+            (identical(other.input, input) ||
+                const DeepCollectionEquality().equals(other.input, input)));
   }
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(gap) ^
-      const DeepCollectionEquality().hash($String) ^
+      const DeepCollectionEquality().hash(exercise) ^
+      const DeepCollectionEquality().hash(input) ^
       runtimeType.hashCode;
 }
 
-extension $StringOrGapExtension on StringOrGap {
-  StringOrGap copyWith({int? gap, String? $String}) {
-    return StringOrGap(gap: gap ?? this.gap, $String: $String ?? this.$String);
+extension $ExerciseSolutionDefinitionExampleExerciseExtension
+    on ExerciseSolutionDefinitionExampleExercise {
+  ExerciseSolutionDefinitionExampleExercise copyWith(
+      {int? exercise, String? input}) {
+    return ExerciseSolutionDefinitionExampleExercise(
+        exercise: exercise ?? this.exercise, input: input ?? this.input);
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class DefinitionExerciseStatsDefinitionExampleExercise {
+  DefinitionExerciseStatsDefinitionExampleExercise({
+    this.correct,
+    this.id,
+    this.incorrect,
+    this.definition,
+    this.difficultyScore,
+  });
+
+  factory DefinitionExerciseStatsDefinitionExampleExercise.fromJson(
+          Map<String, dynamic> json) =>
+      _$DefinitionExerciseStatsDefinitionExampleExerciseFromJson(json);
+
+  @JsonKey(name: 'correct')
+  final int? correct;
+  @JsonKey(name: 'id')
+  final int? id;
+  @JsonKey(name: 'incorrect')
+  final int? incorrect;
+  @JsonKey(name: 'definition')
+  final DefinitionContentItem? definition;
+  @JsonKey(name: 'difficultyScore')
+  final double? difficultyScore;
+  static const fromJsonFactory =
+      _$DefinitionExerciseStatsDefinitionExampleExerciseFromJson;
+  static const toJsonFactory =
+      _$DefinitionExerciseStatsDefinitionExampleExerciseToJson;
+  Map<String, dynamic> toJson() =>
+      _$DefinitionExerciseStatsDefinitionExampleExerciseToJson(this);
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is DefinitionExerciseStatsDefinitionExampleExercise &&
+            (identical(other.correct, correct) ||
+                const DeepCollectionEquality()
+                    .equals(other.correct, correct)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.incorrect, incorrect) ||
+                const DeepCollectionEquality()
+                    .equals(other.incorrect, incorrect)) &&
+            (identical(other.definition, definition) ||
+                const DeepCollectionEquality()
+                    .equals(other.definition, definition)) &&
+            (identical(other.difficultyScore, difficultyScore) ||
+                const DeepCollectionEquality()
+                    .equals(other.difficultyScore, difficultyScore)));
+  }
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(correct) ^
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(incorrect) ^
+      const DeepCollectionEquality().hash(definition) ^
+      const DeepCollectionEquality().hash(difficultyScore) ^
+      runtimeType.hashCode;
+}
+
+extension $DefinitionExerciseStatsDefinitionExampleExerciseExtension
+    on DefinitionExerciseStatsDefinitionExampleExercise {
+  DefinitionExerciseStatsDefinitionExampleExercise copyWith(
+      {int? correct,
+      int? id,
+      int? incorrect,
+      DefinitionContentItem? definition,
+      double? difficultyScore}) {
+    return DefinitionExerciseStatsDefinitionExampleExercise(
+        correct: correct ?? this.correct,
+        id: id ?? this.id,
+        incorrect: incorrect ?? this.incorrect,
+        definition: definition ?? this.definition,
+        difficultyScore: difficultyScore ?? this.difficultyScore);
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class UserStatisticsR {
+  UserStatisticsR({
+    this.apiKey,
+    this.languages,
+  });
+
+  factory UserStatisticsR.fromJson(Map<String, dynamic> json) =>
+      _$UserStatisticsRFromJson(json);
+
+  @JsonKey(name: 'apiKey')
+  final String? apiKey;
+  @JsonKey(name: 'languages', defaultValue: <Language>[])
+  final List<Language>? languages;
+  static const fromJsonFactory = _$UserStatisticsRFromJson;
+  static const toJsonFactory = _$UserStatisticsRToJson;
+  Map<String, dynamic> toJson() => _$UserStatisticsRToJson(this);
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is UserStatisticsR &&
+            (identical(other.apiKey, apiKey) ||
+                const DeepCollectionEquality().equals(other.apiKey, apiKey)) &&
+            (identical(other.languages, languages) ||
+                const DeepCollectionEquality()
+                    .equals(other.languages, languages)));
+  }
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(apiKey) ^
+      const DeepCollectionEquality().hash(languages) ^
+      runtimeType.hashCode;
+}
+
+extension $UserStatisticsRExtension on UserStatisticsR {
+  UserStatisticsR copyWith({String? apiKey, List<Language>? languages}) {
+    return UserStatisticsR(
+        apiKey: apiKey ?? this.apiKey, languages: languages ?? this.languages);
   }
 }
 

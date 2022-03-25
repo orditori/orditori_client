@@ -1,27 +1,29 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "version": "0.0.1",
-    "title": "Definition Example Exercise API",
-    "description": "This is an API for definition example exercises"
+    "title": "User Statistics API",
+    "description": "API for various user-related data and stats"
   },
   "paths": {
     "/notebooks": {
       "get": {
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
+            "required": true,
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           }
         ],
         "responses": {
           "400": { "description": "Invalid `apiKey`" },
           "200": {
-            "schema": { "$ref": "#/definitions/NotebookR" },
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/NotebookR" }
+              }
+            },
             "description": ""
           }
         }
@@ -29,58 +31,67 @@
     },
     "/notebookEntries": {
       "post": {
-        "consumes": ["application/json;charset=utf-8"],
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
-          },
-          {
             "required": true,
-            "schema": { "$ref": "#/definitions/NotebookEntryW" },
-            "in": "body",
-            "name": "body"
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json;charset=utf-8": {
+              "schema": { "$ref": "#/components/schemas/NotebookEntryW" }
+            }
+          }
+        },
         "responses": {
           "400": { "description": "Invalid `body` or `apiKey`" },
-          "200": { "schema": { "type": "integer" }, "description": "" }
+          "200": {
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": { "type": "integer" }
+              }
+            },
+            "description": ""
+          }
         }
       }
     },
     "/notebookEntries/{entryId}": {
       "delete": {
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
+            "required": true,
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           },
           {
-            "maximum": 9223372036854775807,
-            "minimum": -9223372036854775808,
-            "required": true,
-            "in": "path",
             "name": "entryId",
-            "type": "integer"
+            "required": true,
+            "schema": {
+              "maximum": 9223372036854775807,
+              "type": "integer",
+              "minimum": -9223372036854775808
+            },
+            "in": "path"
           }
         ],
         "responses": {
-          "404": { "description": "`entryId` not found" },
           "400": { "description": "Invalid `apiKey`" },
+          "404": { "description": "`entryId` not found" },
           "200": {
-            "schema": {
-              "example": [],
-              "items": {},
-              "maxItems": 0,
-              "type": "array"
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "items": {},
+                  "maxItems": 0,
+                  "type": "array",
+                  "example": []
+                }
+              }
             },
             "description": ""
           }
@@ -89,16 +100,26 @@
     },
     "/definitions": {
       "get": {
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
-          { "required": true, "in": "query", "name": "query", "type": "string" }
+          {
+            "name": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "in": "query"
+          }
         ],
         "responses": {
           "400": { "description": "Invalid `query`" },
           "200": {
-            "schema": {
-              "items": { "$ref": "#/definitions/Definition" },
-              "type": "array"
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DefinitionsWithSource"
+                  },
+                  "type": "array"
+                }
+              }
             },
             "description": ""
           }
@@ -107,70 +128,90 @@
     },
     "/definitionExamples": {
       "post": {
-        "consumes": ["application/json;charset=utf-8"],
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
-          },
-          {
             "required": true,
-            "schema": { "$ref": "#/definitions/DefinitionExampleW" },
-            "in": "body",
-            "name": "body"
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json;charset=utf-8": {
+              "schema": { "$ref": "#/components/schemas/DefinitionExampleW" }
+            }
+          }
+        },
         "responses": {
           "400": { "description": "Invalid `body` or `apiKey`" },
-          "200": { "schema": { "type": "integer" }, "description": "" }
+          "200": {
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": { "type": "integer" }
+              }
+            },
+            "description": ""
+          }
         }
       }
     },
     "/definitionContentItems": {
       "post": {
-        "consumes": ["application/json;charset=utf-8"],
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
-          },
-          {
             "required": true,
-            "schema": { "$ref": "#/definitions/DefinitionContentItemW" },
-            "in": "body",
-            "name": "body"
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json;charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/DefinitionContentItemW"
+              }
+            }
+          }
+        },
         "responses": {
           "400": { "description": "Invalid `body` or `apiKey`" },
-          "200": { "schema": { "type": "integer" }, "description": "" }
+          "200": {
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": { "type": "integer" }
+              }
+            },
+            "description": ""
+          }
         }
       }
     },
     "/exercises/definition/random": {
       "get": {
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
+            "required": true,
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
+          },
+          {
+            "name": "language",
+            "required": false,
+            "schema": { "type": "string" },
+            "in": "query"
           }
         ],
         "responses": {
-          "400": { "description": "Invalid `apiKey`" },
+          "400": { "description": "Invalid `language` or `apiKey`" },
           "200": {
-            "schema": { "$ref": "#/definitions/DefinitionExerciseR" },
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/DefinitionExerciseR" }
+              }
+            },
             "description": ""
           }
         }
@@ -178,27 +219,31 @@
     },
     "/exercises/definition/solutions": {
       "post": {
-        "consumes": ["application/json;charset=utf-8"],
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
-          },
-          {
             "required": true,
-            "schema": { "$ref": "#/definitions/ExerciseSolution" },
-            "in": "body",
-            "name": "body"
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json;charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/ExerciseSolution_DefinitionExercise"
+              }
+            }
+          }
+        },
         "responses": {
           "400": { "description": "Invalid `body` or `apiKey`" },
           "200": {
-            "schema": { "$ref": "#/definitions/SolutionCheckResult" },
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/SolutionCheckResult" }
+              }
+            },
             "description": ""
           }
         }
@@ -206,22 +251,26 @@
     },
     "/exercises/definition/scores": {
       "get": {
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
+            "required": true,
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           }
         ],
         "responses": {
           "400": { "description": "Invalid `apiKey`" },
           "200": {
-            "schema": {
-              "items": { "$ref": "#/definitions/DefinitionExerciseStats" },
-              "type": "array"
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DefinitionExerciseStats_DefinitionExercise"
+                  },
+                  "type": "array"
+                }
+              }
             },
             "description": ""
           }
@@ -230,20 +279,24 @@
     },
     "/exercises/example/random": {
       "get": {
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
+            "required": true,
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           }
         ],
         "responses": {
           "400": { "description": "Invalid `apiKey`" },
           "200": {
-            "schema": { "$ref": "#/definitions/DefinitionExampleExerciseR" },
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefinitionExampleExerciseR"
+                }
+              }
+            },
             "description": ""
           }
         }
@@ -251,27 +304,31 @@
     },
     "/exercises/example/solutions": {
       "post": {
-        "consumes": ["application/json;charset=utf-8"],
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
-          },
-          {
             "required": true,
-            "schema": { "$ref": "#/definitions/ExerciseSolution" },
-            "in": "body",
-            "name": "body"
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json;charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/ExerciseSolution_DefinitionExampleExercise"
+              }
+            }
+          }
+        },
         "responses": {
           "400": { "description": "Invalid `body` or `apiKey`" },
           "200": {
-            "schema": { "$ref": "#/definitions/SolutionCheckResult" },
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/SolutionCheckResult" }
+              }
+            },
             "description": ""
           }
         }
@@ -279,22 +336,49 @@
     },
     "/exercises/example/scores": {
       "get": {
-        "produces": ["application/json;charset=utf-8"],
         "parameters": [
           {
-            "format": "uuid",
-            "required": true,
-            "in": "query",
             "name": "apiKey",
-            "type": "string"
+            "required": true,
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
           }
         ],
         "responses": {
           "400": { "description": "Invalid `apiKey`" },
           "200": {
-            "schema": {
-              "items": { "$ref": "#/definitions/DefinitionExerciseStats" },
-              "type": "array"
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DefinitionExerciseStats_DefinitionExampleExercise"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/userStatistics": {
+      "get": {
+        "parameters": [
+          {
+            "name": "apiKey",
+            "required": true,
+            "schema": { "format": "uuid", "type": "string" },
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "400": { "description": "Invalid `apiKey`" },
+          "200": {
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": { "$ref": "#/components/schemas/UserStatisticsR" }
+              }
             },
             "description": ""
           }
@@ -302,296 +386,425 @@
       }
     }
   },
-  "definitions": {
-    "NotebookR": {
-      "description": "A notebook with its entries",
-      "required": ["id", "apiKey", "revision", "formatVersion", "entries"],
-      "properties": {
-        "id": { "type": "integer" },
-        "apiKey": { "$ref": "#/definitions/UUID" },
-        "revision": {
-          "maximum": 9223372036854775807,
-          "minimum": -9223372036854775808,
-          "type": "integer"
+  "components": {
+    "schemas": {
+      "NotebookR": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "items": { "$ref": "#/components/schemas/NotebookEntryR" },
+            "type": "array"
+          },
+          "id": { "type": "integer" },
+          "revision": {
+            "maximum": 9223372036854775807,
+            "type": "integer",
+            "minimum": -9223372036854775808
+          },
+          "apiKey": { "$ref": "#/components/schemas/UUID" },
+          "formatVersion": {
+            "maximum": 9223372036854775807,
+            "type": "integer",
+            "minimum": -9223372036854775808
+          }
         },
-        "formatVersion": {
-          "maximum": 9223372036854775807,
-          "minimum": -9223372036854775808,
-          "type": "integer"
+        "required": ["id", "apiKey", "revision", "formatVersion", "entries"],
+        "description": "A notebook with its entries"
+      },
+      "UUID": {
+        "format": "uuid",
+        "type": "string",
+        "example": "00000000-0000-0000-0000-000000000000"
+      },
+      "NotebookEntryR": {
+        "type": "object",
+        "properties": {
+          "addedDate": { "$ref": "#/components/schemas/UTCTime" },
+          "id": { "type": "integer" },
+          "definitions": {
+            "items": { "$ref": "#/components/schemas/DefinitionContentItemR" },
+            "type": "array"
+          }
         },
-        "entries": {
-          "items": { "$ref": "#/definitions/NotebookEntryR" },
-          "type": "array"
-        }
+        "required": ["id", "addedDate", "definitions"],
+        "description": "A notebook entry"
       },
-      "type": "object"
-    },
-    "ID": {
-      "required": ["untyped"],
-      "properties": { "untyped": { "$ref": "#/definitions/RowID" } },
-      "type": "object"
-    },
-    "RowID": {
-      "maximum": 9223372036854775807,
-      "minimum": -9223372036854775808,
-      "type": "integer"
-    },
-    "UUID": {
-      "example": "00000000-0000-0000-0000-000000000000",
-      "format": "uuid",
-      "type": "string"
-    },
-    "NotebookEntryR": {
-      "description": "A notebook entry",
-      "required": ["id", "addedDate", "definitions"],
-      "properties": {
-        "id": { "type": "integer" },
-        "addedDate": { "$ref": "#/definitions/UTCTime" },
-        "definitions": {
-          "items": { "$ref": "#/definitions/DefinitionContentItemR" },
-          "type": "array"
-        }
+      "UTCTime": {
+        "format": "yyyy-mm-ddThh:MM:ssZ",
+        "type": "string",
+        "example": "2016-07-22T00:00:00Z"
       },
-      "type": "object"
-    },
-    "UTCTime": {
-      "example": "2016-07-22T00:00:00Z",
-      "format": "yyyy-mm-ddThh:MM:ssZ",
-      "type": "string"
-    },
-    "DefinitionContentItemR": {
-      "description": "A notebook entry definition item",
-      "required": ["id", "word", "language", "definition", "examples"],
-      "properties": {
-        "id": { "type": "integer" },
-        "word": { "type": "string" },
-        "language": { "$ref": "#/definitions/Language" },
-        "definition": { "type": "string" },
-        "examples": {
-          "items": { "$ref": "#/definitions/DefinitionExample" },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "Language": {
-      "description": "A language with its ISO639-3 code and name in English",
-      "required": ["code", "name"],
-      "properties": {
-        "code": { "type": "string" },
-        "name": { "type": "string" }
-      },
-      "type": "object"
-    },
-    "DefinitionExample": {
-      "description": "A notebook entry definition example",
-      "required": ["id", "definition", "string"],
-      "properties": {
-        "id": { "type": "integer" },
-        "definition": { "type": "integer" },
-        "string": { "type": "string" },
-        "translation": { "type": "string" }
-      },
-      "type": "object"
-    },
-    "NotebookEntryW": {
-      "description": "A notebook entry payload",
-      "required": ["notebook", "addedDate"],
-      "properties": {
-        "notebook": {
-          "maximum": 9223372036854775807,
-          "minimum": -9223372036854775808,
-          "type": "integer"
+      "DefinitionContentItemR": {
+        "type": "object",
+        "properties": {
+          "language": { "$ref": "#/components/schemas/Language" },
+          "id": { "type": "integer" },
+          "sourceLink": { "type": "string" },
+          "definitionSource": { "type": "integer" },
+          "word": { "type": "string" },
+          "definition": { "type": "string" },
+          "examples": {
+            "items": { "$ref": "#/components/schemas/DefinitionExample" },
+            "type": "array"
+          }
         },
-        "addedDate": { "$ref": "#/definitions/UTCTime" }
+        "required": [
+          "id",
+          "word",
+          "language",
+          "definition",
+          "definitionSource",
+          "sourceLink",
+          "examples"
+        ],
+        "description": "A notebook entry definition item"
       },
-      "type": "object"
-    },
-    "Definition": {
-      "description": "Unified format for definitions retrieved from a definition source (e.g. Wiktionary)",
-      "required": ["word", "language", "definition", "examples"],
-      "properties": {
-        "word": { "type": "string" },
-        "language": { "$ref": "#/definitions/Language" },
-        "definition": { "type": "string" },
-        "examples": {
-          "items": { "$ref": "#/definitions/Example" },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "Example": {
-      "description": "An example for a definition",
-      "required": ["string"],
-      "properties": {
-        "string": { "type": "string" },
-        "translation": { "type": "string" }
-      },
-      "type": "object"
-    },
-    "DefinitionExampleW": {
-      "description": "A definition example payload",
-      "required": ["definition", "string"],
-      "properties": {
-        "definition": {
-          "maximum": 9223372036854775807,
-          "minimum": -9223372036854775808,
-          "type": "integer"
+      "Language": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "code": { "type": "string" }
         },
-        "string": { "type": "string" },
-        "translation": { "type": "string" }
+        "required": ["code", "name"],
+        "description": "A language with its ISO639-3 code and name in English"
       },
-      "type": "object"
-    },
-    "DefinitionContentItemW": {
-      "description": "A definition content item payload",
-      "required": ["entry", "word", "language", "definition"],
-      "properties": {
-        "entry": {
-          "maximum": 9223372036854775807,
-          "minimum": -9223372036854775808,
-          "type": "integer"
+      "DefinitionExample": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "translation": { "type": "string" },
+          "definition": { "type": "integer" },
+          "string": { "type": "string" }
         },
-        "word": { "type": "string" },
-        "language": { "$ref": "#/definitions/Language" },
-        "definition": { "type": "string" }
+        "required": ["id", "definition", "string"],
+        "description": "A notebook entry definition example"
       },
-      "type": "object"
-    },
-    "DefinitionExerciseR": {
-      "description": "A definition-based exercise",
-      "required": ["id", "language", "definition", "difficultyScore"],
-      "properties": {
-        "id": { "type": "integer" },
-        "language": { "$ref": "#/definitions/Language" },
-        "definition": { "type": "string" },
-        "difficultyScore": { "format": "double", "type": "number" }
-      },
-      "example": {
-        "definition": "later today, shortly, in a moment",
-        "difficultyScore": 0.37,
-        "language": { "name": "Dutch", "code": "nld" },
-        "id": 0
-      },
-      "type": "object"
-    },
-    "SolutionCheckResult": {
-      "description": "A result of checking correctness of a solution",
-      "properties": {
-        "Incorrect": { "type": "string" },
-        "Correct": {
-          "items": { "$ref": "#/definitions/FuzzyCompareToken" },
-          "type": "array"
-        }
-      },
-      "maxProperties": 1,
-      "minProperties": 1,
-      "type": "object"
-    },
-    "FuzzyCompareToken": {
-      "description": "A result of checking correctness of a solution ",
-      "properties": {
-        "Character": { "type": "string" },
-        "Issue": { "$ref": "#/definitions/FuzzyCompareIssue" }
-      },
-      "example": { "tag": "Character", "contents": "ß" },
-      "maxProperties": 1,
-      "minProperties": 1,
-      "type": "object"
-    },
-    "FuzzyCompareIssue": {
-      "description": "Partial character match when fuzzy-comparing strings",
-      "required": ["expected", "actual"],
-      "properties": {
-        "expected": { "type": "string" },
-        "actual": { "type": "string" }
-      },
-      "example": { "actual": "ue", "expected": "Ü" },
-      "type": "object"
-    },
-    "ExerciseSolution": {
-      "description": "A user's solution to an exercise, text input",
-      "required": ["exercise", "input"],
-      "properties": {
-        "exercise": { "type": "integer" },
-        "input": { "type": "string" }
-      },
-      "example": { "input": "straks", "exercise": 0 },
-      "type": "object"
-    },
-    "DefinitionExerciseStats": {
-      "description": "Solution and difficulty statistics for a definition-based exercise",
-      "required": [
-        "id",
-        "definition",
-        "difficultyScore",
-        "correct",
-        "incorrect"
-      ],
-      "properties": {
-        "id": { "type": "integer" },
-        "definition": { "$ref": "#/definitions/DefinitionContentItem" },
-        "difficultyScore": { "format": "double", "type": "number" },
-        "correct": {
-          "maximum": 9223372036854775807,
-          "minimum": -9223372036854775808,
-          "type": "integer"
+      "NotebookEntryW": {
+        "type": "object",
+        "properties": {
+          "addedDate": { "$ref": "#/components/schemas/UTCTime" },
+          "notebook": { "type": "integer" }
         },
-        "incorrect": {
-          "maximum": 9223372036854775807,
-          "minimum": -9223372036854775808,
-          "type": "integer"
-        }
+        "required": ["notebook", "addedDate"],
+        "description": "A notebook entry payload"
       },
-      "type": "object"
-    },
-    "DefinitionContentItem": {
-      "description": "A word definition (a notebook entry content item)",
-      "required": ["id", "entry", "word", "language", "definition"],
-      "properties": {
-        "id": { "type": "integer" },
-        "entry": { "type": "integer" },
-        "word": { "type": "string" },
-        "language": { "type": "string" },
-        "definition": { "type": "string" }
+      "DefinitionsWithSource": {
+        "type": "object",
+        "properties": {
+          "definitionSource": {
+            "$ref": "#/components/schemas/DefinitionSource"
+          },
+          "definitions": {
+            "items": { "$ref": "#/components/schemas/Definition" },
+            "type": "array"
+          }
+        },
+        "required": ["definitions", "definitionSource"],
+        "description": "Definitions together with their source information"
       },
-      "type": "object"
-    },
-    "DefinitionExampleExerciseR": {
-      "description": "A definition example exercise",
-      "required": [
-        "id",
-        "language",
-        "definition",
-        "example",
-        "difficultyScore"
-      ],
-      "properties": {
-        "id": { "type": "integer" },
-        "language": { "$ref": "#/definitions/Language" },
-        "definition": { "type": "string" },
+      "Definition": {
+        "type": "object",
+        "properties": {
+          "language": { "$ref": "#/components/schemas/Language" },
+          "sourceLink": { "type": "string" },
+          "word": { "type": "string" },
+          "definition": { "type": "string" },
+          "examples": {
+            "items": { "$ref": "#/components/schemas/Example" },
+            "type": "array"
+          }
+        },
+        "required": [
+          "word",
+          "language",
+          "definition",
+          "examples",
+          "sourceLink"
+        ],
+        "description": "Unified format for definitions retrieved from a definition source (e.g. Wiktionary)"
+      },
+      "Example": {
+        "type": "object",
+        "properties": {
+          "translation": { "type": "string" },
+          "string": { "type": "string" }
+        },
+        "required": ["string"],
+        "description": "An example for a definition"
+      },
+      "DefinitionSource": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "id": { "type": "integer" },
+          "scrapeUrl": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["id", "name", "description", "scrapeUrl"],
+        "description": "A definition source (e.g. English Wiktionary)"
+      },
+      "DefinitionExampleW": {
+        "type": "object",
+        "properties": {
+          "translation": { "type": "string" },
+          "definition": { "type": "integer" },
+          "string": { "type": "string" }
+        },
+        "required": ["definition", "string"],
+        "description": "A definition example payload"
+      },
+      "DefinitionContentItemW": {
+        "type": "object",
+        "properties": {
+          "language": { "$ref": "#/components/schemas/Language" },
+          "sourceLink": { "type": "string" },
+          "definitionSource": { "type": "integer" },
+          "word": { "type": "string" },
+          "definition": { "type": "string" },
+          "entry": { "type": "integer" }
+        },
+        "required": [
+          "entry",
+          "word",
+          "language",
+          "definition",
+          "definitionSource",
+          "sourceLink"
+        ],
+        "description": "A definition content item payload"
+      },
+      "DefinitionExerciseR": {
+        "type": "object",
+        "properties": {
+          "language": { "$ref": "#/components/schemas/Language" },
+          "id": { "type": "integer" },
+          "definition": { "type": "string" },
+          "difficultyScore": { "format": "double", "type": "number" }
+        },
         "example": {
-          "items": { "$ref": "#/definitions/StringOrGap" },
-          "type": "array"
+          "language": { "name": "Dutch", "code": "nld" },
+          "id": 0,
+          "definition": "later today, shortly, in a moment",
+          "difficultyScore": 0.37
         },
-        "difficultyScore": { "format": "double", "type": "number" }
+        "required": ["id", "language", "definition", "difficultyScore"],
+        "description": "A definition-based exercise"
       },
-      "type": "object"
-    },
-    "StringOrGap": {
-      "description": "A token in a string with gaps",
-      "properties": {
-        "Gap": {
-          "maximum": 9223372036854775807,
-          "minimum": -9223372036854775808,
-          "type": "integer"
+      "SolutionCheckResult": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "contents": { "type": "string" },
+              "tag": { "type": "string", "enum": ["Incorrect"] }
+            },
+            "required": ["tag", "contents"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "contents": {
+                "items": { "$ref": "#/components/schemas/FuzzyCompareToken" },
+                "type": "array"
+              },
+              "tag": { "type": "string", "enum": ["Correct"] }
+            },
+            "required": ["tag", "contents"]
+          }
+        ],
+        "type": "object",
+        "description": "A result of checking correctness of a solution"
+      },
+      "FuzzyCompareToken": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "contents": { "type": "string" },
+              "tag": { "type": "string", "enum": ["Character"] }
+            },
+            "required": ["tag", "contents"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "contents": { "$ref": "#/components/schemas/FuzzyCompareIssue" },
+              "tag": { "type": "string", "enum": ["Issue"] }
+            },
+            "required": ["tag", "contents"]
+          }
+        ],
+        "type": "object",
+        "example": { "contents": "ß", "tag": "Character" },
+        "description": "A result of checking correctness of a solution "
+      },
+      "FuzzyCompareIssue": {
+        "type": "object",
+        "properties": {
+          "expected": { "type": "string" },
+          "actual": { "type": "string" }
         },
-        "String": { "type": "string" }
+        "example": { "expected": "Ü", "actual": "ue" },
+        "required": ["expected", "actual"],
+        "description": "Partial character match when fuzzy-comparing strings"
       },
-      "maxProperties": 1,
-      "minProperties": 1,
-      "type": "object"
+      "ExerciseSolution_DefinitionExercise": {
+        "type": "object",
+        "properties": {
+          "exercise": { "type": "integer" },
+          "input": { "type": "string" }
+        },
+        "example": { "exercise": 0, "input": "straks" },
+        "required": ["exercise", "input"],
+        "description": "A user's solution to an exercise, text input"
+      },
+      "DefinitionExerciseStats_DefinitionExercise": {
+        "type": "object",
+        "properties": {
+          "correct": {
+            "maximum": 9223372036854775807,
+            "type": "integer",
+            "minimum": -9223372036854775808
+          },
+          "id": { "type": "integer" },
+          "incorrect": {
+            "maximum": 9223372036854775807,
+            "type": "integer",
+            "minimum": -9223372036854775808
+          },
+          "definition": {
+            "$ref": "#/components/schemas/DefinitionContentItem"
+          },
+          "difficultyScore": { "format": "double", "type": "number" }
+        },
+        "required": [
+          "id",
+          "definition",
+          "difficultyScore",
+          "correct",
+          "incorrect"
+        ],
+        "description": "Solution and difficulty statistics for a definition-based exercise"
+      },
+      "DefinitionContentItem": {
+        "type": "object",
+        "properties": {
+          "language": { "type": "string" },
+          "id": { "type": "integer" },
+          "sourceLink": { "type": "string" },
+          "definitionSource": { "type": "integer" },
+          "word": { "type": "string" },
+          "definition": { "type": "string" },
+          "entry": { "type": "integer" }
+        },
+        "required": [
+          "id",
+          "entry",
+          "word",
+          "language",
+          "definition",
+          "definitionSource",
+          "sourceLink"
+        ],
+        "description": "A word definition (a notebook entry content item)"
+      },
+      "DefinitionExampleExerciseR": {
+        "type": "object",
+        "properties": {
+          "language": { "$ref": "#/components/schemas/Language" },
+          "id": { "type": "integer" },
+          "definition": { "type": "string" },
+          "example": {
+            "items": { "$ref": "#/components/schemas/StringOrGap" },
+            "type": "array"
+          },
+          "difficultyScore": { "format": "double", "type": "number" }
+        },
+        "required": [
+          "id",
+          "language",
+          "definition",
+          "example",
+          "difficultyScore"
+        ],
+        "description": "A definition example exercise"
+      },
+      "StringOrGap": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "contents": {
+                "maximum": 9223372036854775807,
+                "type": "integer",
+                "minimum": -9223372036854775808
+              },
+              "tag": { "type": "string", "enum": ["Gap"] }
+            },
+            "required": ["tag", "contents"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "contents": { "type": "string" },
+              "tag": { "type": "string", "enum": ["String"] }
+            },
+            "required": ["tag", "contents"]
+          }
+        ],
+        "type": "object",
+        "description": "A token in a string with gaps"
+      },
+      "ExerciseSolution_DefinitionExampleExercise": {
+        "type": "object",
+        "properties": {
+          "exercise": { "type": "integer" },
+          "input": { "type": "string" }
+        },
+        "example": { "exercise": 0, "input": "straks" },
+        "required": ["exercise", "input"],
+        "description": "A user's solution to an exercise, text input"
+      },
+      "DefinitionExerciseStats_DefinitionExampleExercise": {
+        "type": "object",
+        "properties": {
+          "correct": {
+            "maximum": 9223372036854775807,
+            "type": "integer",
+            "minimum": -9223372036854775808
+          },
+          "id": { "type": "integer" },
+          "incorrect": {
+            "maximum": 9223372036854775807,
+            "type": "integer",
+            "minimum": -9223372036854775808
+          },
+          "definition": {
+            "$ref": "#/components/schemas/DefinitionContentItem"
+          },
+          "difficultyScore": { "format": "double", "type": "number" }
+        },
+        "required": [
+          "id",
+          "definition",
+          "difficultyScore",
+          "correct",
+          "incorrect"
+        ],
+        "description": "Solution and difficulty statistics for a definition-based exercise"
+      },
+      "UserStatisticsR": {
+        "type": "object",
+        "properties": {
+          "apiKey": { "$ref": "#/components/schemas/UUID" },
+          "languages": {
+            "items": { "$ref": "#/components/schemas/Language" },
+            "type": "array"
+          }
+        },
+        "required": ["apiKey", "languages"],
+        "description": "User statistics"
+      }
     }
   }
 }
