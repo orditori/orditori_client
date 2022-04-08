@@ -1131,7 +1131,7 @@ class DefinitionExercise extends StatelessWidget {
               ),
             ),
           ),
-          ExerciseControls(exerciesId: exercise.id!),
+          ExerciseControls(exercise: exercise),
         ],
       ),
     );
@@ -1141,9 +1141,11 @@ class DefinitionExercise extends StatelessWidget {
 final fn = FocusNode();
 
 class ExerciseControls extends StatefulWidget {
-  final int exerciesId;
-  const ExerciseControls({Key? key, required this.exerciesId})
-      : super(key: key);
+  final DefinitionExerciseR exercise;
+  const ExerciseControls({
+    Key? key,
+    required this.exercise,
+  }) : super(key: key);
 
   @override
   _ExerciseControlsState createState() => _ExerciseControlsState();
@@ -1169,13 +1171,41 @@ class IncorrectResult extends SolutionCheckResult {
   IncorrectResult(this.value);
 }
 
+typedef ExerciseOptionCallback = void Function(String option);
+
+class ExerciseOptions extends StatelessWidget {
+  final List<String> options;
+  final ExerciseOptionCallback onOptionSelect;
+  const ExerciseOptions({
+    Key? key,
+    required this.options,
+    required this.onOptionSelect,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ...options.map(
+          (option) => OutlinedButton(
+            onPressed: () => onOptionSelect(option),
+            child: Text(option),
+          ),
+        )
+      ],
+    );
+  }
+}
+
 class _ExerciseControlsState extends State<ExerciseControls> {
   final ctrl = TextEditingController();
   SolutionCheckResult? result = null;
+  late final showOptions = widget.exercise.difficultyScore! > 0.4;
 
   @override
   void didUpdateWidget(covariant ExerciseControls oldWidget) {
-    if (oldWidget.exerciesId != widget.exerciesId) {
+    if (oldWidget.exercise.id != widget.exercise.id) {
       ctrl.clear();
       result = null;
     }
@@ -1183,11 +1213,11 @@ class _ExerciseControlsState extends State<ExerciseControls> {
     super.didUpdateWidget(oldWidget);
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(String answer) async {
     if (result == null) {
       final solution = ExerciseSolutionDefinitionExercise(
-        exercise: widget.exerciesId,
-        input: ctrl.text,
+        exercise: widget.exercise.id,
+        input: answer,
       );
 
       final url =
@@ -1219,18 +1249,24 @@ class _ExerciseControlsState extends State<ExerciseControls> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextField(
-          focusNode: fn,
-          autocorrect: false,
-          controller: ctrl,
-          decoration: InputDecoration(
-            hintText: 'Answer',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+        if (showOptions)
+          ExerciseOptions(
+            options: widget.exercise.options!,
+            onOptionSelect: _submit,
+          )
+        else
+          TextField(
+            focusNode: fn,
+            autocorrect: false,
+            controller: ctrl,
+            decoration: InputDecoration(
+              hintText: 'Answer',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
+            onSubmitted: _submit,
           ),
-          onSubmitted: (_) => _submit(),
-        ),
         SizedBox(height: 16),
         Container(
           height: 60,
@@ -1238,7 +1274,7 @@ class _ExerciseControlsState extends State<ExerciseControls> {
         ),
         SizedBox(height: 16),
         ElevatedButton(
-          onPressed: _submit,
+          onPressed: () => _submit(ctrl.text),
           child: ValueListenableBuilder<TextEditingValue>(
             valueListenable: ctrl,
             builder: (_, value, __) {

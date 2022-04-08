@@ -225,6 +225,10 @@ DefinitionExerciseR _$DefinitionExerciseRFromJson(Map<String, dynamic> json) =>
       id: json['id'] as int?,
       definition: json['definition'] as String?,
       difficultyScore: (json['difficultyScore'] as num?)?.toDouble(),
+      options: (json['options'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
     );
 
 Map<String, dynamic> _$DefinitionExerciseRToJson(
@@ -234,6 +238,7 @@ Map<String, dynamic> _$DefinitionExerciseRToJson(
       'id': instance.id,
       'definition': instance.definition,
       'difficultyScore': instance.difficultyScore,
+      'options': instance.options,
     };
 
 SolutionCheckResult _$SolutionCheckResultFromJson(Map<String, dynamic> json) =>

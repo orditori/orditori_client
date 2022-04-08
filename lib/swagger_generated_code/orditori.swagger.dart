@@ -966,6 +966,7 @@ class DefinitionExerciseR {
     this.id,
     this.definition,
     this.difficultyScore,
+    this.options,
   });
 
   factory DefinitionExerciseR.fromJson(Map<String, dynamic> json) =>
@@ -979,6 +980,8 @@ class DefinitionExerciseR {
   final String? definition;
   @JsonKey(name: 'difficultyScore')
   final double? difficultyScore;
+  @JsonKey(name: 'options', defaultValue: <String>[])
+  final List<String>? options;
   static const fromJsonFactory = _$DefinitionExerciseRFromJson;
   static const toJsonFactory = _$DefinitionExerciseRToJson;
   Map<String, dynamic> toJson() => _$DefinitionExerciseRToJson(this);
@@ -997,7 +1000,9 @@ class DefinitionExerciseR {
                     .equals(other.definition, definition)) &&
             (identical(other.difficultyScore, difficultyScore) ||
                 const DeepCollectionEquality()
-                    .equals(other.difficultyScore, difficultyScore)));
+                    .equals(other.difficultyScore, difficultyScore)) &&
+            (identical(other.options, options) ||
+                const DeepCollectionEquality().equals(other.options, options)));
   }
 
   @override
@@ -1006,6 +1011,7 @@ class DefinitionExerciseR {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(difficultyScore) ^
+      const DeepCollectionEquality().hash(options) ^
       runtimeType.hashCode;
 }
 
@@ -1014,12 +1020,14 @@ extension $DefinitionExerciseRExtension on DefinitionExerciseR {
       {Language? language,
       int? id,
       String? definition,
-      double? difficultyScore}) {
+      double? difficultyScore,
+      List<String>? options}) {
     return DefinitionExerciseR(
         language: language ?? this.language,
         id: id ?? this.id,
         definition: definition ?? this.definition,
-        difficultyScore: difficultyScore ?? this.difficultyScore);
+        difficultyScore: difficultyScore ?? this.difficultyScore,
+        options: options ?? this.options);
   }
 }
 
