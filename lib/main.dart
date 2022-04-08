@@ -775,6 +775,10 @@ class _SearchState extends State<Search> {
   final ctrl = TextEditingController();
 
   Future<void> _search() async {
+    if (ctrl.text.isEmpty) {
+      return;
+    }
+
     setState(() {
       isSearching = true;
       items = [];
