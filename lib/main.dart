@@ -589,10 +589,18 @@ class DefinitionTile extends StatelessWidget {
     return ListTile(
       leading: leading,
       title: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Chip(label: Text(def.language!.code!)),
           const SizedBox(width: 8),
-          SelectableText(def.word!)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 14.0),
+              child: SelectableText(
+                def.word!,
+              ),
+            ),
+          )
         ],
       ),
       subtitle: Padding(
