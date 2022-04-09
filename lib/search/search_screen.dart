@@ -1,9 +1,11 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
+import 'package:orditori/framework.dart';
+import 'package:orditori/search/search_bar.dart';
+import 'package:orditori/search/search_button.dart';
 import 'package:orditori/services.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 import 'package:orditori/widgets/async_widget.dart';
-import 'package:orditori/widgets/loading_indicator.dart';
 
 import 'search_results.dart';
 
@@ -23,21 +25,23 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   bool hasResult = false;
-  bool isSearching = false;
   List<DefinitionsWithSource> items = [];
   String? error;
   NotebookEntryR? entry;
   Set<String> defsSet = {};
 
-  final ctrl = TextEditingController();
+  final query = LateReceive<TextEditingValue>();
+  final searchStatus = LateReceive<Status>(initialValue: const StatusUnknown());
+  late final submit = Broadcast.callback(onSubmit);
 
-  Future<void> _search() async {
-    if (ctrl.text.isEmpty) {
+  Stream<Status> _search(String query) async* {
+    if (query.isEmpty) {
       return;
     }
 
+    yield const StatusInProgress();
+
     setState(() {
-      isSearching = true;
       items = [];
       error = null;
       hasResult = false;
@@ -46,16 +50,16 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     try {
-      final res = await client.definitionsGet(query: ctrl.text);
+      final res = await client.definitionsGet(query: query);
+      bool ok = false;
 
       setState(() {
         items = res.body!;
         hasResult = true;
-        isSearching = false;
 
         try {
           entry = widget.entries.firstWhere(
-            (element) => element.definitions!.first.word == ctrl.text,
+            (element) => element.definitions!.first.word == query,
           );
 
           _buildDefinitionsMap();
@@ -63,11 +67,17 @@ class _SearchScreenState extends State<SearchScreen> {
           entry = null;
           defsSet = {};
         }
+
+        ok = true;
       });
+
+      if (ok) {
+        yield const StatusOk();
+      }
     } catch (err) {
+      yield StatusError(err);
       setState(() {
         error = err.toString();
-        isSearching = false;
         entry = null;
         defsSet = {};
       });
@@ -140,11 +150,14 @@ class _SearchScreenState extends State<SearchScreen> {
     } catch (err) {
       setState(() {
         error = err.toString();
-        isSearching = false;
         entry = null;
         defsSet = {};
       });
     }
+  }
+
+  void onSubmit(String query) {
+    searchStatus.bindStream(_search(query), const StatusUnknown());
   }
 
   @override
@@ -154,68 +167,25 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0).copyWith(top: 0),
-              child: Row(
-                children: [
-                  BackButton(),
-                  Expanded(
-                    child: TextField(
-                      controller: ctrl,
-                      autofocus: true,
-                      onSubmitted: (_) => _search(),
-                      decoration: InputDecoration(hintText: 'Search'),
-                    ),
-                  ),
-                  ValueListenableBuilder<TextEditingValue>(
-                    valueListenable: ctrl,
-                    builder: (context, value, _) {
-                      return AnimatedOpacity(
-                        opacity: value.text.isEmpty ? 0 : 1,
-                        duration: const Duration(milliseconds: 200),
-                        child: TextButton(
-                          child: Text('Clear'),
-                          onPressed: () {
-                            ctrl.clear();
-                          },
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
+            SearchBar(
+              query: query,
+              querySubmit: submit,
             ),
             Expanded(
               child: SearchResults(
                 items: items,
-                query: ctrl.text,
+                query: query,
                 definitionsSet: defsSet,
                 error: error,
                 hasResult: hasResult,
                 onAdd: _addDefinition,
               ),
             ),
-            ValueListenableBuilder<TextEditingValue>(
-              valueListenable: ctrl,
-              builder: (context, value, _) {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: value.text.isEmpty ? null : _search,
-                    child: SizedBox(
-                      height: 16,
-                      width: isSearching ? 16 : null,
-                      child: isSearching
-                          ? const LoadingIndicator(
-                              color: Colors.white,
-                              strokeWidth: 1,
-                            )
-                          : const Text('Search'),
-                    ),
-                  ),
-                );
-              },
-            )
+            SearchButton(
+              query: query,
+              searchStatus: searchStatus,
+              submit: submit,
+            ),
           ],
         ),
       ),

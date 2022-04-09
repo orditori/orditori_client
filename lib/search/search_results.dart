@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orditori/framework.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 import 'definition_tile.dart';
@@ -6,7 +7,7 @@ import 'definition_tile.dart';
 class SearchResults extends StatelessWidget {
   final String? error;
   final bool hasResult;
-  final String query;
+  final Receive<TextEditingValue> query;
   final Set<String> definitionsSet;
   final List<DefinitionsWithSource> items;
   final void Function(Definition def, int sourceId, String link) onAdd;
@@ -80,7 +81,7 @@ class SearchResults extends StatelessWidget {
 
     if (hasResult && items.every((element) => element.definitions!.isEmpty)) {
       return Center(
-        child: Text('Nothing found for "$query"'),
+        child: Text('Nothing found for "${query.read().text}"'),
       );
     }
 
