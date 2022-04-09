@@ -1,6 +1,6 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
-import 'package:orditori/framework.dart';
+import 'package:flutter_fm/flutter_fm.dart';
 import 'package:orditori/search/search_bar.dart';
 import 'package:orditori/search/search_button.dart';
 import 'package:orditori/services.dart';
@@ -31,11 +31,9 @@ class _SearchScreenState extends State<SearchScreen> {
   Set<String> defsSet = {};
 
   final query = LateReceive<TextEditingValue>();
+  late final text = query.map((data) => data.text);
 
-  late final submit = Broadcast.callback((String query) {
-    final statusStream = _search(query);
-    return Status.fromStream(statusStream);
-  });
+  late final submit = Broadcast.statusStreamGenerator(_search, text);
 
   Stream<Status<List<DefinitionsWithSource>>> _search(String query) async* {
     if (query.isEmpty) {

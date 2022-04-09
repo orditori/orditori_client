@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:orditori/framework.dart';
+import 'package:flutter_fm/flutter_fm.dart';
 
 class SearchBar<T> extends StatelessWidget with Init<TextEditingController> {
   final Broadcast<String, T> querySubmit;
