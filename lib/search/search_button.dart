@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:orditori/framework.dart';
 import 'package:orditori/widgets/loading_indicator.dart';
 
-class SearchButton extends StatelessWidget {
+class SearchButton<T> extends StatelessWidget {
   final Receive<TextEditingValue> query;
-  final Receive<Status> searchStatus;
-  final Broadcast<String> submit;
+  final Broadcast<String, T> submit;
 
   const SearchButton({
     Key? key,
     required this.query,
-    required this.searchStatus,
     required this.submit,
   }) : super(key: key);
 
@@ -26,11 +24,11 @@ class SearchButton extends StatelessWidget {
         receive: query,
         builder: (context) {
           return ElevatedButton(
-            onPressed: query.read().text.isEmpty ? null : onSubmit,
-            child: Receiver(
-              receive: searchStatus,
-              builder: (context) {
-                final isLoading = searchStatus.read() is StatusInProgress;
+            onPressed: query.read().text.isEmpty ? null : () => onSubmit,
+            child: StatusListener(
+              broadcast: submit,
+              builder: (context, status) {
+                final isLoading = status is StatusInProgress;
 
                 return SizedBox(
                   height: 16,

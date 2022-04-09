@@ -1,45 +1,84 @@
 import 'package:flutter/widgets.dart';
 
-abstract class Status {
+abstract class Status<T> {
   const Status();
+
+  factory Status.fromStream(Stream<Status<T>> stream) {
+    return _StatusStream<T>(stream);
+  }
 }
 
-class StatusUnknown implements Status {
+class StatusUnknown<T> implements Status<T> {
   const StatusUnknown();
 }
 
-class StatusOk implements Status {
-  const StatusOk();
+class StatusOk<T> implements Status<T> {
+  final T payload;
+  const StatusOk(this.payload);
 }
 
-class StatusError implements Status {
+class StatusError<T> implements Status<T> {
   final Object? error;
   const StatusError(this.error);
 }
 
-class StatusInProgress implements Status {
+class StatusInProgress<T> implements Status<T> {
   const StatusInProgress();
 }
 
-abstract class Broadcast<T> {
-  const Broadcast();
-  Status write(T data);
+class _StatusStream<T> implements Status<T> {
+  final Stream<Status<T>> stream;
+  final Status<T> initialValue;
+  const _StatusStream(this.stream, [this.initialValue = const StatusUnknown()]);
+}
 
-  factory Broadcast.callback(BroadcastCallback<T> callback) {
+abstract class Broadcast<T, K> {
+  const Broadcast();
+  Status<K> write(T data);
+
+  factory Broadcast.callback(BroadcastCallback<T, K> callback) {
     return _CallbackBroadcast(callback);
   }
 }
 
-typedef BroadcastCallback<T> = void Function(T data);
+abstract class _Broadcast<T, K> extends Broadcast<T, K> {
+  late final ValueNotifier<Status<K>> _statusNotifier;
+  bool _initialized = false;
 
-class _CallbackBroadcast<T> extends Broadcast<T> {
-  final BroadcastCallback<T> _callback;
-  _CallbackBroadcast(BroadcastCallback<T> callback) : _callback = callback;
+  void notifyStatusListeners(Status<K> status) {
+    if (!_initialized) {
+      _initialized = true;
+      _statusNotifier = ValueNotifier(status);
+    } else {
+      _statusNotifier.value = status;
+    }
+  }
+
+  void addStatusListener(VoidCallback callback) {
+    if (!_initialized) {
+      _statusNotifier = ValueNotifier(StatusUnknown<K>());
+      _initialized = true;
+    }
+
+    _statusNotifier.addListener(callback);
+  }
+
+  void removeStatusListener(VoidCallback callback) {
+    _statusNotifier.removeListener(callback);
+  }
+}
+
+typedef BroadcastCallback<T, K> = Status<K> Function(T data);
+
+class _CallbackBroadcast<T, K> extends _Broadcast<T, K> {
+  final BroadcastCallback<T, K> _callback;
+  _CallbackBroadcast(BroadcastCallback<T, K> callback) : _callback = callback;
 
   @override
-  Status write(data) {
-    _callback(data);
-    return StatusOk();
+  Status<K> write(data) {
+    final status = _callback(data);
+    notifyStatusListeners(status);
+    return status;
   }
 }
 
@@ -163,8 +202,6 @@ class _LateReceive<T> extends _Receive<T> implements LateReceive<T> {
 mixin Init<T> on StatelessWidget {
   T init();
 
-  static data() {}
-
   @override
   StatelessElement createElement() {
     return InitElement<T>(this);
@@ -242,5 +279,67 @@ class ReceiverElement<T> extends ComponentElement {
   @override
   Widget build() {
     return widget.builder(this);
+  }
+}
+
+typedef StatusListenerBuilder<T> = Widget Function(
+    BuildContext context, Status<T> status);
+
+class StatusListener<T, K> extends Widget {
+  final StatusListenerBuilder<K> builder;
+  final Broadcast<T, K> broadcast;
+
+  const StatusListener({
+    Key? key,
+    required this.builder,
+    required this.broadcast,
+  }) : super(key: key);
+
+  @override
+  Element createElement() {
+    return StatusListenerElement<T, K>(this);
+  }
+}
+
+class StatusListenerElement<T, K> extends ComponentElement {
+  StatusListenerElement(StatusListener<T, K> widget) : super(widget);
+
+  StatusListener<T, K> get widget => super.widget as StatusListener<T, K>;
+  _Broadcast<T, K> get broadcast => widget.broadcast as _Broadcast<T, K>;
+  Status<K> get status => broadcast._initialized
+      ? broadcast._statusNotifier.value
+      : StatusUnknown();
+
+  void _onStatusReceived() {
+    markNeedsBuild();
+  }
+
+  @override
+  void mount(Element? parent, Object? newSlot) {
+    broadcast.addStatusListener(_onStatusReceived);
+    super.mount(parent, newSlot);
+  }
+
+  @override
+  void unmount() {
+    broadcast.removeStatusListener(_onStatusReceived);
+    super.unmount();
+  }
+
+  @override
+  Widget build() {
+    if (status is _StatusStream<K>) {
+      final _status = status as _StatusStream<K>;
+
+      return StreamBuilder<Status<K>>(
+        stream: _status.stream,
+        initialData: _status.initialValue,
+        builder: (context, snapshot) {
+          return widget.builder(context, snapshot.requireData);
+        },
+      );
+    }
+
+    return widget.builder(this, status);
   }
 }

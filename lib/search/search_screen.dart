@@ -31,10 +31,13 @@ class _SearchScreenState extends State<SearchScreen> {
   Set<String> defsSet = {};
 
   final query = LateReceive<TextEditingValue>();
-  final searchStatus = LateReceive<Status>(initialValue: const StatusUnknown());
-  late final submit = Broadcast.callback(onSubmit);
 
-  Stream<Status> _search(String query) async* {
+  late final submit = Broadcast.callback((String query) {
+    final statusStream = _search(query);
+    return Status.fromStream(statusStream);
+  });
+
+  Stream<Status<List<DefinitionsWithSource>>> _search(String query) async* {
     if (query.isEmpty) {
       return;
     }
@@ -72,7 +75,7 @@ class _SearchScreenState extends State<SearchScreen> {
       });
 
       if (ok) {
-        yield const StatusOk();
+        yield StatusOk(items);
       }
     } catch (err) {
       yield StatusError(err);
@@ -156,10 +159,6 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  void onSubmit(String query) {
-    searchStatus.bindStream(_search(query), const StatusUnknown());
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,7 +182,6 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             SearchButton(
               query: query,
-              searchStatus: searchStatus,
               submit: submit,
             ),
           ],

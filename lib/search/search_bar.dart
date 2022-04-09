@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orditori/framework.dart';
 
-class SearchBar extends StatelessWidget with Init<TextEditingController> {
-  final Broadcast<String> querySubmit;
+class SearchBar<T> extends StatelessWidget with Init<TextEditingController> {
+  final Broadcast<String, T> querySubmit;
   final LateReceive<TextEditingValue> query;
 
   const SearchBar({
