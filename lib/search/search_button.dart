@@ -24,7 +24,7 @@ class SearchButton<T> extends StatelessWidget {
         receive: query,
         builder: (context) {
           return ElevatedButton(
-            onPressed: query.read().text.isEmpty ? null : () => onSubmit,
+            onPressed: query.read().text.isEmpty ? null : onSubmit,
             child: StatusListener(
               broadcast: submit,
               builder: (context, status) {
