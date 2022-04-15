@@ -29,13 +29,14 @@ class ExerciseControls extends StatefulWidget {
 class _ExerciseControlsState extends State<ExerciseControls> {
   final ctrl = TextEditingController();
   SolutionCheckResult? result = null;
-  late final showOptions = widget.exercise.difficultyScore! > 0.4;
+  late bool showOptions = widget.exercise.difficultyScore! > 0.4;
 
   @override
   void didUpdateWidget(covariant ExerciseControls oldWidget) {
     if (oldWidget.exercise.id != widget.exercise.id) {
       ctrl.clear();
       result = null;
+      showOptions = widget.exercise.difficultyScore! > 0.4;
     }
 
     super.didUpdateWidget(oldWidget);
