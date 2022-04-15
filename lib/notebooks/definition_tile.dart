@@ -3,36 +3,47 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 class DefinitionTile extends StatelessWidget {
   final DefinitionContentItemR def;
-  final Widget? leading;
+  final Widget leading;
 
   const DefinitionTile({
     Key? key,
     required this.def,
-    this.leading,
+    required this.leading,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: leading,
-      title: Row(
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: 4.0, right: 16.0),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 7.0),
+            child: leading,
+          ),
           Chip(label: Text(def.language!.code!)),
           const SizedBox(width: 8),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 14.0),
-              child: SelectableText(
-                def.word!,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  child: SelectableText(
+                    def.word!,
+                    style: textTheme.titleSmall,
+                  ),
+                ),
+                SelectableText(
+                  def.definition!,
+                  style: textTheme.caption,
+                )
+              ],
             ),
-          )
+          ),
         ],
-      ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(left: 60.0),
-        child: SelectableText(def.definition!),
       ),
     );
   }
