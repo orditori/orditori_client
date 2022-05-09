@@ -52,6 +52,7 @@ DefinitionContentItemR _$DefinitionContentItemRFromJson(
       id: json['id'] as int?,
       sourceLink: json['sourceLink'] as String?,
       definitionSource: json['definitionSource'] as int?,
+      partOfSpeech: partOfSpeechFromJson(json['partOfSpeech']),
       word: json['word'] as String?,
       definition: json['definition'] as String?,
       examples: (json['examples'] as List<dynamic>?)
@@ -68,6 +69,7 @@ Map<String, dynamic> _$DefinitionContentItemRToJson(
       'id': instance.id,
       'sourceLink': instance.sourceLink,
       'definitionSource': instance.definitionSource,
+      'partOfSpeech': partOfSpeechToJson(instance.partOfSpeech),
       'word': instance.word,
       'definition': instance.definition,
       'examples': instance.examples?.map((e) => e.toJson()).toList(),
@@ -136,6 +138,7 @@ Definition _$DefinitionFromJson(Map<String, dynamic> json) => Definition(
           ? null
           : Language.fromJson(json['language'] as Map<String, dynamic>),
       sourceLink: json['sourceLink'] as String?,
+      partOfSpeech: partOfSpeechFromJson(json['partOfSpeech']),
       word: json['word'] as String?,
       definition: json['definition'] as String?,
       examples: (json['examples'] as List<dynamic>?)
@@ -148,6 +151,7 @@ Map<String, dynamic> _$DefinitionToJson(Definition instance) =>
     <String, dynamic>{
       'language': instance.language?.toJson(),
       'sourceLink': instance.sourceLink,
+      'partOfSpeech': partOfSpeechToJson(instance.partOfSpeech),
       'word': instance.word,
       'definition': instance.definition,
       'examples': instance.examples?.map((e) => e.toJson()).toList(),
@@ -201,6 +205,7 @@ DefinitionContentItemW _$DefinitionContentItemWFromJson(
           : Language.fromJson(json['language'] as Map<String, dynamic>),
       sourceLink: json['sourceLink'] as String?,
       definitionSource: json['definitionSource'] as int?,
+      partOfSpeech: partOfSpeechFromJson(json['partOfSpeech']),
       word: json['word'] as String?,
       definition: json['definition'] as String?,
       entry: json['entry'] as int?,
@@ -212,6 +217,7 @@ Map<String, dynamic> _$DefinitionContentItemWToJson(
       'language': instance.language?.toJson(),
       'sourceLink': instance.sourceLink,
       'definitionSource': instance.definitionSource,
+      'partOfSpeech': partOfSpeechToJson(instance.partOfSpeech),
       'word': instance.word,
       'definition': instance.definition,
       'entry': instance.entry,
@@ -311,6 +317,7 @@ DefinitionContentItem _$DefinitionContentItemFromJson(
       id: json['id'] as int?,
       sourceLink: json['sourceLink'] as String?,
       definitionSource: json['definitionSource'] as int?,
+      partOfSpeech: partOfSpeechFromJson(json['partOfSpeech']),
       word: json['word'] as String?,
       definition: json['definition'] as String?,
       entry: json['entry'] as int?,
@@ -323,6 +330,7 @@ Map<String, dynamic> _$DefinitionContentItemToJson(
       'id': instance.id,
       'sourceLink': instance.sourceLink,
       'definitionSource': instance.definitionSource,
+      'partOfSpeech': partOfSpeechToJson(instance.partOfSpeech),
       'word': instance.word,
       'definition': instance.definition,
       'entry': instance.entry,

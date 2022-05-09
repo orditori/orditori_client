@@ -4,6 +4,8 @@ import 'package:collection/collection.dart';
 import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'package:chopper/chopper.dart' as chopper;
+import 'orditori.enums.swagger.dart' as enums;
+export 'orditori.enums.swagger.dart';
 
 part 'orditori.swagger.chopper.dart';
 part 'orditori.swagger.g.dart';
@@ -373,6 +375,7 @@ class DefinitionContentItemR {
     this.id,
     this.sourceLink,
     this.definitionSource,
+    this.partOfSpeech,
     this.word,
     this.definition,
     this.examples,
@@ -389,6 +392,11 @@ class DefinitionContentItemR {
   final String? sourceLink;
   @JsonKey(name: 'definitionSource')
   final int? definitionSource;
+  @JsonKey(
+      name: 'partOfSpeech',
+      toJson: partOfSpeechToJson,
+      fromJson: partOfSpeechFromJson)
+  final enums.PartOfSpeech? partOfSpeech;
   @JsonKey(name: 'word')
   final String? word;
   @JsonKey(name: 'definition')
@@ -414,6 +422,9 @@ class DefinitionContentItemR {
             (identical(other.definitionSource, definitionSource) ||
                 const DeepCollectionEquality()
                     .equals(other.definitionSource, definitionSource)) &&
+            (identical(other.partOfSpeech, partOfSpeech) ||
+                const DeepCollectionEquality()
+                    .equals(other.partOfSpeech, partOfSpeech)) &&
             (identical(other.word, word) ||
                 const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.definition, definition) ||
@@ -430,6 +441,7 @@ class DefinitionContentItemR {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(sourceLink) ^
       const DeepCollectionEquality().hash(definitionSource) ^
+      const DeepCollectionEquality().hash(partOfSpeech) ^
       const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(examples) ^
@@ -442,6 +454,7 @@ extension $DefinitionContentItemRExtension on DefinitionContentItemR {
       int? id,
       String? sourceLink,
       int? definitionSource,
+      enums.PartOfSpeech? partOfSpeech,
       String? word,
       String? definition,
       List<DefinitionExample>? examples}) {
@@ -450,6 +463,7 @@ extension $DefinitionContentItemRExtension on DefinitionContentItemR {
         id: id ?? this.id,
         sourceLink: sourceLink ?? this.sourceLink,
         definitionSource: definitionSource ?? this.definitionSource,
+        partOfSpeech: partOfSpeech ?? this.partOfSpeech,
         word: word ?? this.word,
         definition: definition ?? this.definition,
         examples: examples ?? this.examples);
@@ -653,6 +667,7 @@ class Definition {
   Definition({
     this.language,
     this.sourceLink,
+    this.partOfSpeech,
     this.word,
     this.definition,
     this.examples,
@@ -665,6 +680,11 @@ class Definition {
   final Language? language;
   @JsonKey(name: 'sourceLink')
   final String? sourceLink;
+  @JsonKey(
+      name: 'partOfSpeech',
+      toJson: partOfSpeechToJson,
+      fromJson: partOfSpeechFromJson)
+  final enums.PartOfSpeech? partOfSpeech;
   @JsonKey(name: 'word')
   final String? word;
   @JsonKey(name: 'definition')
@@ -685,6 +705,9 @@ class Definition {
             (identical(other.sourceLink, sourceLink) ||
                 const DeepCollectionEquality()
                     .equals(other.sourceLink, sourceLink)) &&
+            (identical(other.partOfSpeech, partOfSpeech) ||
+                const DeepCollectionEquality()
+                    .equals(other.partOfSpeech, partOfSpeech)) &&
             (identical(other.word, word) ||
                 const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.definition, definition) ||
@@ -699,6 +722,7 @@ class Definition {
   int get hashCode =>
       const DeepCollectionEquality().hash(language) ^
       const DeepCollectionEquality().hash(sourceLink) ^
+      const DeepCollectionEquality().hash(partOfSpeech) ^
       const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(examples) ^
@@ -709,12 +733,14 @@ extension $DefinitionExtension on Definition {
   Definition copyWith(
       {Language? language,
       String? sourceLink,
+      enums.PartOfSpeech? partOfSpeech,
       String? word,
       String? definition,
       List<Example>? examples}) {
     return Definition(
         language: language ?? this.language,
         sourceLink: sourceLink ?? this.sourceLink,
+        partOfSpeech: partOfSpeech ?? this.partOfSpeech,
         word: word ?? this.word,
         definition: definition ?? this.definition,
         examples: examples ?? this.examples);
@@ -884,6 +910,7 @@ class DefinitionContentItemW {
     this.language,
     this.sourceLink,
     this.definitionSource,
+    this.partOfSpeech,
     this.word,
     this.definition,
     this.entry,
@@ -898,6 +925,11 @@ class DefinitionContentItemW {
   final String? sourceLink;
   @JsonKey(name: 'definitionSource')
   final int? definitionSource;
+  @JsonKey(
+      name: 'partOfSpeech',
+      toJson: partOfSpeechToJson,
+      fromJson: partOfSpeechFromJson)
+  final enums.PartOfSpeech? partOfSpeech;
   @JsonKey(name: 'word')
   final String? word;
   @JsonKey(name: 'definition')
@@ -921,6 +953,9 @@ class DefinitionContentItemW {
             (identical(other.definitionSource, definitionSource) ||
                 const DeepCollectionEquality()
                     .equals(other.definitionSource, definitionSource)) &&
+            (identical(other.partOfSpeech, partOfSpeech) ||
+                const DeepCollectionEquality()
+                    .equals(other.partOfSpeech, partOfSpeech)) &&
             (identical(other.word, word) ||
                 const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.definition, definition) ||
@@ -935,6 +970,7 @@ class DefinitionContentItemW {
       const DeepCollectionEquality().hash(language) ^
       const DeepCollectionEquality().hash(sourceLink) ^
       const DeepCollectionEquality().hash(definitionSource) ^
+      const DeepCollectionEquality().hash(partOfSpeech) ^
       const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(entry) ^
@@ -946,6 +982,7 @@ extension $DefinitionContentItemWExtension on DefinitionContentItemW {
       {Language? language,
       String? sourceLink,
       int? definitionSource,
+      enums.PartOfSpeech? partOfSpeech,
       String? word,
       String? definition,
       int? entry}) {
@@ -953,6 +990,7 @@ extension $DefinitionContentItemWExtension on DefinitionContentItemW {
         language: language ?? this.language,
         sourceLink: sourceLink ?? this.sourceLink,
         definitionSource: definitionSource ?? this.definitionSource,
+        partOfSpeech: partOfSpeech ?? this.partOfSpeech,
         word: word ?? this.word,
         definition: definition ?? this.definition,
         entry: entry ?? this.entry);
@@ -1235,6 +1273,7 @@ class DefinitionContentItem {
     this.id,
     this.sourceLink,
     this.definitionSource,
+    this.partOfSpeech,
     this.word,
     this.definition,
     this.entry,
@@ -1251,6 +1290,11 @@ class DefinitionContentItem {
   final String? sourceLink;
   @JsonKey(name: 'definitionSource')
   final int? definitionSource;
+  @JsonKey(
+      name: 'partOfSpeech',
+      toJson: partOfSpeechToJson,
+      fromJson: partOfSpeechFromJson)
+  final enums.PartOfSpeech? partOfSpeech;
   @JsonKey(name: 'word')
   final String? word;
   @JsonKey(name: 'definition')
@@ -1276,6 +1320,9 @@ class DefinitionContentItem {
             (identical(other.definitionSource, definitionSource) ||
                 const DeepCollectionEquality()
                     .equals(other.definitionSource, definitionSource)) &&
+            (identical(other.partOfSpeech, partOfSpeech) ||
+                const DeepCollectionEquality()
+                    .equals(other.partOfSpeech, partOfSpeech)) &&
             (identical(other.word, word) ||
                 const DeepCollectionEquality().equals(other.word, word)) &&
             (identical(other.definition, definition) ||
@@ -1291,6 +1338,7 @@ class DefinitionContentItem {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(sourceLink) ^
       const DeepCollectionEquality().hash(definitionSource) ^
+      const DeepCollectionEquality().hash(partOfSpeech) ^
       const DeepCollectionEquality().hash(word) ^
       const DeepCollectionEquality().hash(definition) ^
       const DeepCollectionEquality().hash(entry) ^
@@ -1303,6 +1351,7 @@ extension $DefinitionContentItemExtension on DefinitionContentItem {
       int? id,
       String? sourceLink,
       int? definitionSource,
+      enums.PartOfSpeech? partOfSpeech,
       String? word,
       String? definition,
       int? entry}) {
@@ -1311,6 +1360,7 @@ extension $DefinitionContentItemExtension on DefinitionContentItem {
         id: id ?? this.id,
         sourceLink: sourceLink ?? this.sourceLink,
         definitionSource: definitionSource ?? this.definitionSource,
+        partOfSpeech: partOfSpeech ?? this.partOfSpeech,
         word: word ?? this.word,
         definition: definition ?? this.definition,
         entry: entry ?? this.entry);
@@ -1573,6 +1623,49 @@ extension $UserStatisticsRExtension on UserStatisticsR {
     return UserStatisticsR(
         apiKey: apiKey ?? this.apiKey, languages: languages ?? this.languages);
   }
+}
+
+String? partOfSpeechToJson(enums.PartOfSpeech? partOfSpeech) {
+  return enums.$PartOfSpeechMap[partOfSpeech];
+}
+
+enums.PartOfSpeech partOfSpeechFromJson(Object? partOfSpeech) {
+  if (partOfSpeech is int) {
+    return enums.$PartOfSpeechMap.entries
+        .firstWhere(
+            (element) => element.value.toLowerCase() == partOfSpeech.toString(),
+            orElse: () =>
+                const MapEntry(enums.PartOfSpeech.swaggerGeneratedUnknown, ''))
+        .key;
+  }
+
+  if (partOfSpeech is String) {
+    return enums.$PartOfSpeechMap.entries
+        .firstWhere(
+            (element) =>
+                element.value.toLowerCase() == partOfSpeech.toLowerCase(),
+            orElse: () =>
+                const MapEntry(enums.PartOfSpeech.swaggerGeneratedUnknown, ''))
+        .key;
+  }
+
+  return enums.PartOfSpeech.swaggerGeneratedUnknown;
+}
+
+List<String> partOfSpeechListToJson(List<enums.PartOfSpeech>? partOfSpeech) {
+  if (partOfSpeech == null) {
+    return [];
+  }
+
+  return partOfSpeech.map((e) => enums.$PartOfSpeechMap[e]!).toList();
+}
+
+List<enums.PartOfSpeech> partOfSpeechListFromJson(List? partOfSpeech) {
+  if (partOfSpeech == null) {
+    return [];
+  }
+
+  return partOfSpeech.map((e) => partOfSpeechFromJson(e.toString())).toList();
 }
 
 typedef $JsonFactory<T> = T Function(Map<String, dynamic> json);
