@@ -573,6 +573,9 @@
             "type": "integer",
             "minimum": -9223372036854775808
           },
+          "partOfSpeech": {
+            "$ref": "#/components/schemas/PartOfSpeech"
+          },
           "word": {
             "type": "string"
           },
@@ -596,6 +599,20 @@
           "examples"
         ],
         "description": "A notebook entry definition item"
+      },
+      "PartOfSpeech": {
+        "type": "string",
+        "enum": [
+          "Noun",
+          "Verb",
+          "Adjective",
+          "Adverb",
+          "Pronoun",
+          "Preposition",
+          "Conjunction",
+          "Interjection",
+          "Article"
+        ]
       },
       "Language": {
         "type": "object",
@@ -685,6 +702,9 @@
           },
           "sourceLink": {
             "type": "string"
+          },
+          "partOfSpeech": {
+            "$ref": "#/components/schemas/PartOfSpeech"
           },
           "word": {
             "type": "string"
@@ -783,6 +803,9 @@
             "maximum": 9223372036854775807,
             "type": "integer",
             "minimum": -9223372036854775808
+          },
+          "partOfSpeech": {
+            "$ref": "#/components/schemas/PartOfSpeech"
           },
           "word": {
             "type": "string"
@@ -1040,6 +1063,9 @@
             "maximum": 9223372036854775807,
             "type": "integer",
             "minimum": -9223372036854775808
+          },
+          "partOfSpeech": {
+            "$ref": "#/components/schemas/PartOfSpeech"
           },
           "word": {
             "type": "string"

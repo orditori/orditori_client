@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
@@ -31,9 +32,22 @@ class DefinitionTile extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  child: SelectableText(
-                    def.word!,
-                    style: textTheme.titleSmall,
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      SelectableText(
+                        def.word!,
+                        style: textTheme.titleSmall,
+                      ),
+                      if (def.partOfSpeech != null &&
+                          def.partOfSpeech !=
+                              PartOfSpeech.swaggerGeneratedUnknown)
+                        Text(
+                          describeEnum(def.partOfSpeech!),
+                          style: textTheme.bodySmall!
+                              .copyWith(fontStyle: FontStyle.italic),
+                        )
+                    ],
                   ),
                 ),
                 SelectableText(
