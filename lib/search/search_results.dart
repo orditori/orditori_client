@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_fm/flutter_fm.dart';
+import 'package:orditori/framework.dart';
+
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 import 'definition_tile.dart';
