@@ -18,10 +18,15 @@ class ExerciseResult extends StatelessWidget {
     } else if (result is IncorrectResult) {
       child = Container(
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: Theme.of(context).colorScheme.error,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Center(child: Text((result as IncorrectResult).value)),
+        child: Center(
+          child: Text(
+            (result as IncorrectResult).value,
+            style: TextStyle(color: Theme.of(context).colorScheme.onError),
+          ),
+        ),
       );
     } else {
       child = Container(
@@ -29,7 +34,12 @@ class ExerciseResult extends StatelessWidget {
           color: Colors.green,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Center(child: Text('Correct!')),
+        child: Center(
+          child: Text(
+            'Correct!',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
       );
     }
 

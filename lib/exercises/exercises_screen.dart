@@ -7,7 +7,11 @@ import 'package:orditori/widgets/async_widget.dart';
 import 'definition_exercise.dart';
 
 class ExercisesScreen extends StatelessWidget {
-  const ExercisesScreen({Key? key}) : super(key: key);
+  final VoidCallback onExit;
+  const ExercisesScreen({
+    Key? key,
+    required this.onExit,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +35,21 @@ class ExercisesScreen extends StatelessWidget {
           AsyncWidget.reload<Response<DefinitionExerciseR>>();
           return const SizedBox();
         }
-        return DefinitionExercise(
-          key: ValueKey(value.body?.id),
-          exercise: value.body!,
+        return Stack(
+          children: [
+            DefinitionExercise(
+              key: ValueKey(value.body?.id),
+              exercise: value.body!,
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: onExit,
+              ),
+            ),
+          ],
         );
       },
     );

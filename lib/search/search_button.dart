@@ -35,10 +35,7 @@ class SearchButton<T> extends StatelessWidget {
                   height: 16,
                   width: isLoading ? 16 : null,
                   child: isLoading
-                      ? const LoadingIndicator(
-                          color: Colors.white,
-                          strokeWidth: 1,
-                        )
+                      ? const LoadingIndicator(strokeWidth: 1)
                       : const Text('Search'),
                 );
               },

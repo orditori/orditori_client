@@ -1,6 +1,7 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:orditori/framework.dart';
+import 'package:orditori/notebooks/notebooks_screen.dart';
 
 import 'package:orditori/search/search_bar.dart';
 import 'package:orditori/search/search_button.dart';
@@ -11,13 +12,10 @@ import 'package:orditori/widgets/async_widget.dart';
 import 'search_results.dart';
 
 class SearchScreen extends StatefulWidget {
-  final int notebookId;
-  final List<NotebookEntryR> entries;
-
+  final VoidCallback onExit;
   const SearchScreen({
     Key? key,
-    required this.entries,
-    required this.notebookId,
+    required this.onExit,
   }) : super(key: key);
 
   @override
@@ -60,7 +58,7 @@ class _SearchScreenState extends State<SearchScreen> {
         hasResult = true;
 
         try {
-          entry = widget.entries.firstWhere(
+          entry = Notebooks.widgetKey.currentState!.entries.firstWhere(
             (element) => element.definitions!.first.word == query,
           );
 
@@ -103,7 +101,7 @@ class _SearchScreenState extends State<SearchScreen> {
       apiKey: Auth.getToken(context),
       body: NotebookEntryW(
         addedDate: d,
-        notebook: widget.notebookId,
+        notebook: Notebooks.widgetKey.currentState!.notebookId,
       ),
     );
 
@@ -168,6 +166,7 @@ class _SearchScreenState extends State<SearchScreen> {
             SearchBar(
               query: query,
               querySubmit: submit,
+              onExit: widget.onExit,
             ),
             Expanded(
               child: SearchResults(

@@ -38,30 +38,29 @@ class App extends StatelessWidget {
       error: const SizedBox(),
       loading: const SizedBox(),
       builder: (context, value) {
-        SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness:
-                value == Brightness.dark ? Brightness.light : Brightness.dark,
-          ),
-        );
-
         return MaterialApp(
           title: 'Orditori',
           theme: ThemeData(
             brightness: value,
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all(padding),
-                shape: MaterialStateProperty.all(shape),
-              ),
+            useMaterial3: true,
+            colorSchemeSeed: Colors.blue,
+            chipTheme: ChipThemeData(
+              padding: const EdgeInsets.all(4.0),
             ),
             inputDecorationTheme: InputDecorationTheme(
               border: InputBorder.none,
             ),
             cardTheme: const CardTheme(shape: shape),
           ),
-          home: const Home(),
+          home: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarBrightness:
+                  value == Brightness.dark ? Brightness.dark : Brightness.light,
+              statusBarIconBrightness:
+                  value == Brightness.dark ? Brightness.dark : Brightness.light,
+            ),
+            child: const Home(),
+          ),
         );
       },
     );
@@ -119,61 +118,47 @@ class AppPages extends StatefulWidget {
 
 class _AppPagesState extends State<AppPages>
     with SingleTickerProviderStateMixin {
-  late int pageIndex = services.Auth.getToken(context).isEmpty ? 1 : 0;
+  late int pageIndex = 0;
 
-  late final ctrl = TabController(
-    initialIndex: pageIndex,
-    length: 3,
-    vsync: this,
-  )..addListener(onChange);
+  late final children = [
+    const Notebooks(),
+    SearchScreen(onExit: onExit),
+    ExercisesScreen(onExit: onExit),
+    const SettingsScreen(),
+  ];
 
-  onChange() {
+  void onExit() {
     setState(() {
-      pageIndex = ctrl.index;
+      pageIndex = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: TabBar(
-        controller: ctrl,
-        labelColor: Theme.of(context).colorScheme.secondary,
-        unselectedLabelColor: Theme.of(context).colorScheme.onSurface,
-        indicatorSize: TabBarIndicatorSize.label,
-        indicatorWeight: 1,
-        tabs: [
-          Tab(icon: Icon(Icons.book)),
-          Tab(icon: Icon(Icons.play_arrow_rounded)),
-          Tab(icon: Icon(Icons.settings)),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: pageIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            pageIndex = index;
+          });
+        },
+        destinations: [
+          NavigationDestination(icon: Icon(Icons.book), label: 'Notebook'),
+          NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
+          NavigationDestination(
+            icon: Icon(Icons.assignment),
+            label: 'Exercises',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
         ],
       ),
       body: SafeArea(
-        child: TabBarView(
-          controller: ctrl,
-          children: [
-            const Notebooks(),
-            const ExercisesScreen(),
-            const SettingsScreen(),
-          ],
-        ),
+        child: children[pageIndex],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-      floatingActionButton: pageIndex == 0
-          ? FloatingActionButton(
-              child: const Icon(Icons.search),
-              onPressed: () {
-                final r = MaterialPageRoute(
-                  builder: (context) => SearchScreen(
-                    notebookId: Notebooks.widgetKey.currentState!.notebookId,
-                    entries: Notebooks.widgetKey.currentState!.entries,
-                  ),
-                );
-
-                Navigator.of(context).push(r);
-              },
-            )
-          : null,
     );
   }
 }

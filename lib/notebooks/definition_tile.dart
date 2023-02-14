@@ -24,7 +24,10 @@ class DefinitionTile extends StatelessWidget {
             padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 7.0),
             child: leading,
           ),
-          Chip(label: Text(def.language!.code!)),
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Chip(label: Text(def.language!.code!)),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -35,24 +38,27 @@ class DefinitionTile extends StatelessWidget {
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      SelectableText(
+                      Text(
                         def.word!,
                         style: textTheme.titleSmall,
                       ),
                       if (def.partOfSpeech != null &&
                           def.partOfSpeech !=
                               PartOfSpeech.swaggerGeneratedUnknown)
-                        Text(
-                          describeEnum(def.partOfSpeech!),
-                          style: textTheme.bodySmall!
-                              .copyWith(fontStyle: FontStyle.italic),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            describeEnum(def.partOfSpeech!),
+                            style: textTheme.bodySmall!
+                                .copyWith(fontStyle: FontStyle.italic),
+                          ),
                         )
                     ],
                   ),
                 ),
-                SelectableText(
+                Text(
                   def.definition!,
-                  style: textTheme.caption,
+                  style: textTheme.bodySmall,
                 )
               ],
             ),

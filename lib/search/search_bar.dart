@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:orditori/framework.dart';
 
+final fn = FocusNode();
+
 class SearchBar<T> extends StatelessWidget with Init<TextEditingController> {
   final Broadcast<String, T> querySubmit;
   final LateReceive<TextEditingValue> query;
+  final VoidCallback onExit;
 
   const SearchBar({
     Key? key,
     required this.querySubmit,
     required this.query,
+    required this.onExit,
   }) : super(key: key);
 
   @override
@@ -20,36 +24,41 @@ class SearchBar<T> extends StatelessWidget with Init<TextEditingController> {
   Widget build(BuildContext context) {
     final ctrl = context.data(this);
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0).copyWith(top: 0),
-      child: Row(
-        children: [
-          BackButton(),
-          Expanded(
-            child: TextField(
-              controller: ctrl,
-              autofocus: true,
-              onSubmitted: (query) => querySubmit.write(query),
-              decoration: InputDecoration(hintText: 'Search'),
-            ),
+    return Row(
+      children: [
+        IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            fn.unfocus();
+            onExit();
+          },
+        ),
+        Expanded(
+          child: TextField(
+            focusNode: fn,
+            controller: ctrl,
+            autofocus: true,
+            onSubmitted: (query) => querySubmit.write(query),
+            decoration: InputDecoration(hintText: 'Search'),
+            textInputAction: TextInputAction.search,
           ),
-          Receiver(
-            receive: query,
-            builder: (context) {
-              return AnimatedOpacity(
-                opacity: query.read().text.isEmpty ? 0 : 1,
-                duration: const Duration(milliseconds: 200),
-                child: TextButton(
-                  child: Text('Clear'),
-                  onPressed: () {
-                    ctrl.clear();
-                  },
-                ),
-              );
-            },
-          )
-        ],
-      ),
+        ),
+        Receiver(
+          receive: query,
+          builder: (context) {
+            return AnimatedOpacity(
+              opacity: query.read().text.isEmpty ? 0 : 1,
+              duration: const Duration(milliseconds: 200),
+              child: TextButton(
+                child: Text('Clear'),
+                onPressed: () {
+                  ctrl.clear();
+                },
+              ),
+            );
+          },
+        )
+      ],
     );
   }
 }
