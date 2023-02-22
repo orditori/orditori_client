@@ -25,25 +25,18 @@ class DefinitionTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Chip(label: Text(def.language!.code!)),
-                const SizedBox(width: 8),
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.only(top: 6.0),
-                  child: SelectableText(def.definition!),
-                )),
+                const SizedBox(width: 12),
+                Expanded(child: SelectableText(def.definition!)),
                 const SizedBox(width: 16),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-                  child: GestureDetector(
-                    onTap: onBookmarkPressed,
-                    child: Icon(
-                      isSaved
-                          ? Icons.bookmark_added_sharp
-                          : Icons.bookmark_add_outlined,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                IconButton(
+                  icon: Icon(
+                    isSaved
+                        ? Icons.bookmark_added_sharp
+                        : Icons.bookmark_add_outlined,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                ),
+                  onPressed: onBookmarkPressed,
+                )
               ],
             ),
             if (def.examples?.isNotEmpty ?? false)

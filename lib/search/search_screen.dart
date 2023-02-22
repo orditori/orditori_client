@@ -1,7 +1,6 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:orditori/framework.dart';
-import 'package:orditori/notebooks/notebooks_screen.dart';
 
 import 'package:orditori/search/search_bar.dart';
 import 'package:orditori/search/search_button.dart';
@@ -13,6 +12,10 @@ import 'search_results.dart';
 
 class SearchScreen extends StatefulWidget {
   final VoidCallback onExit;
+
+  static late int notebookId;
+  static late List<NotebookEntryR> notebookEntries;
+
   const SearchScreen({
     Key? key,
     required this.onExit,
@@ -58,7 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
         hasResult = true;
 
         try {
-          entry = Notebooks.widgetKey.currentState!.entries.firstWhere(
+          entry = SearchScreen.notebookEntries.firstWhere(
             (element) => element.definitions!.first.word == query,
           );
 
@@ -101,7 +104,7 @@ class _SearchScreenState extends State<SearchScreen> {
       apiKey: Auth.getToken(context),
       body: NotebookEntryW(
         addedDate: d,
-        notebook: Notebooks.widgetKey.currentState!.notebookId,
+        notebook: SearchScreen.notebookId,
       ),
     );
 
@@ -136,12 +139,15 @@ class _SearchScreenState extends State<SearchScreen> {
         body: body,
       );
 
-      entry!.definitions!.add(DefinitionContentItemR(
-          id: res.body!,
-          definition: def.definition,
-          language: def.language,
-          word: def.word,
-          definitionSource: sourceId));
+      final defContentItemR = DefinitionContentItemR(
+        id: res.body!,
+        definition: def.definition,
+        language: def.language,
+        word: def.word,
+        definitionSource: sourceId,
+      );
+
+      entry!.definitions!.add(defContentItemR);
 
       _buildDefinitionsMap();
 

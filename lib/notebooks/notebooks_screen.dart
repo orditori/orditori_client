@@ -1,5 +1,6 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
+import 'package:orditori/search/search_screen.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 import 'package:orditori/widgets/async_widget.dart';
 
@@ -13,8 +14,6 @@ class DefinitionsDateGroup {
 }
 
 class Notebooks extends StatelessWidget {
-  static final widgetKey = GlobalKey<NotebookEntriesListState>();
-
   const Notebooks({Key? key}) : super(key: key);
 
   @override
@@ -47,8 +46,10 @@ class Notebooks extends StatelessWidget {
         .where((element) => element.definitions?.isNotEmpty ?? false)
         .toList();
 
+    SearchScreen.notebookId = r.id!;
+    SearchScreen.notebookEntries = entries;
+
     final child = NotebookEntriesList(
-      key: widgetKey,
       entries: entries,
       notebookId: r.id!,
     );
