@@ -57,7 +57,7 @@ class App extends StatelessWidget {
               statusBarBrightness:
                   value == Brightness.dark ? Brightness.dark : Brightness.light,
               statusBarIconBrightness:
-                  value == Brightness.dark ? Brightness.dark : Brightness.light,
+                  value == Brightness.dark ? Brightness.light : Brightness.dark,
             ),
             child: const Home(),
           ),
