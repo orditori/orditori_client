@@ -14,7 +14,7 @@ class ExerciseResult extends StatelessWidget {
     late Widget child;
 
     if (result == null) {
-      child = SizedBox();
+      child = const SizedBox();
     } else if (result is IncorrectResult) {
       child = Container(
         decoration: BoxDecoration(
@@ -34,10 +34,10 @@ class ExerciseResult extends StatelessWidget {
           color: Colors.green,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Center(
+        child: const Center(
           child: Text(
             'Correct!',
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white),
           ),
         ),
       );

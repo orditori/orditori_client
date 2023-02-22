@@ -308,7 +308,7 @@ class _MappedLateReceive<T, K> implements _LateReceive<K> {
   @override
   K? get _initialValue {
     if (_receive._initialValue == null) return null;
-    return _mapper(_receive._initialValue!);
+    return _mapper(_receive._initialValue as T);
   }
 
   @override
@@ -322,12 +322,12 @@ class _MappedLateReceive<T, K> implements _LateReceive<K> {
   bool get leading => _receive.leading;
 
   @override
-  set _bound(bool __bound) {
-    _receive._bound = __bound;
+  set _bound(bool bound) {
+    _receive._bound = bound;
   }
 
   @override
-  set _notifier(ValueNotifier<K> __notifier) {
+  set _notifier(ValueNotifier<K> notifier) {
     throw Exception("Can't set notifier on mapped LateReceive");
   }
 }
@@ -482,6 +482,7 @@ class StatusListenerElement<T, K> extends ComponentElement {
 
   @override
   StatusListener<T, K> get widget => super.widget as StatusListener<T, K>;
+  // ignore: library_private_types_in_public_api
   _Broadcast<T, K> get broadcast => widget.broadcast as _Broadcast<T, K>;
   Status<K> get status => broadcast._initialized
       ? broadcast._statusNotifier.value
@@ -506,11 +507,11 @@ class StatusListenerElement<T, K> extends ComponentElement {
   @override
   Widget build() {
     if (status is _StatusStream<K>) {
-      final _status = status as _StatusStream<K>;
+      final s = status as _StatusStream<K>;
 
       return StreamBuilder<Status<K>>(
-        stream: _status.stream,
-        initialData: _status.initialValue,
+        stream: s.stream,
+        initialData: s.initialValue,
         builder: (context, snapshot) {
           return widget.builder(context, snapshot.requireData);
         },

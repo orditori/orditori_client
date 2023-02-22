@@ -19,7 +19,7 @@ class SearchScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _SearchScreenState createState() => _SearchScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
@@ -95,7 +95,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> _addEntry() async {
-    final d = DateTime.now().toIso8601String().substring(0, 23) + 'Z';
+    final d = '${DateTime.now().toIso8601String().substring(0, 23)}Z';
 
     final res = await client.notebookEntriesPost(
       apiKey: Auth.getToken(context),
@@ -131,6 +131,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     try {
       final res = await client.definitionContentItemsPost(
+        // ignore: use_build_context_synchronously
         apiKey: Auth.getToken(context),
         body: body,
       );

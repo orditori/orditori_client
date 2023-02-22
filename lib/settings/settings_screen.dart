@@ -54,7 +54,7 @@ class SettingsScreen extends StatelessWidget {
                     final token = Auth.getToken(context);
                     Clipboard.setData(ClipboardData(text: token));
                   },
-                  icon: Icon(Icons.copy),
+                  icon: const Icon(Icons.copy),
                 ),
                 IconButton(
                   onPressed: () {

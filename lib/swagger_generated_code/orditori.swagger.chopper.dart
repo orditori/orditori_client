@@ -38,7 +38,7 @@ class _$Orditori extends Orditori {
   @override
   Future<Response<dynamic>> _notebookEntriesEntryIdDelete(
       {required String? apiKey, required int? entryId}) {
-    final $url = '/notebookEntries/${entryId}';
+    final $url = '/notebookEntries/$entryId';
     final $params = <String, dynamic>{'apiKey': apiKey};
     final $request =
         Request('DELETE', $url, client.baseUrl, parameters: $params);

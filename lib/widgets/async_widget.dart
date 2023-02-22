@@ -53,7 +53,7 @@ class AsyncWidget<T> extends StatefulWidget {
   }
 
   @override
-  _AsyncWidgetState createState() => _AsyncWidgetState<T>();
+  State<AsyncWidget> createState() => _AsyncWidgetState<T>();
 }
 
 enum AsyncState {

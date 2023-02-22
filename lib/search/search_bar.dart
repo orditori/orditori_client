@@ -27,7 +27,7 @@ class SearchBar<T> extends StatelessWidget with Init<TextEditingController> {
     return Row(
       children: [
         IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             fn.unfocus();
             onExit();
@@ -39,7 +39,7 @@ class SearchBar<T> extends StatelessWidget with Init<TextEditingController> {
             controller: ctrl,
             autofocus: true,
             onSubmitted: (query) => querySubmit.write(query),
-            decoration: InputDecoration(hintText: 'Search'),
+            decoration: const InputDecoration(hintText: 'Search'),
             textInputAction: TextInputAction.search,
           ),
         ),
@@ -50,7 +50,7 @@ class SearchBar<T> extends StatelessWidget with Init<TextEditingController> {
               opacity: query.read().text.isEmpty ? 0 : 1,
               duration: const Duration(milliseconds: 200),
               child: TextButton(
-                child: Text('Clear'),
+                child: const Text('Clear'),
                 onPressed: () {
                   ctrl.clear();
                 },

@@ -42,7 +42,7 @@ class SearchResults extends StatelessWidget {
             group.definitionSource!.name!,
             style: Theme.of(context)
                 .textTheme
-                .overline!
+                .labelSmall!
                 .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         );

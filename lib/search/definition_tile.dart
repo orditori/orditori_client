@@ -53,11 +53,11 @@ class DefinitionTile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Divider(),
-                      SizedBox(height: 8),
+                      const Divider(),
+                      const SizedBox(height: 8),
                       Text(
                         'Examples:',
-                        style: Theme.of(context).textTheme.subtitle2,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                       ...(def.examples!.map(
                         (e) => Padding(

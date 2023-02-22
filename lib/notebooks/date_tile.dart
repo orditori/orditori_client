@@ -13,7 +13,7 @@ class DateTile extends StatelessWidget {
       child: Column(
         children: [
           Text(month),
-          Text(day, style: Theme.of(context).textTheme.headline6),
+          Text(day, style: Theme.of(context).textTheme.titleLarge),
         ],
       ),
     );

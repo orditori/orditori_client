@@ -34,7 +34,7 @@ class DefinitionExercise extends StatelessWidget {
                     minFontSize: 16,
                     stepGranularity: 4,
                     maxFontSize: 32,
-                    style: TextStyle(fontSize: 32),
+                    style: const TextStyle(fontSize: 32),
                     maxLines: 4,
                   ),
                 ),

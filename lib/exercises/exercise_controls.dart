@@ -23,12 +23,12 @@ class ExerciseControls extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ExerciseControlsState createState() => _ExerciseControlsState();
+  State<ExerciseControls> createState() => _ExerciseControlsState();
 }
 
 class _ExerciseControlsState extends State<ExerciseControls> {
   final ctrl = TextEditingController();
-  SolutionCheckResult? result = null;
+  SolutionCheckResult? result;
   late bool showOptions = widget.exercise.difficultyScore! > 0.4;
 
   @override
@@ -61,7 +61,7 @@ class _ExerciseControlsState extends State<ExerciseControls> {
       );
 
       setState(() {
-        this.result = SolutionCheckResult.fromJson(jsonDecode(res.body));
+        result = SolutionCheckResult.fromJson(jsonDecode(res.body));
       });
     } else {
       setState(() {
@@ -96,12 +96,12 @@ class _ExerciseControlsState extends State<ExerciseControls> {
             ),
             onSubmitted: _submit,
           ),
-        SizedBox(height: 16),
-        Container(
+        const SizedBox(height: 16),
+        SizedBox(
           height: 60,
           child: ExerciseResult(result: result),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () => _submit(ctrl.text),
           child: ValueListenableBuilder<TextEditingValue>(

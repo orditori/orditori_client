@@ -44,10 +44,10 @@ class App extends StatelessWidget {
             brightness: value,
             useMaterial3: true,
             colorSchemeSeed: Colors.blue,
-            chipTheme: ChipThemeData(
-              padding: const EdgeInsets.all(4.0),
+            chipTheme: const ChipThemeData(
+              padding: EdgeInsets.all(4.0),
             ),
-            inputDecorationTheme: InputDecorationTheme(
+            inputDecorationTheme: const InputDecorationTheme(
               border: InputBorder.none,
             ),
             cardTheme: const CardTheme(shape: shape),
@@ -143,7 +143,7 @@ class _AppPagesState extends State<AppPages>
             pageIndex = index;
           });
         },
-        destinations: [
+        destinations: const [
           NavigationDestination(icon: Icon(Icons.book), label: 'Notebook'),
           NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
           NavigationDestination(
