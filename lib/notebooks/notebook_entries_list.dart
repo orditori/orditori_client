@@ -39,9 +39,9 @@ class NotebookEntriesListState extends State<NotebookEntriesList> {
               ? null
               : widget.entries[index + 1];
 
-          final date = formatDate(DateTime.parse(item.addedDate!));
+          final date = formatDate(DateTime.parse(item.addedDate));
           final nextDate =
-              formatDate(DateTime.parse((nextItem ?? item).addedDate!));
+              formatDate(DateTime.parse((nextItem ?? item).addedDate));
 
           Widget leading = const SizedBox(width: 40);
 
@@ -50,7 +50,7 @@ class NotebookEntriesListState extends State<NotebookEntriesList> {
             leading = DateTile(month: ch[0], day: ch[1]);
           }
 
-          final def = item.definitions!.first;
+          final def = item.definitions.first;
 
           return DefinitionTile(def: def, leading: leading);
         },

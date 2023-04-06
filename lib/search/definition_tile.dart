@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 class DefinitionTile extends StatelessWidget {
-  final Definition def;
+  final DefinitionR def;
   final bool isSaved;
   final VoidCallback onBookmarkPressed;
 
@@ -24,9 +24,9 @@ class DefinitionTile extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Chip(label: Text(def.language!.code!)),
+                Chip(label: Text(def.language.code)),
                 const SizedBox(width: 12),
-                Expanded(child: SelectableText(def.definition!)),
+                Expanded(child: SelectableText(def.definition)),
                 const SizedBox(width: 16),
                 IconButton(
                   icon: Icon(
@@ -39,7 +39,7 @@ class DefinitionTile extends StatelessWidget {
                 )
               ],
             ),
-            if (def.examples?.isNotEmpty ?? false)
+            if (def.examples.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.all(8.0).copyWith(bottom: 0),
                 child: IntrinsicHeight(
@@ -52,12 +52,12 @@ class DefinitionTile extends StatelessWidget {
                         'Examples:',
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
-                      ...(def.examples!.map(
+                      ...(def.examples.map(
                         (e) => Padding(
                           padding:
                               const EdgeInsets.all(8.0).copyWith(bottom: 0),
                           child: Text(
-                            e.$String!,
+                            e.$string,
                             style: const TextStyle(fontStyle: FontStyle.italic),
                           ),
                         ),

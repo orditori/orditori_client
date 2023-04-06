@@ -1,36 +1,34 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:collection/collection.dart';
 
 enum PartOfSpeech {
-  @JsonValue('swaggerGeneratedUnknown')
-  swaggerGeneratedUnknown,
-  @JsonValue('Noun')
-  noun,
-  @JsonValue('Verb')
-  verb,
-  @JsonValue('Adjective')
-  adjective,
-  @JsonValue('Adverb')
-  adverb,
-  @JsonValue('Pronoun')
-  pronoun,
-  @JsonValue('Preposition')
-  preposition,
-  @JsonValue('Conjunction')
-  conjunction,
-  @JsonValue('Interjection')
-  interjection,
-  @JsonValue('Article')
-  article
-}
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
 
-const $PartOfSpeechMap = {
-  PartOfSpeech.noun: 'Noun',
-  PartOfSpeech.verb: 'Verb',
-  PartOfSpeech.adjective: 'Adjective',
-  PartOfSpeech.adverb: 'Adverb',
-  PartOfSpeech.pronoun: 'Pronoun',
-  PartOfSpeech.preposition: 'Preposition',
-  PartOfSpeech.conjunction: 'Conjunction',
-  PartOfSpeech.interjection: 'Interjection',
-  PartOfSpeech.article: 'Article'
-};
+  @JsonValue('Noun')
+  noun('Noun'),
+  @JsonValue('ProperNoun')
+  propernoun('ProperNoun'),
+  @JsonValue('Verb')
+  verb('Verb'),
+  @JsonValue('Adjective')
+  adjective('Adjective'),
+  @JsonValue('Adverb')
+  adverb('Adverb'),
+  @JsonValue('Pronoun')
+  pronoun('Pronoun'),
+  @JsonValue('Preposition')
+  preposition('Preposition'),
+  @JsonValue('Conjunction')
+  conjunction('Conjunction'),
+  @JsonValue('Interjection')
+  interjection('Interjection'),
+  @JsonValue('Article')
+  article('Article'),
+  @JsonValue('Determiner')
+  determiner('Determiner');
+
+  final String? value;
+
+  const PartOfSpeech(this.value);
+}

@@ -11,7 +11,7 @@ class SearchResults extends StatelessWidget {
   final Receive<TextEditingValue> query;
   final Set<String> definitionsSet;
   final List<DefinitionsWithSource> items;
-  final void Function(Definition def, int sourceId, String link) onAdd;
+  final void Function(DefinitionR def, int sourceId, String link) onAdd;
 
   const SearchResults({
     Key? key,
@@ -32,14 +32,14 @@ class SearchResults extends StatelessWidget {
 
       final group = items[outerCursor];
 
-      if (innerCursor == 0 && group.definitions!.isNotEmpty) {
+      if (innerCursor == 0 && group.definitions.isNotEmpty) {
         yield Padding(
           padding: const EdgeInsets.all(8.0).copyWith(
             left: 16,
             top: outerCursor != 0 ? 16 : 8,
           ),
           child: Text(
-            group.definitionSource!.name!,
+            group.definitionSource.name,
             style: Theme.of(context)
                 .textTheme
                 .labelSmall!
@@ -48,13 +48,13 @@ class SearchResults extends StatelessWidget {
         );
       }
 
-      if (innerCursor >= group.definitions!.length) {
+      if (innerCursor >= group.definitions.length) {
         innerCursor = 0;
         outerCursor++;
         continue;
       }
 
-      final def = group.definitions![innerCursor];
+      final def = group.definitions[innerCursor];
 
       yield DefinitionTile(
         def: def,
@@ -63,8 +63,8 @@ class SearchResults extends StatelessWidget {
           if (!definitionsSet.contains(def.definition)) {
             onAdd(
               def,
-              group.definitionSource!.id!,
-              def.sourceLink!,
+              group.definitionSource.id,
+              def.sourceLink,
             );
           }
         },
@@ -80,7 +80,7 @@ class SearchResults extends StatelessWidget {
       return Center(child: Text(error!));
     }
 
-    if (hasResult && items.every((element) => element.definitions!.isEmpty)) {
+    if (hasResult && items.every((element) => element.definitions.isEmpty)) {
       return Center(
         child: Text('Nothing found for "${query.read().text}"'),
       );

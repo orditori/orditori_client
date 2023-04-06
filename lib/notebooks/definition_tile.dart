@@ -26,7 +26,7 @@ class DefinitionTile extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
-            child: Chip(label: Text(def.language!.code!)),
+            child: Chip(label: Text(def.language.code)),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -39,7 +39,7 @@ class DefinitionTile extends StatelessWidget {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
-                        def.word!,
+                        def.word,
                         style: textTheme.titleSmall,
                       ),
                       if (def.partOfSpeech != null &&
@@ -57,7 +57,7 @@ class DefinitionTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  def.definition!,
+                  def.definition,
                   style: textTheme.bodySmall,
                 )
               ],

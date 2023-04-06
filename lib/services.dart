@@ -2,9 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final client = Orditori.create(baseUrl: 'http://3.127.125.21');
+final client = Orditori.create(baseUrl: Uri.parse('http://2.205.69.119'));
 late SharedPreferences prefs;
-const baseUrl = 'http://3.127.125.21';
+const baseUrl = 'http://2.205.69.119';
 
 final _tokenKey = Object();
 

@@ -19,8 +19,8 @@ class Notebooks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = AsyncWidget.read<Response<NotebookR>>(context)!.body!;
-    final g = r.entries!.fold<List<DefinitionsDateGroup>>([], (acc, v) {
-      final date = formatDate(DateTime.parse(v.addedDate!));
+    final g = r.entries.fold<List<DefinitionsDateGroup>>([], (acc, v) {
+      final date = formatDate(DateTime.parse(v.addedDate));
 
       if (acc.isEmpty) {
         return [
@@ -43,15 +43,15 @@ class Notebooks extends StatelessWidget {
 
     final entries = g.reversed
         .expand((element) => element.entries.reversed)
-        .where((element) => element.definitions?.isNotEmpty ?? false)
+        .where((element) => element.definitions.isNotEmpty)
         .toList();
 
-    SearchScreen.notebookId = r.id!;
+    SearchScreen.notebookId = r.id;
     SearchScreen.notebookEntries = entries;
 
     final child = NotebookEntriesList(
       entries: entries,
-      notebookId: r.id!,
+      notebookId: r.id,
     );
 
     return child;

@@ -21,7 +21,7 @@ class DefinitionExercise extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: Chip(label: Text(exercise.language!.name!)),
+            child: Chip(label: Text(exercise.language.name)),
           ),
           Expanded(
             child: Center(
@@ -30,7 +30,7 @@ class DefinitionExercise extends StatelessWidget {
                 child: SizedBox(
                   height: 100,
                   child: AutoSizeText(
-                    exercise.definition!,
+                    exercise.definition,
                     minFontSize: 16,
                     stepGranularity: 4,
                     maxFontSize: 32,

@@ -62,7 +62,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
         try {
           entry = SearchScreen.notebookEntries.firstWhere(
-            (element) => element.definitions!.first.word == query,
+            (element) => element.definitions.first.word == query,
           );
 
           _buildDefinitionsMap();
@@ -89,10 +89,10 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _buildDefinitionsMap() {
     defsSet =
-        entry!.definitions!.fold<Set<String>>({}, (previousValue, element) {
+        entry!.definitions.fold<Set<String>>({}, (previousValue, element) {
       return {
         ...previousValue,
-        element.definition!,
+        element.definition,
       };
     });
   }
@@ -120,34 +120,36 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> _addDefinition(
-      Definition def, int sourceId, String sourceLink) async {
+    DefinitionR def,
+    int sourceId,
+    String sourceLink,
+  ) async {
+    final apiKey = Auth.getToken(context);
     if (entry == null) await _addEntry();
 
     final body = DefinitionContentItemW(
-      word: def.word,
-      definition: def.definition,
+      definition: def.id,
       entry: entry!.id,
-      language: def.language,
-      definitionSource: sourceId,
-      sourceLink: sourceLink,
     );
 
     try {
-      final res = await client.definitionContentItemsPost(
-        // ignore: use_build_context_synchronously
-        apiKey: Auth.getToken(context),
+      await client.definitionContentItemsPost(
+        apiKey: apiKey,
         body: body,
       );
 
       final defContentItemR = DefinitionContentItemR(
-        id: res.body!,
         definition: def.definition,
-        language: def.language,
-        word: def.word,
         definitionSource: sourceId,
+        examples: def.examples,
+        id: def.id,
+        language: def.language,
+        sourceLink: sourceLink,
+        word: def.word,
+        partOfSpeech: def.partOfSpeech,
       );
 
-      entry!.definitions!.add(defContentItemR);
+      entry!.definitions.add(defContentItemR);
 
       _buildDefinitionsMap();
 
