@@ -8,9 +8,9 @@ class DefinitionExercise extends StatelessWidget {
   final DefinitionExerciseR exercise;
 
   const DefinitionExercise({
-    Key? key,
+    super.key,
     required this.exercise,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

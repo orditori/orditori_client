@@ -1,0 +1,3 @@
+dependency_overrides:
+  flutter_compute_tree:
+    path: ../wip/packages/flutter_compute_tree

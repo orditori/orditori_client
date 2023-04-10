@@ -1,0 +1,110 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
+import 'package:flutter_context/flutter_context.dart';
+import 'package:orditori/auth.dart';
+import 'package:orditori/services.dart';
+import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
+
+class DefinitionScreen extends StatelessWidget {
+  final DefinitionContentItemR def;
+  final NotebookEntryR entry;
+  final Trigger refreshNotebook;
+
+  const DefinitionScreen({
+    super.key,
+    required this.def,
+    required this.entry,
+    required this.refreshNotebook,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(def.word),
+      ),
+      body: SafeArea(
+        child: ListView(
+          children: [
+            ListTile(
+              title: const Text('Language'),
+              subtitle: Text(def.language.name),
+            ),
+            if (def.partOfSpeech != null)
+              ListTile(
+                title: const Text('Part of speech'),
+                subtitle: Text(describeEnum(def.partOfSpeech!)),
+              ),
+            ListTile(
+              title: const Text('Definition'),
+              subtitle: Text(def.definition),
+            ),
+            if (def.examples.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.all(16.0).copyWith(bottom: 0),
+                child: Text(
+                  'Examples',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              for (final example in def.examples) ...[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(example.$string),
+                ),
+                if (example.translation != null) ...[
+                  ListTile(
+                    title: const Text('Translation'),
+                    subtitle: Text(example.translation!),
+                  ),
+                ],
+              ],
+            ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: NodeBuilder(
+                (ctNode) {
+                  final delete = trigger();
+                  final token = context.read(tokenContext);
+
+                  final r = delete.asyncHandler((_) async {
+                    await client.notebookEntriesEntryIdDelete(
+                      apiKey: token,
+                      entryId: entry.id,
+                    );
+
+                    refreshNotebook();
+
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                  });
+
+                  return ElevatedButton.icon(
+                    onPressed: delete,
+                    icon: const Icon(Icons.delete),
+                    label: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Opacity(
+                          opacity: r is Loading ? 0 : 1,
+                          child: const Text('Delete'),
+                        ),
+                        if (r is Loading)
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 1),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

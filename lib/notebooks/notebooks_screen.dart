@@ -1,8 +1,8 @@
-import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
-import 'package:orditori/search/search_screen.dart';
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
+import 'package:flutter_context/flutter_context.dart';
+import 'package:orditori/notebooks.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
-import 'package:orditori/widgets/async_widget.dart';
 
 import 'notebook_entries_list.dart';
 
@@ -14,12 +14,18 @@ class DefinitionsDateGroup {
 }
 
 class Notebooks extends StatelessWidget {
-  const Notebooks({Key? key}) : super(key: key);
+  final Trigger refreshNotebook;
+
+  const Notebooks({
+    super.key,
+    required this.refreshNotebook,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final r = AsyncWidget.read<Response<NotebookR>>(context)!.body!;
-    final g = r.entries.fold<List<DefinitionsDateGroup>>([], (acc, v) {
+    final notebook = context.watch(notebookContext);
+
+    final g = notebook.entries.fold<List<DefinitionsDateGroup>>([], (acc, v) {
       final date = formatDate(DateTime.parse(v.addedDate));
 
       if (acc.isEmpty) {
@@ -46,12 +52,10 @@ class Notebooks extends StatelessWidget {
         .where((element) => element.definitions.isNotEmpty)
         .toList();
 
-    SearchScreen.notebookId = r.id;
-    SearchScreen.notebookEntries = entries;
-
     final child = NotebookEntriesList(
       entries: entries,
-      notebookId: r.id,
+      notebookId: notebook.id,
+      refreshNotebook: refreshNotebook,
     );
 
     return child;

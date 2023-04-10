@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 import 'package:intl/intl.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
@@ -9,22 +10,17 @@ String formatDate(DateTime date) {
   return DateFormat.MMMd().format(date);
 }
 
-class NotebookEntriesList extends StatefulWidget {
+class NotebookEntriesList extends StatelessWidget {
   final int notebookId;
   final List<NotebookEntryR> entries;
+  final Trigger refreshNotebook;
+
   const NotebookEntriesList({
-    Key? key,
+    super.key,
     required this.entries,
     required this.notebookId,
-  }) : super(key: key);
-
-  @override
-  State<NotebookEntriesList> createState() => NotebookEntriesListState();
-}
-
-class NotebookEntriesListState extends State<NotebookEntriesList> {
-  List<NotebookEntryR> get entries => widget.entries;
-  int get notebookId => widget.notebookId;
+    required this.refreshNotebook,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +28,17 @@ class NotebookEntriesListState extends State<NotebookEntriesList> {
       child: AnimatedList(
         reverse: true,
         padding: const EdgeInsets.only(bottom: 20),
-        initialItemCount: widget.entries.length,
+        initialItemCount: entries.length,
         itemBuilder: (context, index, _) {
-          final item = widget.entries[index];
-          final nextItem = index == widget.entries.length - 1
-              ? null
-              : widget.entries[index + 1];
+          final item = entries[index];
+          final nextItem =
+              index == entries.length - 1 ? null : entries[index + 1];
 
           final date = formatDate(DateTime.parse(item.addedDate));
-          final nextDate =
-              formatDate(DateTime.parse((nextItem ?? item).addedDate));
+
+          final nextDate = formatDate(
+            DateTime.parse((nextItem ?? item).addedDate),
+          );
 
           Widget leading = const SizedBox(width: 40);
 
@@ -52,7 +49,12 @@ class NotebookEntriesListState extends State<NotebookEntriesList> {
 
           final def = item.definitions.first;
 
-          return DefinitionTile(def: def, leading: leading);
+          return NotebookEntryTile(
+            def: def,
+            entry: item,
+            leading: leading,
+            refreshNotebook: refreshNotebook,
+          );
         },
       ),
     );

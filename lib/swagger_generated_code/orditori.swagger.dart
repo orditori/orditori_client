@@ -456,6 +456,7 @@ extension $NotebookEntryRExtension on NotebookEntryR {
 class DefinitionContentItemR {
   DefinitionContentItemR({
     required this.definition,
+    required this.definitionId,
     required this.definitionSource,
     required this.examples,
     required this.id,
@@ -473,6 +474,8 @@ class DefinitionContentItemR {
 
   @JsonKey(name: 'definition')
   final String definition;
+  @JsonKey(name: 'definitionId')
+  final int definitionId;
   @JsonKey(name: 'definitionSource')
   final int definitionSource;
   @JsonKey(name: 'examples', defaultValue: <DefinitionExample>[])
@@ -500,6 +503,9 @@ class DefinitionContentItemR {
             (identical(other.definition, definition) ||
                 const DeepCollectionEquality()
                     .equals(other.definition, definition)) &&
+            (identical(other.definitionId, definitionId) ||
+                const DeepCollectionEquality()
+                    .equals(other.definitionId, definitionId)) &&
             (identical(other.definitionSource, definitionSource) ||
                 const DeepCollectionEquality()
                     .equals(other.definitionSource, definitionSource)) &&
@@ -527,6 +533,7 @@ class DefinitionContentItemR {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(definition) ^
+      const DeepCollectionEquality().hash(definitionId) ^
       const DeepCollectionEquality().hash(definitionSource) ^
       const DeepCollectionEquality().hash(examples) ^
       const DeepCollectionEquality().hash(id) ^
@@ -540,6 +547,7 @@ class DefinitionContentItemR {
 extension $DefinitionContentItemRExtension on DefinitionContentItemR {
   DefinitionContentItemR copyWith(
       {String? definition,
+      int? definitionId,
       int? definitionSource,
       List<DefinitionExample>? examples,
       int? id,
@@ -549,6 +557,7 @@ extension $DefinitionContentItemRExtension on DefinitionContentItemR {
       String? word}) {
     return DefinitionContentItemR(
         definition: definition ?? this.definition,
+        definitionId: definitionId ?? this.definitionId,
         definitionSource: definitionSource ?? this.definitionSource,
         examples: examples ?? this.examples,
         id: id ?? this.id,
@@ -560,6 +569,7 @@ extension $DefinitionContentItemRExtension on DefinitionContentItemR {
 
   DefinitionContentItemR copyWithWrapped(
       {Wrapped<String>? definition,
+      Wrapped<int>? definitionId,
       Wrapped<int>? definitionSource,
       Wrapped<List<DefinitionExample>>? examples,
       Wrapped<int>? id,
@@ -569,6 +579,8 @@ extension $DefinitionContentItemRExtension on DefinitionContentItemR {
       Wrapped<String>? word}) {
     return DefinitionContentItemR(
         definition: (definition != null ? definition.value : this.definition),
+        definitionId:
+            (definitionId != null ? definitionId.value : this.definitionId),
         definitionSource: (definitionSource != null
             ? definitionSource.value
             : this.definitionSource),

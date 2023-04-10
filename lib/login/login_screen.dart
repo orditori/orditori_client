@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:orditori/services.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  final void Function(String token) setToken;
+
+  const LoginScreen({super.key, required this.setToken});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class LoginScreen extends StatelessWidget {
                           hintText: 'API Token',
                           border: InputBorder.none,
                         ),
-                        onSubmitted: (token) => Auth.setToken(context, token),
+                        onSubmitted: setToken,
                       ),
                     ),
                     IconButton(
@@ -44,7 +45,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    Auth.setToken(context, ctrl.text);
+                    setToken(ctrl.text);
                   },
                   child: const Text('Done'),
                 )

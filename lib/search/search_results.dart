@@ -1,27 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:orditori/framework.dart';
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 import 'definition_tile.dart';
 
+class DefinitionWithSource {
+  final DefinitionR def;
+  final DefinitionSource source;
+
+  const DefinitionWithSource({
+    required this.def,
+    required this.source,
+  });
+}
+
 class SearchResults extends StatelessWidget {
   final String? error;
   final bool hasResult;
-  final Receive<TextEditingValue> query;
-  final Set<String> definitionsSet;
   final List<DefinitionsWithSource> items;
-  final void Function(DefinitionR def, int sourceId, String link) onAdd;
+  final String query;
+  final Trigger refreshNotebook;
 
   const SearchResults({
-    Key? key,
+    super.key,
     this.error,
     this.hasResult = false,
     required this.query,
     required this.items,
-    required this.onAdd,
-    this.definitionsSet = const {},
-  }) : super(key: key);
+    required this.refreshNotebook,
+  });
 
   Iterable<Widget> getItems(BuildContext context) sync* {
     int outerCursor = 0;
@@ -54,20 +62,12 @@ class SearchResults extends StatelessWidget {
         continue;
       }
 
-      final def = group.definitions[innerCursor];
+      final definition = group.definitions[innerCursor];
 
       yield DefinitionTile(
-        def: def,
-        isSaved: definitionsSet.contains(def.definition),
-        onBookmarkPressed: () {
-          if (!definitionsSet.contains(def.definition)) {
-            onAdd(
-              def,
-              group.definitionSource.id,
-              def.sourceLink,
-            );
-          }
-        },
+        definition: definition,
+        refreshNotebook: refreshNotebook,
+        source: group.definitionSource,
       );
 
       innerCursor++;
@@ -82,7 +82,7 @@ class SearchResults extends StatelessWidget {
 
     if (hasResult && items.every((element) => element.definitions.isEmpty)) {
       return Center(
-        child: Text('Nothing found for "${query.read().text}"'),
+        child: Text('Nothing found for "$query"'),
       );
     }
 

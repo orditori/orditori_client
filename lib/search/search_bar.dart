@@ -1,62 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:orditori/framework.dart';
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
-final fn = FocusNode();
-
-class SearchBar<T> extends StatelessWidget with Init<TextEditingController> {
-  final Broadcast<String, T> querySubmit;
-  final LateReceive<TextEditingValue> query;
+class SearchBar extends StatelessWidget {
   final VoidCallback onExit;
+  final TextEditingController controller;
+  final Trigger<String> search;
 
   const SearchBar({
-    Key? key,
-    required this.querySubmit,
-    required this.query,
+    super.key,
     required this.onExit,
-  }) : super(key: key);
-
-  @override
-  TextEditingController init() {
-    return TextEditingController()..bind(query);
-  }
+    required this.controller,
+    required this.search,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = context.data(this);
-
     return Row(
       children: [
         IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            fn.unfocus();
-            onExit();
-          },
+          onPressed: onExit,
         ),
         Expanded(
           child: TextField(
-            focusNode: fn,
-            controller: ctrl,
+            controller: controller,
             autofocus: true,
-            onSubmitted: (query) => querySubmit.write(query),
+            onSubmitted: search,
             decoration: const InputDecoration(hintText: 'Search'),
             textInputAction: TextInputAction.search,
           ),
         ),
-        Receiver(
-          receive: query,
-          builder: (context) {
+        AnimatedBuilder(
+          animation: controller,
+          builder: (context, child) {
             return AnimatedOpacity(
-              opacity: query.read().text.isEmpty ? 0 : 1,
+              opacity: controller.text.isEmpty ? 0 : 1,
               duration: const Duration(milliseconds: 200),
-              child: TextButton(
-                child: const Text('Clear'),
-                onPressed: () {
-                  ctrl.clear();
-                },
-              ),
+              child: child,
             );
           },
+          child: TextButton(
+            onPressed: controller.clear,
+            child: const Text('Clear'),
+          ),
         )
       ],
     );

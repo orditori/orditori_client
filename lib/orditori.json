@@ -103,7 +103,6 @@
             "name": "entryId",
             "required": true,
             "schema": {
-              "format": "int64",
               "maximum": 9223372036854775807,
               "minimum": -9223372036854775808,
               "type": "integer"
@@ -451,6 +450,11 @@
         "description": "A notebook entry definition item",
         "properties": {
           "definition": { "type": "string" },
+          "definitionId": {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "type": "integer"
+          },
           "definitionSource": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
@@ -474,6 +478,7 @@
           "id",
           "word",
           "language",
+          "definitionId",
           "definition",
           "definitionSource",
           "sourceLink",

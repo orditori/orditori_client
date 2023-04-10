@@ -47,6 +47,7 @@ DefinitionContentItemR _$DefinitionContentItemRFromJson(
         Map<String, dynamic> json) =>
     DefinitionContentItemR(
       definition: json['definition'] as String,
+      definitionId: json['definitionId'] as int,
       definitionSource: json['definitionSource'] as int,
       examples: (json['examples'] as List<dynamic>?)
               ?.map(
@@ -64,6 +65,7 @@ Map<String, dynamic> _$DefinitionContentItemRToJson(
         DefinitionContentItemR instance) =>
     <String, dynamic>{
       'definition': instance.definition,
+      'definitionId': instance.definitionId,
       'definitionSource': instance.definitionSource,
       'examples': instance.examples.map((e) => e.toJson()).toList(),
       'id': instance.id,

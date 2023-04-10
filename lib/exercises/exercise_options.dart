@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-
-typedef ExerciseOptionCallback = void Function(String option);
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
 class ExerciseOptions extends StatelessWidget {
   final List<String> options;
-  final ExerciseOptionCallback onOptionSelect;
+  final Trigger<String> selectOption;
+
   const ExerciseOptions({
-    Key? key,
+    super.key,
     required this.options,
-    required this.onOptionSelect,
-  }) : super(key: key);
+    required this.selectOption,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class ExerciseOptions extends StatelessWidget {
       children: [
         ...options.map(
           (option) => OutlinedButton(
-            onPressed: () => onOptionSelect(option),
+            onPressed: selectOption.bind(option),
             child: Text(option),
           ),
         )
