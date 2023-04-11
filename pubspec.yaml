@@ -44,10 +44,6 @@ dependencies:
   flutter_compute_tree: ^1.0.0+13
   flutter_context: ^0.10.0
 
-# dependency_overrides:
-#   flutter_fm:
-#     path: ../flutter_fm
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -6,7 +6,7 @@ import 'package:orditori/auth.dart';
 
 import 'definition_exercise.dart';
 
-class ExercisesScreen extends StatelessWidget {
+class ExercisesScreen extends CTWidget {
   final VoidCallback onExit;
   const ExercisesScreen({
     super.key,

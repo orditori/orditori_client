@@ -25,11 +25,11 @@ class NotebookEntriesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SelectionArea(
-      child: AnimatedList(
+      child: ListView.builder(
         reverse: true,
         padding: const EdgeInsets.only(bottom: 20),
-        initialItemCount: entries.length,
-        itemBuilder: (context, index, _) {
+        itemCount: entries.length,
+        itemBuilder: (context, index) {
           final item = entries[index];
           final nextItem =
               index == entries.length - 1 ? null : entries[index + 1];
