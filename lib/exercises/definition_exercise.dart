@@ -1,15 +1,18 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 import 'exercise_controls.dart';
 
 class DefinitionExercise extends StatelessWidget {
   final DefinitionExerciseR exercise;
+  final Trigger loadExercise;
 
   const DefinitionExercise({
     super.key,
     required this.exercise,
+    required this.loadExercise,
   });
 
   @override
@@ -41,7 +44,10 @@ class DefinitionExercise extends StatelessWidget {
               ),
             ),
           ),
-          ExerciseControls(exercise: exercise),
+          ExerciseControls(
+            exercise: exercise,
+            loadExercise: loadExercise,
+          ),
         ],
       ),
     );

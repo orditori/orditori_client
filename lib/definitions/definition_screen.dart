@@ -63,44 +63,42 @@ class DefinitionScreen extends StatelessWidget {
             ],
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: NodeBuilder(
-                (ctNode) {
-                  final delete = trigger();
-                  final token = context.read(tokenContext);
+              child: CTBuilder((ctNode) {
+                final delete = trigger();
+                final token = context.read(tokenContext);
 
-                  final r = delete.asyncHandler((_) async {
-                    await client.notebookEntriesEntryIdDelete(
-                      apiKey: token,
-                      entryId: entry.id,
-                    );
-
-                    refreshNotebook();
-
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                  });
-
-                  return ElevatedButton.icon(
-                    onPressed: delete,
-                    icon: const Icon(Icons.delete),
-                    label: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Opacity(
-                          opacity: r is Loading ? 0 : 1,
-                          child: const Text('Delete'),
-                        ),
-                        if (r is Loading)
-                          const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 1),
-                          ),
-                      ],
-                    ),
+                final r = delete.asyncHandler((_) async {
+                  await client.notebookEntriesEntryIdDelete(
+                    apiKey: token,
+                    entryId: entry.id,
                   );
-                },
-              ),
+
+                  refreshNotebook();
+
+                  // ignore: use_build_context_synchronously
+                  Navigator.of(context).pop();
+                });
+
+                return ElevatedButton.icon(
+                  onPressed: delete,
+                  icon: const Icon(Icons.delete),
+                  label: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Opacity(
+                        opacity: r is Loading ? 0 : 1,
+                        child: const Text('Delete'),
+                      ),
+                      if (r is Loading)
+                        const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 1),
+                        ),
+                    ],
+                  ),
+                );
+              }),
             ),
           ],
         ),

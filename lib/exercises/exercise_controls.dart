@@ -17,8 +17,13 @@ final fn = FocusNode();
 
 class ExerciseControls extends CTWidget {
   final DefinitionExerciseR exercise;
+  final Trigger loadExercise;
 
-  const ExerciseControls({super.key, required this.exercise});
+  const ExerciseControls({
+    super.key,
+    required this.exercise,
+    required this.loadExercise,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +48,19 @@ class ExerciseControls extends CTWidget {
       );
     });
 
+    final loadNext = memo(() {
+      ctrl.clear();
+      loadExercise();
+    });
+
     SolutionCheckResult? result;
 
     if (res is Success) {
       final json = jsonDecode(res.success().value.bodyString);
       result = SolutionCheckResult.fromJson(json);
     }
+
+    final handler = result == null ? () => submit(ctrl.text) : loadNext;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -78,7 +90,7 @@ class ExerciseControls extends CTWidget {
         ),
         const SizedBox(height: 16),
         ElevatedButton(
-          onPressed: () => submit(ctrl.text),
+          onPressed: handler,
           child: ValueListenableBuilder<TextEditingValue>(
             valueListenable: ctrl,
             builder: (_, value, __) {

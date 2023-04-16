@@ -17,7 +17,7 @@ Future<void> main() async {
   final prefs = await SharedPreferences.getInstance();
 
   runApp(
-    NodeBuilder((ctNode) {
+    CTBuilder((context) {
       final brightness = withBrightness(prefs);
       final auth = withAuth(prefs);
 

@@ -16,11 +16,15 @@ class ExercisesScreen extends CTWidget {
   @override
   Widget build(BuildContext context) {
     final token = context.read(tokenContext);
-    final r = invokeAsync(() {
+    final loadExercise = trigger();
+
+    final r = loadExercise.asyncHandler((_) {
       return client.exercisesDefinitionRandomGet(apiKey: token);
     });
 
-    if (r is Loading) {
+    invoke.immediate(loadExercise);
+
+    if (r is Loading || r is Pending) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -35,6 +39,7 @@ class ExercisesScreen extends CTWidget {
         DefinitionExercise(
           key: ValueKey(exercise.id),
           exercise: exercise,
+          loadExercise: loadExercise,
         ),
         Positioned(
           top: 0,

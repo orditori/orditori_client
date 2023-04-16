@@ -276,7 +276,7 @@ packages:
       path: "../wip/packages/flutter_compute_tree"
       relative: true
     source: path
-    version: "1.0.0+13"
+    version: "1.0.0+14"
   flutter_context:
     dependency: "direct main"
     description:
