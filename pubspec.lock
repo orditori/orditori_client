@@ -273,9 +273,10 @@ packages:
   flutter_compute_tree:
     dependency: "direct main"
     description:
-      path: "../wip/packages/flutter_compute_tree"
-      relative: true
-    source: path
+      name: flutter_compute_tree
+      sha256: c66c61fb34cbafef7f86112f88709686ec6456878b207e1b53c9112db138c44f
+      url: "https://pub.dev"
+    source: hosted
     version: "1.0.0+14"
   flutter_context:
     dependency: "direct main"
