@@ -12,14 +12,23 @@ import 'notebooks/notebooks_screen.dart';
 import 'auth.dart';
 import 'brightness.dart';
 
+import 'services.dart' as services;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
+  services.prefs = await SharedPreferences.getInstance();
 
-  runApp(
-    CTBuilder((context) {
-      final brightness = withBrightness(prefs);
-      final auth = withAuth(prefs);
+  runApp(const Root());
+}
+
+class Root extends StatelessWidget {
+  const Root({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CTBuilder((context) {
+      final brightness = withBrightness(services.prefs);
+      final auth = withAuth(services.prefs);
 
       final settingsScreen = SettingsScreen(
         brightnessContext: brightness.context,
@@ -29,13 +38,17 @@ Future<void> main() async {
       );
 
       final firstScreen = auth.isAuthenticated
-          ? withNotebooks(auth.token, (refreshNotebook, child) {
-              return AppPages(
-                settings: settingsScreen,
-                refreshNotebook: refreshNotebook,
-                child: child,
-              );
-            })
+          ? withNotebooks(
+              token: auth.token,
+              setToken: auth.setToken,
+              builder: (refreshNotebook, child) {
+                return AppPages(
+                  settings: settingsScreen,
+                  refreshNotebook: refreshNotebook,
+                  child: child,
+                );
+              },
+            )
           : LoginScreen(setToken: auth.setToken);
 
       return auth.Provider(
@@ -46,8 +59,8 @@ Future<void> main() async {
           ),
         ),
       );
-    }),
-  );
+    });
+  }
 }
 
 const borderRadius = BorderRadius.all(Radius.circular(10.0));
