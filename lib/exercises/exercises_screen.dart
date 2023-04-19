@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
-import 'package:flutter_context/flutter_context.dart';
 import 'package:orditori/services.dart';
-import 'package:orditori/auth.dart';
 
 import 'definition_exercise.dart';
 
@@ -15,11 +13,10 @@ class ExercisesScreen extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    final token = n.context.read(tokenContext);
     final loadExercise = n.trigger();
 
     final r = loadExercise.asyncHandler((_) {
-      return client.exercisesDefinitionRandomGet(apiKey: token);
+      return client.exercisesDefinitionRandomGet(apiKey: null);
     });
 
     n.invoke.immediate(loadExercise);

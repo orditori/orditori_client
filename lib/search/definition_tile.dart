@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 import 'package:flutter_context/flutter_context.dart';
-import 'package:orditori/auth.dart';
 import 'package:orditori/notebooks.dart';
 import 'package:orditori/services.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
@@ -21,7 +20,6 @@ class DefinitionTile extends CTWidget {
   @override
   Widget build(CTNode n) {
     final savedDefinitions = n.context.watch(savedDefinitionsContext);
-    final token = n.context.read(tokenContext);
     final notebook = n.context.read(notebookContext);
 
     final isSaved = savedDefinitions.contains(definition.id);
@@ -35,7 +33,7 @@ class DefinitionTile extends CTWidget {
       );
 
       final entryRes = await client.notebookEntriesPost(
-        apiKey: token,
+        apiKey: null,
         body: entryW,
       );
 
@@ -47,7 +45,7 @@ class DefinitionTile extends CTWidget {
       );
 
       await client.definitionContentItemsPost(
-        apiKey: token,
+        apiKey: null,
         body: definitionW,
       );
 

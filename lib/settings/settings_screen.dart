@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_context/flutter_context.dart';
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
-class SettingsScreen extends StatelessWidget {
-  final Context<Brightness> brightnessContext;
-  final void Function(Brightness brightness) setBrightness;
+class SettingsScreen extends CTWidget {
+  final Trigger<Brightness> setBrightness;
 
   final String token;
-  final void Function() deleteToken;
+  final Trigger<void> deleteToken;
+
+  final Widget brightnessTile;
+
+  @override
+  bool get static => true;
 
   const SettingsScreen({
     super.key,
-    required this.brightnessContext,
     required this.setBrightness,
     required this.token,
     required this.deleteToken,
+    required this.brightnessTile,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(CTNode n) {
     return Scaffold(
       body: ListView(
         children: [
-          BrightnessSettingTile(
-            brightnessContext: brightnessContext,
-            setBrightness: setBrightness,
-          ),
+          brightnessTile,
           TokenSettingTile(
             token: token,
             deleteToken: deleteToken,
@@ -36,19 +37,19 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-class BrightnessSettingTile extends StatelessWidget {
-  final Context<Brightness> brightnessContext;
-  final void Function(Brightness brightness) setBrightness;
+class BrightnessSettingTile extends CTWidget {
+  final Ref<Brightness> ref;
+  final Trigger<Brightness> setBrightness;
 
   const BrightnessSettingTile({
     super.key,
-    required this.brightnessContext,
+    required this.ref,
     required this.setBrightness,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final brightness = context.watch(brightnessContext);
+  Widget build(CTNode n) {
+    final brightness = n.subscribeToRef(ref);
     final isDarkMode = brightness == Brightness.dark;
 
     void toggleBrightness() {
@@ -77,6 +78,10 @@ class BrightnessSettingTile extends StatelessWidget {
   }
 }
 
+const _apiKeyCopiedSnackbar = SnackBar(
+  content: Text('Copied API key to clipboard'),
+);
+
 class TokenSettingTile extends StatelessWidget {
   final String token;
   final void Function() deleteToken;
@@ -99,6 +104,7 @@ class TokenSettingTile extends StatelessWidget {
           IconButton(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: token));
+              ScaffoldMessenger.of(context).showSnackBar(_apiKeyCopiedSnackbar);
             },
             icon: const Icon(Icons.copy),
           ),

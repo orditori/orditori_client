@@ -26,11 +26,14 @@ class Root extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    final brightness = withBrightness(n, services.prefs);
-    final auth = withAuth(n, services.prefs);
+    final brightness = withBrightness(n);
+    final auth = withAuth(n);
 
     final settingsScreen = SettingsScreen(
-      brightnessContext: brightness.context,
+      brightnessTile: BrightnessSettingTile(
+        ref: brightness.ref,
+        setBrightness: brightness.setBrightness,
+      ),
       setBrightness: brightness.setBrightness,
       token: auth.token,
       deleteToken: auth.deleteToken,
@@ -51,13 +54,9 @@ class Root extends CTWidget {
           )
         : LoginScreen(setToken: auth.setToken);
 
-    return auth.Provider(
-      child: brightness.Provider(
-        child: App(
-          brightness: brightness.value,
-          child: firstScreen,
-        ),
-      ),
+    return App(
+      brightnessRef: brightness.ref,
+      child: firstScreen,
     );
   }
 }
@@ -66,18 +65,20 @@ const borderRadius = BorderRadius.all(Radius.circular(10.0));
 const shape = RoundedRectangleBorder(borderRadius: borderRadius);
 const padding = EdgeInsets.all(20.0);
 
-class App extends StatelessWidget {
-  final Brightness brightness;
+class App extends CTWidget {
+  final Ref<Brightness> brightnessRef;
   final Widget child;
 
   const App({
     super.key,
-    required this.brightness,
+    required this.brightnessRef,
     required this.child,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(CTNode n) {
+    final brightness = n.subscribeToRef(brightnessRef);
+
     return MaterialApp(
       title: 'Orditori',
       theme: ThemeData(

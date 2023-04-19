@@ -1,22 +1,14 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
-import 'package:flutter_context/flutter_context.dart';
-import 'package:orditori/context_node.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
+import 'services.dart';
 
-typedef BrightnessSetter = void Function(Brightness brightness);
-final brightnessContext = createContext<Brightness>();
-
-class BrightnessNode extends ContextNode<Brightness> {
-  @override
-  final Brightness value;
-  @override
-  Context<Brightness> get context => brightnessContext;
-  final BrightnessSetter setBrightness;
+class BrightnessNode {
+  final Ref<Brightness> ref;
+  final Trigger<Brightness> setBrightness;
 
   BrightnessNode({
-    required this.value,
+    required this.ref,
     required this.setBrightness,
   });
 }
@@ -25,7 +17,7 @@ const _kBrightnessKey = 'brightness';
 const _kLight = 'light';
 const _kDark = 'dark';
 
-BrightnessNode withBrightness(CTNode n, SharedPreferences prefs) {
+BrightnessNode withBrightness(CTNode n) {
   final brightness = n.ref(() {
     final currentBrightness = prefs.getString(_kBrightnessKey) ?? _kLight;
 
@@ -45,7 +37,7 @@ BrightnessNode withBrightness(CTNode n, SharedPreferences prefs) {
     return brightness;
   });
 
-  final setBrightness = brightness.write;
+  final setBrightness = brightness.action((value, Brightness arg) => arg);
 
   n.invoke.immediate(() {
     prefs.setString(
@@ -55,7 +47,7 @@ BrightnessNode withBrightness(CTNode n, SharedPreferences prefs) {
   }, brightness.value);
 
   return BrightnessNode(
-    value: brightness.value,
+    ref: brightness,
     setBrightness: setBrightness,
   );
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
-import 'package:flutter_context/flutter_context.dart';
-import 'package:orditori/auth.dart';
 import 'package:orditori/services.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
@@ -65,11 +63,10 @@ class DefinitionScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: CTBuilder((n) {
                 final delete = n.trigger();
-                final token = context.read(tokenContext);
 
                 final r = delete.asyncHandler((_) async {
                   await client.notebookEntriesEntryIdDelete(
-                    apiKey: token,
+                    apiKey: null,
                     entryId: entry.id,
                   );
 
