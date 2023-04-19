@@ -19,13 +19,13 @@ class DefinitionTile extends CTWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final savedDefinitions = context.watch(savedDefinitionsContext);
-    final token = context.read(tokenContext);
-    final notebook = context.read(notebookContext);
+  Widget build(CTNode n) {
+    final savedDefinitions = n.context.watch(savedDefinitionsContext);
+    final token = n.context.read(tokenContext);
+    final notebook = n.context.read(notebookContext);
 
     final isSaved = savedDefinitions.contains(definition.id);
-    final addDefinition = trigger();
+    final addDefinition = n.trigger();
 
     final addResult = addDefinition.asyncHandler((_) async {
       final addedDate = '${DateTime.now().toIso8601String().substring(0, 23)}Z';
@@ -58,7 +58,7 @@ class DefinitionTile extends CTWidget {
       icon: Icon(
         isSaved ? Icons.bookmark_added_sharp : Icons.bookmark_add_outlined,
       ),
-      color: Theme.of(context).colorScheme.primary,
+      color: Theme.of(n.context).colorScheme.primary,
       onPressed: addDefinition,
     );
 
@@ -89,7 +89,7 @@ class DefinitionTile extends CTWidget {
                       const SizedBox(height: 8),
                       Text(
                         'Examples:',
-                        style: Theme.of(context).textTheme.titleSmall,
+                        style: Theme.of(n.context).textTheme.titleSmall,
                       ),
                       ...(definition.examples.map(
                         (e) => Padding(

@@ -14,15 +14,15 @@ class ExercisesScreen extends CTWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final token = context.read(tokenContext);
-    final loadExercise = trigger();
+  Widget build(CTNode n) {
+    final token = n.context.read(tokenContext);
+    final loadExercise = n.trigger();
 
     final r = loadExercise.asyncHandler((_) {
       return client.exercisesDefinitionRandomGet(apiKey: token);
     });
 
-    invoke.immediate(loadExercise);
+    n.invoke.immediate(loadExercise);
 
     if (r is Loading || r is Pending) {
       return const Center(child: CircularProgressIndicator());

@@ -26,13 +26,13 @@ class ExerciseControls extends CTWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(CTNode n) {
     bool showOptions = exercise.difficultyScore > 0.4;
 
-    final ctrlRef = ref(() => TextEditingController(), [exercise.id]);
+    final ctrlRef = n.ref(() => TextEditingController(), [exercise.id]);
     final ctrl = ctrlRef.value;
 
-    final submit = trigger<String>();
+    final submit = n.trigger<String>();
 
     final res = submit.asyncHandler((answer) {
       final solution = ExerciseSolutionDefinitionExercise(
@@ -40,7 +40,7 @@ class ExerciseControls extends CTWidget {
         input: answer,
       );
 
-      final token = context.read(tokenContext);
+      final token = n.context.read(tokenContext);
 
       return client.exercisesDefinitionSolutionsPost(
         apiKey: token,
@@ -48,7 +48,7 @@ class ExerciseControls extends CTWidget {
       );
     });
 
-    final loadNext = memo(() {
+    final loadNext = n.memo(() {
       ctrl.clear();
       loadExercise();
     });

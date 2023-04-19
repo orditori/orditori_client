@@ -25,8 +25,8 @@ const _kBrightnessKey = 'brightness';
 const _kLight = 'light';
 const _kDark = 'dark';
 
-BrightnessNode withBrightness(SharedPreferences prefs) {
-  final brightness = ref(() {
+BrightnessNode withBrightness(CTNode n, SharedPreferences prefs) {
+  final brightness = n.ref(() {
     final currentBrightness = prefs.getString(_kBrightnessKey) ?? _kLight;
 
     Brightness brightness;
@@ -47,7 +47,7 @@ BrightnessNode withBrightness(SharedPreferences prefs) {
 
   final setBrightness = brightness.write;
 
-  invoke.immediate(() {
+  n.invoke.immediate(() {
     prefs.setString(
       _kBrightnessKey,
       brightness.value == Brightness.light ? _kLight : _kDark,

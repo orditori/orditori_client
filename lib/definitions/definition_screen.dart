@@ -63,8 +63,8 @@ class DefinitionScreen extends StatelessWidget {
             ],
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: CTBuilder((ctNode) {
-                final delete = trigger();
+              child: CTBuilder((n) {
+                final delete = n.trigger();
                 final token = context.read(tokenContext);
 
                 final r = delete.asyncHandler((_) async {

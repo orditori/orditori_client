@@ -26,12 +26,12 @@ class AuthNode extends ContextNode<String> {
   String get value => token;
 }
 
-AuthNode withAuth(SharedPreferences prefs) {
-  final token = ref(() => prefs.getString('token') ?? '');
+AuthNode withAuth(CTNode n, SharedPreferences prefs) {
+  final token = n.ref(() => prefs.getString('token') ?? '');
   final setToken = token.write;
   final deleteToken = token.action((value) => '');
 
-  invoke.immediate(() {
+  n.invoke.immediate(() {
     prefs.setString('token', token.value);
   }, token.value);
 

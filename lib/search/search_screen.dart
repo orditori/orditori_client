@@ -17,10 +17,10 @@ class SearchScreen extends CTWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final ctrlRef = ref(() => TextEditingController());
+  Widget build(CTNode n) {
+    final ctrlRef = n.ref(() => TextEditingController());
     final controller = ctrlRef.value;
-    final search = trigger<String>();
+    final search = n.trigger<String>();
 
     final r = search.asyncHandler((query) {
       return client.definitionsGet(query: query);

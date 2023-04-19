@@ -11,17 +11,18 @@ final notebookContext = createContext<NotebookR>();
 final savedDefinitionsContext = createContext<Set<int>>();
 
 Widget withNotebooks({
+  required CTNode n,
   required String token,
   required Function(String token) setToken,
   required Widget Function(Trigger refreshNotebook, Widget? child) builder,
 }) {
-  final load = trigger();
+  final load = n.trigger();
 
   final r = load.asyncHandler((_) {
     return client.notebooksGet(apiKey: token);
   });
 
-  invoke.immediate(load);
+  n.invoke.immediate(load);
 
   return NotebooksProvider(
     notebookResult: r,
@@ -56,7 +57,7 @@ class NotebooksProvider extends CTWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(CTNode n) {
     final r = notebookResult;
 
     if (r is Loading || r is Pending) {
@@ -76,8 +77,8 @@ class NotebooksProvider extends CTWidget {
     if (r.success().value.body == null) {
       return builder(
         refreshNotbook,
-        CTBuilder((context) {
-          invoke.immediate(() async {
+        CTBuilder((n) {
+          n.invoke.immediate(() async {
             await prefs.clear();
             setToken('');
             // ignore: prefer_const_constructors

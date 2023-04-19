@@ -21,45 +21,44 @@ Future<void> main() async {
   runApp(const Root());
 }
 
-class Root extends StatelessWidget {
+class Root extends CTWidget {
   const Root({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return CTBuilder((context) {
-      final brightness = withBrightness(services.prefs);
-      final auth = withAuth(services.prefs);
+  Widget build(CTNode n) {
+    final brightness = withBrightness(n, services.prefs);
+    final auth = withAuth(n, services.prefs);
 
-      final settingsScreen = SettingsScreen(
-        brightnessContext: brightness.context,
-        setBrightness: brightness.setBrightness,
-        token: auth.token,
-        deleteToken: auth.deleteToken,
-      );
+    final settingsScreen = SettingsScreen(
+      brightnessContext: brightness.context,
+      setBrightness: brightness.setBrightness,
+      token: auth.token,
+      deleteToken: auth.deleteToken,
+    );
 
-      final firstScreen = auth.isAuthenticated
-          ? withNotebooks(
-              token: auth.token,
-              setToken: auth.setToken,
-              builder: (refreshNotebook, child) {
-                return AppPages(
-                  settings: settingsScreen,
-                  refreshNotebook: refreshNotebook,
-                  child: child,
-                );
-              },
-            )
-          : LoginScreen(setToken: auth.setToken);
+    final firstScreen = auth.isAuthenticated
+        ? withNotebooks(
+            n: n,
+            token: auth.token,
+            setToken: auth.setToken,
+            builder: (refreshNotebook, child) {
+              return AppPages(
+                settings: settingsScreen,
+                refreshNotebook: refreshNotebook,
+                child: child,
+              );
+            },
+          )
+        : LoginScreen(setToken: auth.setToken);
 
-      return auth.Provider(
-        child: brightness.Provider(
-          child: App(
-            brightness: brightness.value,
-            child: firstScreen,
-          ),
+    return auth.Provider(
+      child: brightness.Provider(
+        child: App(
+          brightness: brightness.value,
+          child: firstScreen,
         ),
-      );
-    });
+      ),
+    );
   }
 }
 
@@ -121,18 +120,16 @@ class AppPages extends CTWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final pageIndex = ref(() => 0);
-    final onExit = memo(() => pageIndex.write(0));
+  Widget build(CTNode n) {
+    final pageIndex = n.ref(() => 0);
+    final onExit = n.memo(() => pageIndex.write(0));
 
-    final children = ref(
-      () => [
-        Notebooks(refreshNotebook: refreshNotebook),
-        SearchScreen(onExit: onExit, refreshNotebook: refreshNotebook),
-        ExercisesScreen(onExit: onExit),
-        settings,
-      ],
-    );
+    final children = [
+      Notebooks(refreshNotebook: refreshNotebook),
+      SearchScreen(onExit: onExit, refreshNotebook: refreshNotebook),
+      ExercisesScreen(onExit: onExit),
+      settings,
+    ];
 
     return Scaffold(
       bottomNavigationBar: NavigationBar(
@@ -152,7 +149,7 @@ class AppPages extends CTWidget {
         ],
       ),
       body: SafeArea(
-        child: child ?? children.value[pageIndex.value],
+        child: child ?? children[pageIndex.value],
       ),
     );
   }
