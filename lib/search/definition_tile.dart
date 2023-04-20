@@ -17,10 +17,12 @@ class DefinitionTile extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    final savedDefinitions = Ref.consume<Set<int>>(n).just().value;
+    final savedDefinitions = n.subscribeToRef(
+      Ref.consume<Set<int>>(n).just().value,
+    );
     final notebookRef = Ref.consume<NotebookR>(n).just().value;
 
-    final isSaved = savedDefinitions.value.contains(definition.id);
+    final isSaved = savedDefinitions.contains(definition.id);
     final addDefinition = n.trigger();
 
     final addResult = addDefinition.asyncHandler((_) async {
@@ -50,13 +52,19 @@ class DefinitionTile extends CTWidget {
       refreshNotebook();
     });
 
-    final icon = IconButton(
-      icon: Icon(
-        isSaved ? Icons.bookmark_added_sharp : Icons.bookmark_add_outlined,
-      ),
-      color: Theme.of(n.context).colorScheme.primary,
-      onPressed: addDefinition,
-    );
+    final icon = isSaved
+        ? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.bookmark_added,
+              color: Theme.of(n.context).colorScheme.primary,
+            ),
+          )
+        : IconButton(
+            icon: const Icon(Icons.bookmark_add_outlined),
+            color: Theme.of(n.context).colorScheme.primary,
+            onPressed: addDefinition,
+          );
 
     return Card(
       margin: const EdgeInsets.all(16).copyWith(bottom: 8),
@@ -71,7 +79,27 @@ class DefinitionTile extends CTWidget {
                 const SizedBox(width: 12),
                 Expanded(child: SelectableText(definition.definition)),
                 const SizedBox(width: 16),
-                addResult is Loading ? const CircularProgressIndicator() : icon,
+                Stack(
+                  children: [
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 50),
+                      opacity: addResult is Loading ? 0 : 1,
+                      child: icon,
+                    ),
+                    if (addResult is Loading)
+                      const Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
             if (definition.examples.isNotEmpty)
