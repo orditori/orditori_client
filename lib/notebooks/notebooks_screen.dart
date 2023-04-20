@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
-import 'package:flutter_context/flutter_context.dart';
-import 'package:orditori/notebooks.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 import 'notebook_entries_list.dart';
@@ -13,7 +11,7 @@ class DefinitionsDateGroup {
   DefinitionsDateGroup(this.date, this.entries);
 }
 
-class Notebooks extends StatelessWidget {
+class Notebooks extends CTWidget {
   final Trigger refreshNotebook;
 
   const Notebooks({
@@ -22,8 +20,9 @@ class Notebooks extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final notebook = context.watch(notebookContext);
+  Widget build(CTNode n) {
+    final notebookRef = Ref.consume<NotebookR>(n);
+    final notebook = n.subscribeToRef(notebookRef.just().value);
 
     final g = notebook.entries.fold<List<DefinitionsDateGroup>>([], (acc, v) {
       final date = formatDate(DateTime.parse(v.addedDate));

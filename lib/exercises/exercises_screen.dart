@@ -31,12 +31,17 @@ class ExercisesScreen extends CTWidget {
 
     final exercise = r.success().value.body!;
 
+    final paddingRef = Ref.consume<EdgeInsets>(n);
+    final padding = n.subscribeToRef(paddingRef.just().value);
+
     return Stack(
       children: [
-        DefinitionExercise(
-          key: ValueKey(exercise.id),
-          exercise: exercise,
-          loadExercise: loadExercise,
+        Padding(
+          padding: padding,
+          child: DefinitionExercise(
+            exercise: exercise,
+            loadExercise: loadExercise,
+          ),
         ),
         Positioned(
           top: 0,

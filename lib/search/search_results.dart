@@ -15,7 +15,7 @@ class DefinitionWithSource {
   });
 }
 
-class SearchResults extends StatelessWidget {
+class SearchResults extends CTWidget {
   final String? error;
   final bool hasResult;
   final List<DefinitionsWithSource> items;
@@ -75,7 +75,7 @@ class SearchResults extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(CTNode n) {
     if (error != null) {
       return Center(child: Text(error!));
     }
@@ -86,9 +86,13 @@ class SearchResults extends StatelessWidget {
       );
     }
 
-    final children = getItems(context).toList();
+    final children = getItems(n.context).toList();
+
+    final paddingRef = Ref.consume<EdgeInsets>(n);
+    final padding = n.subscribeToRef(paddingRef.just().value);
 
     return ListView.builder(
+      padding: padding,
       itemCount: children.length,
       itemBuilder: (context, index) {
         return children[index];

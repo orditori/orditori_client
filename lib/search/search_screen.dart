@@ -26,15 +26,26 @@ class SearchScreen extends CTWidget {
       return client.definitionsGet(query: query);
     });
 
+    final paddingRef = Ref.consume<EdgeInsets>(n);
+    final padding = n.subscribeToRef(paddingRef.just().value);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SearchBar(
-              onExit: onExit,
-              controller: controller,
-              search: search,
+            Padding(
+              padding: padding,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  child: SearchBar(
+                    onExit: onExit,
+                    controller: controller,
+                    search: search,
+                  ),
+                ),
+              ),
             ),
             Expanded(
               child: SearchResults(
@@ -45,10 +56,13 @@ class SearchScreen extends CTWidget {
                 refreshNotebook: refreshNotebook,
               ),
             ),
-            SearchButton(
-              controller: controller,
-              isLoading: r is Loading,
-              search: search,
+            Padding(
+              padding: padding,
+              child: SearchButton(
+                controller: controller,
+                isLoading: r is Loading,
+                search: search,
+              ),
             ),
           ],
         ),

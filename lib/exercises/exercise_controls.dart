@@ -25,18 +25,25 @@ class ExerciseControls extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    bool showOptions = exercise.difficultyScore > 0.4;
+    bool showOptions = exercise.difficultyScore > 0.3;
 
-    final ctrlRef = n.ref(() => TextEditingController(), [exercise.id]);
+    final ctrlRef = n.ref(() => TextEditingController(), exercise.id);
     final ctrl = ctrlRef.value;
 
     final submit = n.trigger<String>();
+    final selectedOption = n.ref<String?, int>(() => null, exercise.id);
 
-    final res = submit.asyncHandler((answer) {
+    selectedOption.provide();
+
+    final res = submit.asyncHandler((answer) async {
+      selectedOption.value = answer;
+
       final solution = ExerciseSolutionDefinitionExercise(
         exercise: exercise.id,
         input: answer,
       );
+
+      await Future.delayed(const Duration(milliseconds: 300));
 
       return client.exercisesDefinitionSolutionsPost(
         apiKey: null,
@@ -65,6 +72,7 @@ class ExerciseControls extends CTWidget {
           ExerciseOptions(
             options: exercise.options,
             selectOption: submit,
+            result: result,
           )
         else
           TextField(
@@ -80,25 +88,33 @@ class ExerciseControls extends CTWidget {
             onSubmitted: submit,
           ),
         const SizedBox(height: 16),
-        SizedBox(
-          height: 60,
-          child: ExerciseResult(result: result),
-        ),
-        const SizedBox(height: 16),
+        if (!showOptions) ...[
+          SizedBox(
+            height: 60,
+            child: ExerciseResult(result: result),
+          ),
+          const SizedBox(height: 16),
+        ],
         ElevatedButton(
           onPressed: handler,
-          child: ValueListenableBuilder<TextEditingValue>(
-            valueListenable: ctrl,
-            builder: (_, value, __) {
-              return Text(
-                result != null
-                    ? 'Next'
-                    : value.text.isEmpty
-                        ? 'Skip'
-                        : 'Submit',
-              );
-            },
-          ),
+          child: res is Loading
+              ? const SizedBox(
+                  width: 12,
+                  height: 12,
+                  child: CircularProgressIndicator(strokeWidth: 1),
+                )
+              : ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: ctrl,
+                  builder: (_, value, __) {
+                    return Text(
+                      result != null
+                          ? 'Next'
+                          : value.text.isEmpty
+                              ? 'Skip'
+                              : 'Submit',
+                    );
+                  },
+                ),
         )
       ],
     );

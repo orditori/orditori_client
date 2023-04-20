@@ -84,14 +84,19 @@ class App extends CTWidget {
       theme: ThemeData(
         brightness: brightness,
         useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: brightness,
+        ),
         chipTheme: const ChipThemeData(
           padding: EdgeInsets.all(4.0),
         ),
         inputDecorationTheme: const InputDecorationTheme(
           border: InputBorder.none,
         ),
-        cardTheme: const CardTheme(shape: shape),
+        cardTheme: const CardTheme(
+          shape: shape,
+        ),
       ),
       home: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
@@ -109,21 +114,23 @@ class App extends CTWidget {
 }
 
 class AppPages extends CTWidget {
-  final Widget settings;
   final Trigger refreshNotebook;
+
   final Widget? child;
+  final Widget settings;
 
   const AppPages({
     super.key,
-    required this.settings,
     required this.refreshNotebook,
+    required this.settings,
     this.child,
   });
 
   @override
   Widget build(CTNode n) {
     final pageIndex = n.ref(() => 0);
-    final onExit = n.memo(() => pageIndex.write(0));
+    final setPage = pageIndex.action((value, int index) => index);
+    final onExit = n.memo(() => setPage(0));
 
     final children = [
       Notebooks(refreshNotebook: refreshNotebook),
@@ -132,25 +139,88 @@ class AppPages extends CTWidget {
       settings,
     ];
 
+    final mq = MediaQuery.of(n.context);
+    const navTypeBreakpoint = 600;
+
     return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: pageIndex.value,
-        onDestinationSelected: pageIndex.write,
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.book), label: 'Notebook'),
-          NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
-          NavigationDestination(
-            icon: Icon(Icons.assignment),
-            label: 'Exercises',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
+      bottomNavigationBar: mq.size.width < navTypeBreakpoint
+          ? NavigationBar(
+              selectedIndex: pageIndex.value,
+              onDestinationSelected: setPage,
+              destinations: const [
+                NavigationDestination(
+                    icon: Icon(Icons.book), label: 'Notebook'),
+                NavigationDestination(
+                    icon: Icon(Icons.search), label: 'Search'),
+                NavigationDestination(
+                  icon: Icon(Icons.assignment),
+                  label: 'Exercises',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.settings),
+                  label: 'Settings',
+                ),
+              ],
+            )
+          : null,
       body: SafeArea(
-        child: child ?? children[pageIndex.value],
+        child: Row(
+          children: [
+            if (mq.size.width >= navTypeBreakpoint)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  child: NavigationRail(
+                    backgroundColor: Colors.transparent,
+                    onDestinationSelected: setPage,
+                    extended: mq.size.width >= 800,
+                    labelType: mq.size.width < 800
+                        ? NavigationRailLabelType.all
+                        : null,
+                    destinations: const [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.book),
+                        label: Text('Notebook'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.search),
+                        label: Text('Search'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.assignment),
+                        label: Text('Exercises'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.settings),
+                        label: Text('Settings'),
+                      ),
+                    ],
+                    selectedIndex: pageIndex.value,
+                  ),
+                ),
+              ),
+            Expanded(
+              child: LayoutBuilder(builder: (context, constraints) {
+                final w = constraints.biggest.width;
+                final padding = ((w - 700) / 2).clamp(0.0, 600.0);
+
+                return CTBuilder(
+                  (n) {
+                    final paddingRef = n.ref(
+                      () => EdgeInsets.symmetric(horizontal: padding),
+                      padding,
+                    );
+
+                    paddingRef.provide();
+
+                    return child ?? children[pageIndex.value];
+                  },
+                  dep: Object.hash(padding, pageIndex.value),
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

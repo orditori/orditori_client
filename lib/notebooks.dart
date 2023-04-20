@@ -1,14 +1,10 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
-import 'package:flutter_context/flutter_context.dart';
 import 'package:orditori/main.dart';
 import 'package:orditori/services.dart';
 
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
-
-final notebookContext = createContext<NotebookR>();
-final savedDefinitionsContext = createContext<Set<int>>();
 
 Widget withNotebooks({
   required CTNode n,
@@ -97,12 +93,9 @@ class NotebooksProvider extends CTWidget {
         .map((e) => e.definitionId)
         .toSet();
 
-    return notebookContext.Provider(
-      value: notebook,
-      child: savedDefinitionsContext.Provider(
-        value: savedDefinitions,
-        child: builder(refreshNotbook, null),
-      ),
-    );
+    n.ref(() => notebook, notebook).provide();
+    n.ref(() => savedDefinitions, savedDefinitions).provide();
+
+    return builder(refreshNotbook, null);
   }
 }

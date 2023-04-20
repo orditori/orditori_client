@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
-import 'package:flutter_context/flutter_context.dart';
-import 'package:orditori/notebooks.dart';
 import 'package:orditori/services.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
@@ -19,17 +17,17 @@ class DefinitionTile extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    final savedDefinitions = n.context.watch(savedDefinitionsContext);
-    final notebook = n.context.read(notebookContext);
+    final savedDefinitions = Ref.consume<Set<int>>(n).just().value;
+    final notebookRef = Ref.consume<NotebookR>(n).just().value;
 
-    final isSaved = savedDefinitions.contains(definition.id);
+    final isSaved = savedDefinitions.value.contains(definition.id);
     final addDefinition = n.trigger();
 
     final addResult = addDefinition.asyncHandler((_) async {
       final addedDate = '${DateTime.now().toIso8601String().substring(0, 23)}Z';
       final entryW = NotebookEntryW(
         addedDate: addedDate,
-        notebook: notebook.id,
+        notebook: notebookRef.value.id,
       );
 
       final entryRes = await client.notebookEntriesPost(

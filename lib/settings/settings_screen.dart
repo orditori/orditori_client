@@ -23,8 +23,12 @@ class SettingsScreen extends CTWidget {
 
   @override
   Widget build(CTNode n) {
+    final paddingRef = Ref.consume<EdgeInsets>(n);
+    final padding = n.subscribeToRef(paddingRef.just().value);
+
     return Scaffold(
       body: ListView(
+        padding: padding,
         children: [
           brightnessTile,
           TokenSettingTile(
@@ -67,7 +71,6 @@ class BrightnessSettingTile extends CTWidget {
     final icon = isDarkMode ? Icons.dark_mode_sharp : Icons.dark_mode_outlined;
 
     return ListTile(
-      onTap: toggleBrightness,
       title: const Text('Dark Mode'),
       leading: Icon(icon),
       trailing: Switch(
