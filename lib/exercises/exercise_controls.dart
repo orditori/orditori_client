@@ -11,8 +11,6 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart'
 import 'exercise_options.dart';
 import 'exercise_result.dart';
 
-final fn = FocusNode();
-
 class ExerciseControls extends CTWidget {
   final DefinitionExerciseR exercise;
   final Trigger loadExercise;
@@ -76,7 +74,7 @@ class ExerciseControls extends CTWidget {
           )
         else
           TextField(
-            focusNode: fn,
+            autofocus: true,
             autocorrect: false,
             controller: ctrl,
             decoration: InputDecoration(

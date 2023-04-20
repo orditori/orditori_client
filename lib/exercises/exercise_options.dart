@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
@@ -99,7 +100,11 @@ class ExerciseOptions extends CTWidget {
                     : null;
 
                 yield Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(
+                      defaultTargetPlatform == TargetPlatform.iOS ||
+                              defaultTargetPlatform == TargetPlatform.android
+                          ? 0
+                          : 8),
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       backgroundColor: backgroundColor,

@@ -106,6 +106,7 @@ class App extends CTWidget {
           statusBarIconBrightness: brightness == Brightness.dark
               ? Brightness.light
               : Brightness.dark,
+          statusBarColor: Colors.transparent,
         ),
         child: child,
       ),
