@@ -23,7 +23,12 @@ class ExerciseControls extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    bool showOptions = exercise.difficultyScore > 0.3;
+    final showOptionsRef = n.ref(
+      () => exercise.difficultyScore > 0.3,
+      exercise.id,
+    );
+
+    final showOptions = showOptionsRef.action((value, _) => !value);
 
     final ctrlRef = n.ref(() => TextEditingController(), exercise.id);
     final ctrl = ctrlRef.value;
@@ -66,13 +71,13 @@ class ExerciseControls extends CTWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (showOptions)
+        if (showOptionsRef.value)
           ExerciseOptions(
             options: exercise.options,
             selectOption: submit,
             result: result,
           )
-        else
+        else ...[
           TextField(
             autofocus: true,
             autocorrect: false,
@@ -85,8 +90,14 @@ class ExerciseControls extends CTWidget {
             ),
             onSubmitted: submit,
           ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: showOptions,
+            child: const Text('Show choices'),
+          )
+        ],
         const SizedBox(height: 16),
-        if (!showOptions) ...[
+        if (!showOptionsRef.value) ...[
           SizedBox(
             height: 60,
             child: ExerciseResult(result: result),
