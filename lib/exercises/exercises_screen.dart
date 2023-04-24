@@ -19,7 +19,7 @@ class ExercisesScreen extends CTWidget {
       return client.exercisesDefinitionRandomGet(apiKey: null);
     });
 
-    n.invoke.immediate(loadExercise);
+    n.invoke(loadExercise);
 
     if (r is Loading || r is Pending) {
       return const Center(child: CircularProgressIndicator());

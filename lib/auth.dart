@@ -20,7 +20,7 @@ AuthNode withAuth(CTNode n) {
   final setToken = token.action((value, String arg) => arg);
   final deleteToken = token.action((value, _) => '');
 
-  n.invoke.immediate(() {
+  n.invoke(() {
     services.token = token.value;
     services.prefs.setString(services.kTokenKey, token.value);
   }, token.value);

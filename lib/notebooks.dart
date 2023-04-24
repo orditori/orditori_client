@@ -18,7 +18,7 @@ Widget withNotebooks({
     return client.notebooksGet(apiKey: token);
   });
 
-  n.invoke.immediate(load);
+  n.invoke(load);
 
   return NotebooksProvider(
     notebookResult: r,
@@ -74,7 +74,7 @@ class NotebooksProvider extends CTWidget {
       return builder(
         refreshNotbook,
         CTBuilder((n) {
-          n.invoke.immediate(() async {
+          n.invoke(() async {
             await prefs.clear();
             setToken('');
             // ignore: prefer_const_constructors

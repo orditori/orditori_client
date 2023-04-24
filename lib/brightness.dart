@@ -39,7 +39,7 @@ BrightnessNode withBrightness(CTNode n) {
 
   final setBrightness = brightness.action((value, Brightness arg) => arg);
 
-  n.invoke.immediate(() {
+  n.invoke(() {
     prefs.setString(
       _kBrightnessKey,
       brightness.value == Brightness.light ? _kLight : _kDark,
