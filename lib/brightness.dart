@@ -3,16 +3,6 @@ import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
 import 'services.dart';
 
-class BrightnessNode {
-  final Ref<Brightness> ref;
-  final Trigger<Brightness> setBrightness;
-
-  BrightnessNode({
-    required this.ref,
-    required this.setBrightness,
-  });
-}
-
 const _kBrightnessKey = 'brightness';
 const _kLight = 'light';
 const _kDark = 'dark';
