@@ -26,18 +26,8 @@ class Root extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    final brightness = withBrightness(n);
+    withBrightness(n);
     final auth = withAuth(n);
-
-    final settingsScreen = SettingsScreen(
-      brightnessTile: BrightnessSettingTile(
-        ref: brightness.ref,
-        setBrightness: brightness.setBrightness,
-      ),
-      setBrightness: brightness.setBrightness,
-      token: auth.token,
-      deleteToken: auth.deleteToken,
-    );
 
     final firstScreen = auth.isAuthenticated
         ? withNotebooks(
@@ -46,7 +36,6 @@ class Root extends CTWidget {
             setToken: auth.setToken,
             builder: (refreshNotebook, child) {
               return AppPages(
-                settings: settingsScreen,
                 refreshNotebook: refreshNotebook,
                 child: child,
               );
@@ -55,7 +44,6 @@ class Root extends CTWidget {
         : LoginScreen(setToken: auth.setToken);
 
     return App(
-      brightnessRef: brightness.ref,
       child: firstScreen,
     );
   }
@@ -66,17 +54,16 @@ const shape = RoundedRectangleBorder(borderRadius: borderRadius);
 const padding = EdgeInsets.all(20.0);
 
 class App extends CTWidget {
-  final Ref<Brightness> brightnessRef;
   final Widget child;
 
   const App({
     super.key,
-    required this.brightnessRef,
     required this.child,
   });
 
   @override
   Widget build(CTNode n) {
+    final brightnessRef = Ref.consume<Brightness>(n).just().value;
     final brightness = n.subscribeToRef(brightnessRef);
 
     return MaterialApp(
@@ -118,12 +105,10 @@ class AppPages extends CTWidget {
   final Trigger refreshNotebook;
 
   final Widget? child;
-  final Widget settings;
 
   const AppPages({
     super.key,
     required this.refreshNotebook,
-    required this.settings,
     this.child,
   });
 
@@ -137,7 +122,7 @@ class AppPages extends CTWidget {
       Notebooks(refreshNotebook: refreshNotebook),
       SearchScreen(onExit: onExit, refreshNotebook: refreshNotebook),
       ExercisesScreen(onExit: onExit),
-      settings,
+      const SettingsScreen(),
     ];
 
     final mq = MediaQuery.of(n.context);

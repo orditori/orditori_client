@@ -1,4 +1,5 @@
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
+import 'package:orditori/settings/settings_screen.dart';
 import 'services.dart' as services;
 
 class AuthNode {
@@ -24,6 +25,9 @@ AuthNode withAuth(CTNode n) {
     services.token = token.value;
     services.prefs.setString(services.kTokenKey, token.value);
   }, token.value);
+
+  token.provide();
+  deleteToken.provide(const DeleteTokenTriggerToken());
 
   return AuthNode(
     token: token.value,

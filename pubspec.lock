@@ -276,7 +276,7 @@ packages:
       path: "../wip/packages/flutter_compute_tree"
       relative: true
     source: path
-    version: "1.0.0+16"
+    version: "1.0.0+17"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:

@@ -3,23 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
 class SettingsScreen extends CTWidget {
-  final Trigger<Brightness> setBrightness;
-
-  final String token;
-  final Trigger<void> deleteToken;
-
-  final Widget brightnessTile;
-
   @override
   bool get static => true;
 
-  const SettingsScreen({
-    super.key,
-    required this.setBrightness,
-    required this.token,
-    required this.deleteToken,
-    required this.brightnessTile,
-  });
+  const SettingsScreen({super.key});
 
   @override
   Widget build(CTNode n) {
@@ -29,12 +16,9 @@ class SettingsScreen extends CTWidget {
     return Scaffold(
       body: ListView(
         padding: padding,
-        children: [
-          brightnessTile,
-          TokenSettingTile(
-            token: token,
-            deleteToken: deleteToken,
-          ),
+        children: const [
+          BrightnessSettingTile(),
+          TokenSettingTile(),
         ],
       ),
     );
@@ -42,18 +26,14 @@ class SettingsScreen extends CTWidget {
 }
 
 class BrightnessSettingTile extends CTWidget {
-  final Ref<Brightness> ref;
-  final Trigger<Brightness> setBrightness;
-
-  const BrightnessSettingTile({
-    super.key,
-    required this.ref,
-    required this.setBrightness,
-  });
+  const BrightnessSettingTile({super.key});
 
   @override
   Widget build(CTNode n) {
+    final ref = Ref.consume<Brightness>(n).just().value;
     final brightness = n.subscribeToRef(ref);
+
+    final setBrightness = Trigger.consume<Brightness>(n).just().value;
     final isDarkMode = brightness == Brightness.dark;
 
     void toggleBrightness() {
@@ -81,22 +61,27 @@ class BrightnessSettingTile extends CTWidget {
   }
 }
 
-const _apiKeyCopiedSnackbar = SnackBar(
+const _snackbar = SnackBar(
   content: Text('Copied API key to clipboard'),
 );
 
-class TokenSettingTile extends StatelessWidget {
-  final String token;
-  final void Function() deleteToken;
+class DeleteTokenTriggerToken extends TriggerToken {
+  const DeleteTokenTriggerToken();
+}
 
-  const TokenSettingTile({
-    super.key,
-    required this.token,
-    required this.deleteToken,
-  });
+class TokenSettingTile extends CTWidget {
+  const TokenSettingTile({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(CTNode n) {
+    final tokenRef = Ref.consume<String>(n).just().value;
+    final token = n.subscribeToRef(tokenRef);
+
+    final deleteToken = Trigger.consume(
+      n,
+      const DeleteTokenTriggerToken(),
+    ).just().value;
+
     return ListTile(
       title: const Text('API Key'),
       subtitle: Text(token, maxLines: 1),
@@ -107,7 +92,7 @@ class TokenSettingTile extends StatelessWidget {
           IconButton(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: token));
-              ScaffoldMessenger.of(context).showSnackBar(_apiKeyCopiedSnackbar);
+              ScaffoldMessenger.of(n.context).showSnackBar(_snackbar);
             },
             icon: const Icon(Icons.copy),
           ),

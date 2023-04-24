@@ -17,7 +17,7 @@ const _kBrightnessKey = 'brightness';
 const _kLight = 'light';
 const _kDark = 'dark';
 
-BrightnessNode withBrightness(CTNode n) {
+void withBrightness(CTNode n) {
   final brightness = n.ref(() {
     final currentBrightness = prefs.getString(_kBrightnessKey) ?? _kLight;
 
@@ -46,8 +46,6 @@ BrightnessNode withBrightness(CTNode n) {
     );
   }, brightness.value);
 
-  return BrightnessNode(
-    ref: brightness,
-    setBrightness: setBrightness,
-  );
+  brightness.provide();
+  setBrightness.provide();
 }

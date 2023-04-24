@@ -93,8 +93,8 @@ class NotebooksProvider extends CTWidget {
         .map((e) => e.definitionId)
         .toSet();
 
-    n.ref(() => notebook, notebook).provide();
-    n.ref(() => savedDefinitions, savedDefinitions).provide();
+    n.valueRef(notebook).provide();
+    n.valueRef(savedDefinitions).provide();
 
     return builder(refreshNotbook, null);
   }
