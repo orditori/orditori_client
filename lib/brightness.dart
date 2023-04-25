@@ -3,39 +3,67 @@ import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
 import 'services.dart';
 
-const _kBrightnessKey = 'brightness';
-const _kLight = 'light';
-const _kDark = 'dark';
+const _key = 'brightness';
+
+final _brightnessMap = {
+  Brightness.light.name: Brightness.light,
+  Brightness.dark.name: Brightness.dark,
+};
+
+class ToggleBrightenssTriggerToken extends TriggerToken {
+  const ToggleBrightenssTriggerToken();
+}
+
+extension BrightnessCodec on Brightness {
+  String encode() {
+    return name;
+  }
+
+  static Brightness decode(String value) {
+    final b = _brightnessMap[value];
+
+    if (b == null) {
+      throw Exception('Unknown brightness value: $value');
+    }
+
+    return b;
+  }
+}
 
 void withBrightness(CTNode n) {
   final brightness = n.ref(() {
-    final currentBrightness = prefs.getString(_kBrightnessKey) ?? _kLight;
-
     Brightness brightness;
 
-    switch (currentBrightness) {
-      case _kLight:
+    final encodedBrightness = prefs.getString(_key);
+
+    if (encodedBrightness == null) {
+      brightness = Brightness.light;
+    } else {
+      try {
+        brightness = BrightnessCodec.decode(encodedBrightness);
+      } on Exception {
         brightness = Brightness.light;
-        break;
-      case _kDark:
-        brightness = Brightness.dark;
-        break;
-      default:
-        throw Exception('Unknown brightness: $currentBrightness');
+      }
     }
 
     return brightness;
   });
 
   final setBrightness = brightness.action((value, Brightness arg) => arg);
+  final toggleBrightness = brightness.action((value, _) {
+    if (value == Brightness.light) {
+      return Brightness.dark;
+    } else {
+      return Brightness.light;
+    }
+  });
 
-  n.invoke(() {
-    prefs.setString(
-      _kBrightnessKey,
-      brightness.value == Brightness.light ? _kLight : _kDark,
-    );
-  }, brightness.value);
+  n.invoke(
+    () => prefs.setString(_key, brightness.value.encode()),
+    brightness.value,
+  );
 
   brightness.provide();
   setBrightness.provide();
+  toggleBrightness.provide(const ToggleBrightenssTriggerToken());
 }

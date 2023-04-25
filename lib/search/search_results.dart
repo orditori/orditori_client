@@ -89,7 +89,7 @@ class SearchResults extends CTWidget {
     final children = getItems(n.context).toList();
 
     final paddingRef = Ref.consume<EdgeInsets>(n);
-    final padding = n.subscribeToRef(paddingRef.just().value);
+    final padding = n.subscribeToRef(paddingRef);
 
     return ListView.builder(
       padding: padding,

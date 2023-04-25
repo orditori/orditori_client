@@ -11,7 +11,7 @@ class SettingsScreen extends CTWidget {
   @override
   Widget build(CTNode n) {
     final paddingRef = Ref.consume<EdgeInsets>(n);
-    final padding = n.subscribeToRef(paddingRef.just().value);
+    final padding = n.subscribeToRef(paddingRef);
 
     return Scaffold(
       body: ListView(
@@ -30,10 +30,10 @@ class BrightnessSettingTile extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    final ref = Ref.consume<Brightness>(n).just().value;
+    final ref = Ref.consume<Brightness>(n);
     final brightness = n.subscribeToRef(ref);
 
-    final setBrightness = Trigger.consume<Brightness>(n).just().value;
+    final setBrightness = Trigger.consume<Brightness>(n);
     final isDarkMode = brightness == Brightness.dark;
 
     void toggleBrightness() {
@@ -74,13 +74,10 @@ class TokenSettingTile extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    final tokenRef = Ref.consume<String>(n).just().value;
+    final tokenRef = Ref.consume<String>(n);
     final token = n.subscribeToRef(tokenRef);
 
-    final deleteToken = Trigger.consume(
-      n,
-      const DeleteTokenTriggerToken(),
-    ).just().value;
+    final deleteToken = Trigger.consume(n, const DeleteTokenTriggerToken());
 
     return ListTile(
       title: const Text('API Key'),

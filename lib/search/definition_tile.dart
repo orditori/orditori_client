@@ -17,10 +17,9 @@ class DefinitionTile extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    final savedDefinitions = n.subscribeToRef(
-      Ref.consume<Set<int>>(n).just().value,
-    );
-    final notebookRef = Ref.consume<NotebookR>(n).just().value;
+    final savedDefinitionsRef = Ref.consume<Set<int>>(n);
+    final savedDefinitions = n.subscribeToRef(savedDefinitionsRef);
+    final notebookRef = Ref.consume<NotebookR>(n);
 
     final isSaved = savedDefinitions.contains(definition.id);
     final addDefinition = n.trigger();

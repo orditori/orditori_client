@@ -27,7 +27,7 @@ class SearchScreen extends CTWidget {
     });
 
     final paddingRef = Ref.consume<EdgeInsets>(n);
-    final padding = n.subscribeToRef(paddingRef.just().value);
+    final padding = n.subscribeToRef(paddingRef);
 
     return Scaffold(
       body: SafeArea(

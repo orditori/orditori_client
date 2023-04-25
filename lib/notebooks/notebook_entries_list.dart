@@ -25,7 +25,7 @@ class NotebookEntriesList extends CTWidget {
   @override
   Widget build(CTNode n) {
     final paddingRef = Ref.consume<EdgeInsets>(n);
-    final padding = n.subscribeToRef(paddingRef.just().value);
+    final padding = n.subscribeToRef(paddingRef);
 
     return ListView.builder(
       reverse: true,

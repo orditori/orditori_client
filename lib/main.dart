@@ -63,7 +63,7 @@ class App extends CTWidget {
 
   @override
   Widget build(CTNode n) {
-    final brightnessRef = Ref.consume<Brightness>(n).just().value;
+    final brightnessRef = Ref.consume<Brightness>(n);
     final brightness = n.subscribeToRef(brightnessRef);
 
     return MaterialApp(

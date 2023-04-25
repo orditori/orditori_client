@@ -22,7 +22,7 @@ class Notebooks extends CTWidget {
   @override
   Widget build(CTNode n) {
     final notebookRef = Ref.consume<NotebookR>(n);
-    final notebook = n.subscribeToRef(notebookRef.just().value);
+    final notebook = n.subscribeToRef(notebookRef);
 
     final g = notebook.entries.fold<List<DefinitionsDateGroup>>([], (acc, v) {
       final date = formatDate(DateTime.parse(v.addedDate));

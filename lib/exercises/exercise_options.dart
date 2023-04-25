@@ -63,7 +63,7 @@ class ExerciseOptions extends CTWidget {
   @override
   Widget build(CTNode n) {
     final selectedOptionRef = Ref.consume<String?>(n);
-    final selectedOption = n.subscribeToRef(selectedOptionRef.just().value);
+    final selectedOption = n.subscribeToRef(selectedOptionRef);
 
     return CallbackShortcuts(
       bindings: {
