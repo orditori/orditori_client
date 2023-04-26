@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:github/github.dart';
+import 'package:path/path.dart' as path;
 
 final githubToken = Platform.environment['GITHUB_TOKEN'] as String;
 final tag = Platform.environment['CM_TAG'] as String;
@@ -18,7 +18,7 @@ Future<void> main(List<String> args) async {
   final releaseAsset = CreateReleaseAsset(
     assetData: File(filename).readAsBytesSync(),
     contentType: 'application/octet-stream',
-    name: filename,
+    name: path.basename(filename),
   );
 
   final assets = await github.repositories.uploadReleaseAssets(
