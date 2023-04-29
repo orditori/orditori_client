@@ -6,7 +6,7 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 class DefinitionTile extends CTWidget {
   final DefinitionR definition;
   final DefinitionSource source;
-  final Trigger refreshNotebook;
+  final VoidTrigger refreshNotebook;
 
   const DefinitionTile({
     super.key,
@@ -16,19 +16,18 @@ class DefinitionTile extends CTWidget {
   });
 
   @override
-  Widget build(CTNode n) {
-    final savedDefinitionsRef = Ref.consume<Set<int>>(n);
-    final savedDefinitions = n.subscribeToRef(savedDefinitionsRef);
-    final notebookRef = Ref.consume<NotebookR>(n);
+  Widget build(CTNode n, CTContext context) {
+    final savedDefinitions = context.ref<Set<int>>().subscribe();
+    final notebook = context.ref<NotebookR>().subscribe();
 
     final isSaved = savedDefinitions.contains(definition.id);
     final addDefinition = n.trigger();
 
-    final addResult = addDefinition.asyncHandler((_) async {
+    final addResult = addDefinition.asyncHandler(() async {
       final addedDate = '${DateTime.now().toIso8601String().substring(0, 23)}Z';
       final entryW = NotebookEntryW(
         addedDate: addedDate,
-        notebook: notebookRef.value.id,
+        notebook: notebook.id,
       );
 
       final entryRes = await client.notebookEntriesPost(

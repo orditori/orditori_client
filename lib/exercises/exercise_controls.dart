@@ -13,7 +13,7 @@ import 'exercise_result.dart';
 
 class ExerciseControls extends CTWidget {
   final DefinitionExerciseR exercise;
-  final Trigger loadExercise;
+  final VoidTrigger loadExercise;
 
   const ExerciseControls({
     super.key,
@@ -22,25 +22,26 @@ class ExerciseControls extends CTWidget {
   });
 
   @override
-  Widget build(CTNode n) {
-    final showOptionsRef = n.ref(
+  Widget build(CTNode n, CTContext context) {
+    final shouldShowOptionsRef = n.ref(
       () => exercise.difficultyScore > 0.3,
       exercise.id,
     );
 
-    final showOptions = showOptionsRef.action((value, _) => !value);
+    final showOptions = shouldShowOptionsRef.action((value) => true);
 
     final ctrlRef = n.ref(() => TextEditingController(), exercise.id);
     final ctrl = ctrlRef.value;
 
-    final submit = n.trigger<String>();
-    final selectedOption = n.ref<String?, int>(() => null, exercise.id);
+    final submit = n.trigger.withArg<String>();
 
+    final selectedOption = n.ref<String?, int>(() => null, exercise.id);
+    final select = selectedOption.action.setValue();
     selectedOption.provide();
 
-    final res = submit.asyncHandler((answer) async {
-      selectedOption.value = answer;
+    submit.handler(select);
 
+    final res = submit.asyncHandler((answer) async {
       final solution = ExerciseSolutionDefinitionExercise(
         exercise: exercise.id,
         input: answer,
@@ -71,7 +72,7 @@ class ExerciseControls extends CTWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (showOptionsRef.value)
+        if (shouldShowOptionsRef.value)
           ExerciseOptions(
             options: exercise.options,
             selectOption: submit,
@@ -97,7 +98,7 @@ class ExerciseControls extends CTWidget {
           )
         ],
         const SizedBox(height: 16),
-        if (!showOptionsRef.value) ...[
+        if (!shouldShowOptionsRef.value) ...[
           SizedBox(
             height: 60,
             child: ExerciseResult(result: result),

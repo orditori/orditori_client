@@ -20,7 +20,7 @@ class SearchResults extends CTWidget {
   final bool hasResult;
   final List<DefinitionsWithSource> items;
   final String query;
-  final Trigger refreshNotebook;
+  final VoidTrigger refreshNotebook;
 
   const SearchResults({
     super.key,
@@ -75,7 +75,7 @@ class SearchResults extends CTWidget {
   }
 
   @override
-  Widget build(CTNode n) {
+  Widget build(CTNode n, CTContext context) {
     if (error != null) {
       return Center(child: Text(error!));
     }
@@ -87,9 +87,7 @@ class SearchResults extends CTWidget {
     }
 
     final children = getItems(n.context).toList();
-
-    final paddingRef = Ref.consume<EdgeInsets>(n);
-    final padding = n.subscribeToRef(paddingRef);
+    final padding = context.ref<EdgeInsets>().subscribe();
 
     return ListView.builder(
       padding: padding,

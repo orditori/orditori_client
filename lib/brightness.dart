@@ -10,9 +10,8 @@ final _brightnessMap = {
   Brightness.dark.name: Brightness.dark,
 };
 
-class ToggleBrightenssTriggerToken extends TriggerToken {
-  const ToggleBrightenssTriggerToken();
-}
+final toggleBrightnessToken = VoidTrigger.token(#toggleBrightness);
+final setBrightnessToken = Trigger.token<Brightness>(#setBrightness);
 
 extension BrightnessCodec on Brightness {
   String encode() {
@@ -49,8 +48,8 @@ void withBrightness(CTNode n) {
     return brightness;
   });
 
-  final setBrightness = brightness.action((value, Brightness arg) => arg);
-  final toggleBrightness = brightness.action((value, _) {
+  final setBrightness = brightness.action.setValue();
+  final toggleBrightness = brightness.action((value) {
     if (value == Brightness.light) {
       return Brightness.dark;
     } else {
@@ -65,5 +64,5 @@ void withBrightness(CTNode n) {
 
   brightness.provide();
   setBrightness.provide();
-  toggleBrightness.provide(const ToggleBrightenssTriggerToken());
+  toggleBrightness.provide(toggleBrightnessToken);
 }

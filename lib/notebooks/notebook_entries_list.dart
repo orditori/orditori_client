@@ -13,7 +13,7 @@ String formatDate(DateTime date) {
 class NotebookEntriesList extends CTWidget {
   final int notebookId;
   final List<NotebookEntryR> entries;
-  final Trigger refreshNotebook;
+  final VoidTrigger refreshNotebook;
 
   const NotebookEntriesList({
     super.key,
@@ -23,9 +23,8 @@ class NotebookEntriesList extends CTWidget {
   });
 
   @override
-  Widget build(CTNode n) {
-    final paddingRef = Ref.consume<EdgeInsets>(n);
-    final padding = n.subscribeToRef(paddingRef);
+  Widget build(CTNode n, CTContext context) {
+    final padding = context.ref<EdgeInsets>().subscribe();
 
     return ListView.builder(
       reverse: true,

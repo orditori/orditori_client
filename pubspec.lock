@@ -273,10 +273,11 @@ packages:
   flutter_compute_tree:
     dependency: "direct main"
     description:
-      path: "../wip/packages/flutter_compute_tree"
-      relative: true
-    source: path
-    version: "1.0.0+21"
+      name: flutter_compute_tree
+      sha256: "0bbb332c4555042bcb3b9dc9cbcf0510f1405ed5ce87282c774cb0eb70c5e41d"
+      url: "https://bartender-c6niljjlfq-uc.a.run.app"
+    source: hosted
+    version: "1.0.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:

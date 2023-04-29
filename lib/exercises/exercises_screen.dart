@@ -12,10 +12,10 @@ class ExercisesScreen extends CTWidget {
   });
 
   @override
-  Widget build(CTNode n) {
+  Widget build(CTNode n, CTContext context) {
     final loadExercise = n.trigger();
 
-    final r = loadExercise.asyncHandler((_) {
+    final r = loadExercise.asyncHandler(() {
       return client.exercisesDefinitionRandomGet(apiKey: null);
     });
 
@@ -30,9 +30,7 @@ class ExercisesScreen extends CTWidget {
     }
 
     final exercise = r.success().value.body!;
-
-    final paddingRef = Ref.consume<EdgeInsets>(n);
-    final padding = n.subscribeToRef(paddingRef);
+    final padding = context.ref<EdgeInsets>().subscribe();
 
     return Stack(
       children: [

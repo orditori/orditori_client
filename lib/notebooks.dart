@@ -10,15 +10,13 @@ Widget withNotebooks({
   required CTNode n,
   required String token,
   required Function(String token) setToken,
-  required Widget Function(Trigger refreshNotebook, Widget? child) builder,
+  required Widget Function(VoidTrigger refreshNotebook, Widget? child) builder,
 }) {
   final load = n.trigger();
 
-  final r = load.asyncHandler((_) {
+  final r = load.asyncHandler(() {
     return client.notebooksGet(apiKey: token);
-  });
-
-  n.invoke(load);
+  }, invoke: true);
 
   return NotebooksProvider(
     notebookResult: r,
@@ -30,8 +28,8 @@ Widget withNotebooks({
 
 class NotebooksProvider extends CTWidget {
   final Result<Response<NotebookR>> notebookResult;
-  final Trigger refreshNotbook;
-  final Widget Function(Trigger refreshNotebook, Widget? child) builder;
+  final VoidTrigger refreshNotbook;
+  final Widget Function(VoidTrigger refreshNotebook, Widget? child) builder;
   final Function(String token) setToken;
 
   const NotebooksProvider({
@@ -53,7 +51,7 @@ class NotebooksProvider extends CTWidget {
   }
 
   @override
-  Widget build(CTNode n) {
+  Widget build(CTNode n, CTContext context) {
     final r = notebookResult;
 
     if (r is Loading || r is Pending) {
@@ -73,7 +71,7 @@ class NotebooksProvider extends CTWidget {
     if (r.success().value.body == null) {
       return builder(
         refreshNotbook,
-        CTBuilder((n) {
+        CTBuilder((n, context) {
           n.invoke(() async {
             await prefs.clear();
             setToken('');
@@ -93,8 +91,8 @@ class NotebooksProvider extends CTWidget {
         .map((e) => e.definitionId)
         .toSet();
 
-    n.valueRef(notebook).provide();
-    n.valueRef(savedDefinitions).provide();
+    n.provideValueAsRef(notebook);
+    n.provideValueAsRef(savedDefinitions);
 
     return builder(refreshNotbook, null);
   }

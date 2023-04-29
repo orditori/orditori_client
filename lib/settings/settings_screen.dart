@@ -9,9 +9,8 @@ class SettingsScreen extends CTWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(CTNode n) {
-    final paddingRef = Ref.consume<EdgeInsets>(n);
-    final padding = n.subscribeToRef(paddingRef);
+  Widget build(CTNode n, CTContext context) {
+    final padding = context.ref<EdgeInsets>().subscribe();
 
     return Scaffold(
       body: ListView(
@@ -29,11 +28,11 @@ class BrightnessSettingTile extends CTWidget {
   const BrightnessSettingTile({super.key});
 
   @override
-  Widget build(CTNode n) {
-    final ref = Ref.consume<Brightness>(n);
-    final brightness = n.subscribeToRef(ref);
+  Widget build(CTNode n, CTContext context) {
+    final brightness = context.ref<Brightness>().subscribe();
+    final setBrightness =
+        context.trigger.withArg(Trigger.token<Brightness>(#setBrightness));
 
-    final setBrightness = Trigger.consume<Brightness>(n);
     final isDarkMode = brightness == Brightness.dark;
 
     void toggleBrightness() {
@@ -65,19 +64,13 @@ const _snackbar = SnackBar(
   content: Text('Copied API key to clipboard'),
 );
 
-class DeleteTokenTriggerToken extends TriggerToken {
-  const DeleteTokenTriggerToken();
-}
-
 class TokenSettingTile extends CTWidget {
   const TokenSettingTile({super.key});
 
   @override
-  Widget build(CTNode n) {
-    final tokenRef = Ref.consume<String>(n);
-    final token = n.subscribeToRef(tokenRef);
-
-    final deleteToken = Trigger.consume(n, const DeleteTokenTriggerToken());
+  Widget build(CTNode n, CTContext context) {
+    final token = context.ref<String>().subscribe();
+    final deleteToken = context.trigger(VoidTrigger.token(#deleteToken));
 
     return ListTile(
       title: const Text('API Key'),

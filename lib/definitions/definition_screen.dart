@@ -7,7 +7,7 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 class DefinitionScreen extends StatelessWidget {
   final DefinitionContentItemR def;
   final NotebookEntryR entry;
-  final Trigger refreshNotebook;
+  final VoidTrigger refreshNotebook;
 
   const DefinitionScreen({
     super.key,
@@ -61,10 +61,10 @@ class DefinitionScreen extends StatelessWidget {
             ],
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: CTBuilder((n) {
+              child: CTBuilder((n, context) {
                 final delete = n.trigger();
 
-                final r = delete.asyncHandler((_) async {
+                final r = delete.asyncHandler(() async {
                   await client.notebookEntriesEntryIdDelete(
                     apiKey: null,
                     entryId: entry.id,
@@ -73,7 +73,7 @@ class DefinitionScreen extends StatelessWidget {
                   refreshNotebook();
 
                   // ignore: use_build_context_synchronously
-                  Navigator.of(context).pop();
+                  Navigator.of(n.context).pop();
                 });
 
                 return ElevatedButton.icon(

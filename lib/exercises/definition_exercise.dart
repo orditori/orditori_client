@@ -7,7 +7,7 @@ import 'exercise_controls.dart';
 
 class DefinitionExercise extends StatelessWidget {
   final DefinitionExerciseR exercise;
-  final Trigger loadExercise;
+  final VoidTrigger loadExercise;
 
   const DefinitionExercise({
     super.key,

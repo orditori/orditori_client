@@ -41,7 +41,9 @@ dependencies:
   shared_preferences: ^2.0.12
   auto_size_text: ^3.0.0
   http: ^0.13.4
-  flutter_compute_tree: ^1.0.0+21
+  flutter_compute_tree:
+    hosted: https://bartender-c6niljjlfq-uc.a.run.app
+    version: ^1.0.0
   github: ^9.12.0
   path: ^1.8.2
 

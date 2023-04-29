@@ -25,7 +25,7 @@ class Root extends CTWidget {
   const Root({super.key});
 
   @override
-  Widget build(CTNode n) {
+  Widget build(CTNode n, CTContext context) {
     withBrightness(n);
     final auth = withAuth(n);
 
@@ -43,9 +43,7 @@ class Root extends CTWidget {
           )
         : LoginScreen(setToken: auth.setToken);
 
-    return App(
-      child: firstScreen,
-    );
+    return App(child: firstScreen);
   }
 }
 
@@ -62,9 +60,8 @@ class App extends CTWidget {
   });
 
   @override
-  Widget build(CTNode n) {
-    final brightnessRef = Ref.consume<Brightness>(n);
-    final brightness = n.subscribeToRef(brightnessRef);
+  Widget build(CTNode n, CTContext context) {
+    final brightness = context.ref<Brightness>().subscribe();
 
     return MaterialApp(
       title: 'Orditori',
@@ -102,7 +99,7 @@ class App extends CTWidget {
 }
 
 class AppPages extends CTWidget {
-  final Trigger refreshNotebook;
+  final VoidTrigger refreshNotebook;
 
   final Widget? child;
 
@@ -113,9 +110,9 @@ class AppPages extends CTWidget {
   });
 
   @override
-  Widget build(CTNode n) {
+  Widget build(CTNode n, CTContext context) {
     final pageIndex = n.ref(() => 0);
-    final setPage = pageIndex.action((value, int index) => index);
+    final setPage = pageIndex.action.setValue();
     final onExit = n.memo(() => setPage(0));
 
     final children = [
@@ -191,7 +188,7 @@ class AppPages extends CTWidget {
                 final padding = ((w - 700) / 2).clamp(0.0, 600.0);
 
                 return CTBuilder(
-                  (n) {
+                  (n, context) {
                     final paddingRef = n.ref(
                       () => EdgeInsets.symmetric(horizontal: padding),
                       padding,

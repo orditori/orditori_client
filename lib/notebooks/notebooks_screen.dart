@@ -12,7 +12,7 @@ class DefinitionsDateGroup {
 }
 
 class Notebooks extends CTWidget {
-  final Trigger refreshNotebook;
+  final VoidTrigger refreshNotebook;
 
   const Notebooks({
     super.key,
@@ -20,9 +20,8 @@ class Notebooks extends CTWidget {
   });
 
   @override
-  Widget build(CTNode n) {
-    final notebookRef = Ref.consume<NotebookR>(n);
-    final notebook = n.subscribeToRef(notebookRef);
+  Widget build(CTNode n, CTContext context) {
+    final notebook = context.ref<NotebookR>().subscribe();
 
     final g = notebook.entries.fold<List<DefinitionsDateGroup>>([], (acc, v) {
       final date = formatDate(DateTime.parse(v.addedDate));

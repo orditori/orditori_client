@@ -8,7 +8,7 @@ import 'search_results.dart';
 
 class SearchScreen extends CTWidget {
   final VoidCallback onExit;
-  final Trigger refreshNotebook;
+  final VoidTrigger refreshNotebook;
 
   const SearchScreen({
     super.key,
@@ -17,17 +17,16 @@ class SearchScreen extends CTWidget {
   });
 
   @override
-  Widget build(CTNode n) {
+  Widget build(CTNode n, CTContext context) {
     final ctrlRef = n.ref(() => TextEditingController());
     final controller = ctrlRef.value;
-    final search = n.trigger<String>();
+    final search = n.trigger.withArg<String>();
 
     final r = search.asyncHandler((query) {
       return client.definitionsGet(query: query);
     });
 
-    final paddingRef = Ref.consume<EdgeInsets>(n);
-    final padding = n.subscribeToRef(paddingRef);
+    final padding = context.ref<EdgeInsets>().subscribe();
 
     return Scaffold(
       body: SafeArea(

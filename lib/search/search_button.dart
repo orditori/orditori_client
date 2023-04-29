@@ -24,8 +24,9 @@ class SearchButton extends StatelessWidget {
         builder: (context, child) {
           final query = controller.text;
           final action = controller.text.isEmpty ? null : search.bind(query);
+
           return ElevatedButton(
-            onPressed: action,
+            onPressed: action?.call,
             child: SizedBox(
               height: 16,
               width: isLoading ? 16 : null,
