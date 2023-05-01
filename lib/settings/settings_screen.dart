@@ -30,8 +30,7 @@ class BrightnessSettingTile extends CTWidget {
   @override
   Widget build(CTNode n, CTContext context) {
     final brightness = context.ref<Brightness>().subscribe();
-    final setBrightness =
-        context.trigger.withArg(Trigger.token<Brightness>(#setBrightness));
+    final setBrightness = context.trigger.withArg(Trigger.token<Brightness>());
 
     final isDarkMode = brightness == Brightness.dark;
 
@@ -70,7 +69,7 @@ class TokenSettingTile extends CTWidget {
   @override
   Widget build(CTNode n, CTContext context) {
     final token = context.ref<String>().subscribe();
-    final deleteToken = context.trigger(VoidTrigger.token(#deleteToken));
+    final deleteToken = context.trigger(VoidTrigger.token<String>());
 
     return ListTile(
       title: const Text('API Key'),

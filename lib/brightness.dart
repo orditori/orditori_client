@@ -10,9 +10,6 @@ final _brightnessMap = {
   Brightness.dark.name: Brightness.dark,
 };
 
-final toggleBrightnessToken = VoidTrigger.token(#toggleBrightness);
-final setBrightnessToken = Trigger.token<Brightness>(#setBrightness);
-
 extension BrightnessCodec on Brightness {
   String encode() {
     return name;
@@ -63,6 +60,6 @@ void withBrightness(CTNode n) {
   );
 
   brightness.provide();
-  setBrightness.provide();
-  toggleBrightness.provide(toggleBrightnessToken);
+  setBrightness.provide(Trigger.token<Brightness>());
+  toggleBrightness.provide(VoidTrigger.token<Brightness>());
 }

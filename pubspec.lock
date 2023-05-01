@@ -274,7 +274,7 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_compute_tree
-      sha256: "0bbb332c4555042bcb3b9dc9cbcf0510f1405ed5ce87282c774cb0eb70c5e41d"
+      sha256: "9c6edf476ef27b33d090f0ba2cc535d9bf793b1408a61b97706d0b711907ec2b"
       url: "https://bartender-c6niljjlfq-uc.a.run.app"
     source: hosted
     version: "1.0.0"

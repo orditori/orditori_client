@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
 class LoginScreen extends StatelessWidget {
-  final void Function(String token) setToken;
+  final Trigger<String> setToken;
 
-  const LoginScreen({super.key, required this.setToken});
+  const LoginScreen({
+    super.key,
+    required this.setToken,
+  });
 
   @override
   Widget build(BuildContext context) {

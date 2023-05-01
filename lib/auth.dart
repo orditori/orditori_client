@@ -5,7 +5,7 @@ class AuthNode {
   final String token;
   bool get isAuthenticated => token.isNotEmpty;
 
-  final void Function(String token) setToken;
+  final Trigger<String> setToken;
   final VoidTrigger deleteToken;
 
   AuthNode({
@@ -26,7 +26,7 @@ AuthNode withAuth(CTNode n) {
   }, token.value);
 
   token.provide();
-  deleteToken.provide(VoidTrigger.token(#deleteToken));
+  deleteToken.provide(VoidTrigger.token<String>());
 
   return AuthNode(
     token: token.value,

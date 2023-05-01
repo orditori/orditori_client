@@ -13,18 +13,17 @@ String formatDate(DateTime date) {
 class NotebookEntriesList extends CTWidget {
   final int notebookId;
   final List<NotebookEntryR> entries;
-  final VoidTrigger refreshNotebook;
 
   const NotebookEntriesList({
     super.key,
     required this.entries,
     required this.notebookId,
-    required this.refreshNotebook,
   });
 
   @override
   Widget build(CTNode n, CTContext context) {
     final padding = context.ref<EdgeInsets>().subscribe();
+    final refreshNotebook = context.trigger(VoidTrigger.token<NotebookR>());
 
     return ListView.builder(
       reverse: true,

@@ -34,11 +34,8 @@ class Root extends CTWidget {
             n: n,
             token: auth.token,
             setToken: auth.setToken,
-            builder: (refreshNotebook, child) {
-              return AppPages(
-                refreshNotebook: refreshNotebook,
-                child: child,
-              );
+            builder: (child) {
+              return AppPages(child: child);
             },
           )
         : LoginScreen(setToken: auth.setToken);
@@ -99,13 +96,10 @@ class App extends CTWidget {
 }
 
 class AppPages extends CTWidget {
-  final VoidTrigger refreshNotebook;
-
   final Widget? child;
 
   const AppPages({
     super.key,
-    required this.refreshNotebook,
     this.child,
   });
 
@@ -116,8 +110,8 @@ class AppPages extends CTWidget {
     final onExit = n.memo(() => setPage(0));
 
     final children = [
-      Notebooks(refreshNotebook: refreshNotebook),
-      SearchScreen(onExit: onExit, refreshNotebook: refreshNotebook),
+      const Notebooks(),
+      SearchScreen(onExit: onExit),
       ExercisesScreen(onExit: onExit),
       const SettingsScreen(),
     ];
@@ -195,10 +189,15 @@ class AppPages extends CTWidget {
                     );
 
                     paddingRef.provide();
+                    final selectedPage = children[pageIndex.value];
+
+                    if (selectedPage is SettingsScreen) {
+                      return const SettingsScreen();
+                    }
 
                     return child ?? children[pageIndex.value];
                   },
-                  dep: Object.hash(padding, pageIndex.value),
+                  dep: Object.hash(padding, pageIndex.value, child),
                 );
               }),
             ),

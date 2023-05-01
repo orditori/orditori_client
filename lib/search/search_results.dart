@@ -20,7 +20,6 @@ class SearchResults extends CTWidget {
   final bool hasResult;
   final List<DefinitionsWithSource> items;
   final String query;
-  final VoidTrigger refreshNotebook;
 
   const SearchResults({
     super.key,
@@ -28,12 +27,12 @@ class SearchResults extends CTWidget {
     this.hasResult = false,
     required this.query,
     required this.items,
-    required this.refreshNotebook,
   });
 
-  Iterable<Widget> getItems(BuildContext context) sync* {
+  Iterable<Widget> getItems(BuildContext context, CTContext dataContext) sync* {
     int outerCursor = 0;
     int innerCursor = 0;
+    final refreshNotebook = dataContext.trigger(VoidTrigger.token<NotebookR>());
 
     while (true) {
       if (outerCursor >= items.length) return;
@@ -86,7 +85,7 @@ class SearchResults extends CTWidget {
       );
     }
 
-    final children = getItems(n.context).toList();
+    final children = getItems(n.context, context).toList();
     final padding = context.ref<EdgeInsets>().subscribe();
 
     return ListView.builder(

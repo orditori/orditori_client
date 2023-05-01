@@ -6,7 +6,7 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 class DefinitionTile extends CTWidget {
   final DefinitionR definition;
   final DefinitionSource source;
-  final VoidTrigger refreshNotebook;
+  final ConsumedVoidTrigger refreshNotebook;
 
   const DefinitionTile({
     super.key,

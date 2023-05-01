@@ -8,12 +8,10 @@ import 'search_results.dart';
 
 class SearchScreen extends CTWidget {
   final VoidCallback onExit;
-  final VoidTrigger refreshNotebook;
 
   const SearchScreen({
     super.key,
     required this.onExit,
-    required this.refreshNotebook,
   });
 
   @override
@@ -52,7 +50,6 @@ class SearchScreen extends CTWidget {
                 items: r is! Success ? [] : r.success().value.body!,
                 query: controller.text,
                 error: r is Failure ? r.failure().exception.toString() : null,
-                refreshNotebook: refreshNotebook,
               ),
             ),
             Padding(

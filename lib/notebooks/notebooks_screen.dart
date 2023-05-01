@@ -12,12 +12,10 @@ class DefinitionsDateGroup {
 }
 
 class Notebooks extends CTWidget {
-  final VoidTrigger refreshNotebook;
+  @override
+  bool get static => true;
 
-  const Notebooks({
-    super.key,
-    required this.refreshNotebook,
-  });
+  const Notebooks({super.key});
 
   @override
   Widget build(CTNode n, CTContext context) {
@@ -50,12 +48,9 @@ class Notebooks extends CTWidget {
         .where((element) => element.definitions.isNotEmpty)
         .toList();
 
-    final child = NotebookEntriesList(
+    return NotebookEntriesList(
       entries: entries,
       notebookId: notebook.id,
-      refreshNotebook: refreshNotebook,
     );
-
-    return child;
   }
 }
