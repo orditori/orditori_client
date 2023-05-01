@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide SearchBar;
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
 import 'package:orditori/search/search_bar.dart';

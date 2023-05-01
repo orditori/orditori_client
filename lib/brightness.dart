@@ -54,12 +54,21 @@ void withBrightness(CTNode n) {
     }
   });
 
+  final setBrightnessFromBool = brightness.reducer((value, bool isDarkMode) {
+    if (isDarkMode) {
+      return Brightness.dark;
+    } else {
+      return Brightness.light;
+    }
+  });
+
   n.invoke(
     () => prefs.setString(_key, brightness.value.encode()),
     brightness.value,
   );
 
   brightness.provide();
-  setBrightness.provide(Trigger.token<Brightness>());
-  toggleBrightness.provide(VoidTrigger.token<Brightness>());
+  setBrightness.provide();
+  toggleBrightness.provide();
+  setBrightnessFromBool.provide();
 }

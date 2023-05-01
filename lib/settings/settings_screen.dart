@@ -30,7 +30,7 @@ class BrightnessSettingTile extends CTWidget {
   @override
   Widget build(CTNode n, CTContext context) {
     final brightness = context.ref<Brightness>().subscribe();
-    final toggleBrightness = context.trigger(VoidTrigger.token<Brightness>());
+    final setBrightness = context.reducer<Brightness, bool>();
 
     final isDarkMode = brightness == Brightness.dark;
     final icon = isDarkMode ? Icons.dark_mode_sharp : Icons.dark_mode_outlined;
@@ -40,7 +40,7 @@ class BrightnessSettingTile extends CTWidget {
       leading: Icon(icon),
       trailing: Switch(
         value: isDarkMode,
-        onChanged: (v) => toggleBrightness(),
+        onChanged: setBrightness,
       ),
     );
   }
