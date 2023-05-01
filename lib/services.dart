@@ -8,7 +8,7 @@ const kTokenKey = 'token-production';
 late String token;
 
 final client = Orditori.create(
-  baseUrl: Uri.parse('http://2.205.69.119'),
+  baseUrl: Uri.parse('http://3.127.125.21'),
   interceptors: [
     (Request request) {
       return request.copyWith(
