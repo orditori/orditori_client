@@ -1,56 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 import 'package:orditori/overrides.dart';
 
 class ExerciseResult extends StatelessWidget {
-  final SolutionCheckResult? result;
+  final Maybe<SolutionCheckResult> result;
 
   const ExerciseResult({
     super.key,
     required this.result,
   });
 
+  Color backgroundColor(ColorScheme colorScheme, SolutionCheckResult result) {
+    return switch (result) {
+      IncorrectResult() => colorScheme.error,
+      Correct() => Colors.green,
+    };
+  }
+
+  Color textColor(ColorScheme colorScheme, SolutionCheckResult result) {
+    return switch (result) {
+      IncorrectResult() => colorScheme.onError,
+      Correct() => Colors.white,
+    };
+  }
+
+  String text(SolutionCheckResult result) {
+    return switch (result) {
+      IncorrectResult(value: final r) => r,
+      Correct() => 'Correct!',
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    late Widget child;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    if (result == null) {
-      child = const SizedBox();
-    } else if (result is IncorrectResult) {
-      child = Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.error,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Center(
-          child: Text(
-            (result as IncorrectResult).value,
-            style: TextStyle(color: Theme.of(context).colorScheme.onError),
-          ),
-        ),
-      );
-    } else {
-      child = Container(
-        decoration: BoxDecoration(
-          color: Colors.green,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Center(
-          child: Text(
-            'Correct!',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      );
-    }
+    final (scale, opacity) = switch (result) {
+      Nothing() => (0.0, 0.0),
+      Just() => (1.0, 1.0),
+    };
 
     return AnimatedScale(
-      scale: result == null ? 0 : 1,
+      scale: scale,
       curve: Curves.easeInOutBack,
       duration: const Duration(milliseconds: 200),
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 150),
-        opacity: result == null ? 0 : 1,
-        child: child,
+        opacity: opacity,
+        child: switch (result) {
+          Nothing() => const SizedBox.shrink(),
+          Just(value: final v) => Container(
+              decoration: BoxDecoration(
+                color: backgroundColor(colorScheme, v),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Text(
+                  text(v),
+                  style: TextStyle(color: textColor(colorScheme, v)),
+                ),
+              ),
+            )
+        },
       ),
     );
   }

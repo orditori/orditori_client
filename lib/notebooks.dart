@@ -21,8 +21,7 @@ Widget withNotebooks({
   return CTBuilder(
     (n, context) {
       switch (r) {
-        case Loading():
-        case Pending():
+        case Loading() || Pending():
           return builder(const Center(child: CircularProgressIndicator()));
         case Failure(exception: final e):
           return builder(Text(e.toString()));

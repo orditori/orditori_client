@@ -20,8 +20,7 @@ class ExercisesScreen extends CTWidget {
     }, invoke: true);
 
     switch (r) {
-      case Loading():
-      case Pending():
+      case Loading() || Pending():
         return const Center(child: CircularProgressIndicator());
       case Failure(exception: final e):
         return Text(e.toString());

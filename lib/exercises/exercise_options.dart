@@ -20,7 +20,7 @@ class SelectOptionIntent extends Intent {
 class ExerciseOptions extends CTWidget {
   final List<String> options;
   final Trigger<String> selectOption;
-  final SolutionCheckResult? result;
+  final Maybe<SolutionCheckResult> result;
 
   const ExerciseOptions({
     super.key,
@@ -33,12 +33,12 @@ class ExerciseOptions extends CTWidget {
     BuildContext context,
     String? option,
     String? selectedOption,
-    SolutionCheckResult? result,
+    Maybe<SolutionCheckResult> result,
   ) {
     if (selectedOption != option) {
       if (selectedOption != null) {
-        if (result is IncorrectResult) {
-          if (result.value == option) {
+        if (result case Just(value: final r)) {
+          if (r is IncorrectResult && r.value == option) {
             return Colors.green;
           }
         }
@@ -55,7 +55,7 @@ class ExerciseOptions extends CTWidget {
       return Colors.red;
     }
 
-    if (result == null && selectedOption != null) return Colors.yellow;
+    if (result is Nothing && selectedOption != null) return Colors.yellow;
 
     return Theme.of(context).colorScheme.primary;
   }

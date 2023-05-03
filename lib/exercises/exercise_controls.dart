@@ -60,14 +60,16 @@ class ExerciseControls extends CTWidget {
       loadExercise();
     });
 
-    final result = switch (res) {
-      Success(value: final v) => SolutionCheckResult.fromJson(
-          jsonDecode(v.bodyString),
-        ),
-      _ => null,
-    };
+    Maybe<SolutionCheckResult> result = const Nothing();
 
-    final handler = result == null ? () => submit(ctrl.text) : loadNext;
+    if (res case Success(value: final v)) {
+      result = Just(SolutionCheckResult.fromJson(jsonDecode(v.bodyString)));
+    }
+
+    final handler = switch (result) {
+      Just() => loadNext,
+      Nothing() => () => submit(ctrl.text),
+    };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -107,24 +109,22 @@ class ExerciseControls extends CTWidget {
         ],
         ElevatedButton(
           onPressed: handler,
-          child: res is Loading
-              ? const SizedBox(
-                  width: 12,
-                  height: 12,
-                  child: CircularProgressIndicator(strokeWidth: 1),
-                )
-              : ValueListenableBuilder<TextEditingValue>(
-                  valueListenable: ctrl,
-                  builder: (_, value, __) {
-                    return Text(
-                      result != null
-                          ? 'Next'
-                          : value.text.isEmpty
-                              ? 'Skip'
-                              : 'Submit',
-                    );
-                  },
-                ),
+          child: switch (res) {
+            Loading() => const SizedBox(
+                width: 12,
+                height: 12,
+                child: CircularProgressIndicator(strokeWidth: 1),
+              ),
+            _ => ValueListenableBuilder(
+                valueListenable: ctrl,
+                builder: (_, value, __) {
+                  return Text(switch (result) {
+                    Nothing() => value.text.isEmpty ? 'Skip' : 'Submit',
+                    Just() => 'Next',
+                  });
+                },
+              ),
+          },
         )
       ],
     );

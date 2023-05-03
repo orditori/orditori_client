@@ -1,4 +1,4 @@
-class SolutionCheckResult {
+sealed class SolutionCheckResult {
   const SolutionCheckResult();
 
   factory SolutionCheckResult.fromJson(Map<String, dynamic> data) {
@@ -10,9 +10,9 @@ class SolutionCheckResult {
   }
 }
 
-class Correct extends SolutionCheckResult {}
+class Correct implements SolutionCheckResult {}
 
-class IncorrectResult extends SolutionCheckResult {
+class IncorrectResult implements SolutionCheckResult {
   final String value;
 
   IncorrectResult(this.value);
