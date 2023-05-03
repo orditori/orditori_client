@@ -17,39 +17,37 @@ class ExercisesScreen extends CTWidget {
 
     final r = loadExercise.asyncHandler(() {
       return client.exercisesDefinitionRandomGet(apiKey: null);
-    });
+    }, invoke: true);
 
-    n.invoke(loadExercise);
+    switch (r) {
+      case Loading():
+      case Pending():
+        return const Center(child: CircularProgressIndicator());
+      case Failure(exception: final e):
+        return Text(e.toString());
+      case Success(value: final v):
+        final exercise = v.body!;
+        final padding = context.ref<EdgeInsets>().subscribe();
 
-    if (r is Loading || r is Pending) {
-      return const Center(child: CircularProgressIndicator());
+        return Stack(
+          children: [
+            Padding(
+              padding: padding,
+              child: DefinitionExercise(
+                exercise: exercise,
+                loadExercise: loadExercise,
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: onExit,
+              ),
+            ),
+          ],
+        );
     }
-
-    if (r is Failure) {
-      return Text(r.failure().exception.toString());
-    }
-
-    final exercise = r.success().value.body!;
-    final padding = context.ref<EdgeInsets>().subscribe();
-
-    return Stack(
-      children: [
-        Padding(
-          padding: padding,
-          child: DefinitionExercise(
-            exercise: exercise,
-            loadExercise: loadExercise,
-          ),
-        ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: onExit,
-          ),
-        ),
-      ],
-    );
   }
 }

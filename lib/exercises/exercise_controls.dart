@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
 import 'package:flutter/material.dart';
-import 'package:orditori/overrides.dart';
 import 'package:orditori/services.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart'
     hide SolutionCheckResult;
 
+import '../overrides.dart';
 import 'exercise_options.dart';
 import 'exercise_result.dart';
 
@@ -60,12 +60,12 @@ class ExerciseControls extends CTWidget {
       loadExercise();
     });
 
-    SolutionCheckResult? result;
-
-    if (res is Success) {
-      final json = jsonDecode(res.success().value.bodyString);
-      result = SolutionCheckResult.fromJson(json);
-    }
+    final result = switch (res) {
+      Success(value: final v) => SolutionCheckResult.fromJson(
+          jsonDecode(v.bodyString),
+        ),
+      _ => null,
+    };
 
     final handler = result == null ? () => submit(ctrl.text) : loadNext;
 

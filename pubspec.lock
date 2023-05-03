@@ -274,7 +274,7 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_compute_tree
-      sha256: "7359b577df0eb8424f8b510c6d4298ca46d0532140199956fe051bd60e56d203"
+      sha256: b67265c057fae8d0f206b5f496043d8dec1b0c04159cbb3386d60ac8d68426e6
       url: "https://bartender-c6niljjlfq-uc.a.run.app"
     source: hosted
     version: "1.0.0"
@@ -452,10 +452,10 @@ packages:
     dependency: transitive
     description:
       name: matches
-      sha256: "9b6b606af48229e8c841bc945ae4bff19a1c6cac075e2b44aa2a1ae92754b902"
+      sha256: e3c0f81067bcb3a856766927f3caa205699506257d22cc4b92d1a2b22a6972fc
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.4+9"
+    version: "1.0.0-pre.1"
   material_color_utilities:
     dependency: transitive
     description:
@@ -846,5 +846,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=3.0.0-417.3.beta <4.0.0"
+  dart: ">=3.0.0-417.3.beta <3.0.0"
   flutter: ">=3.0.0"

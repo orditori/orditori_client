@@ -20,37 +20,29 @@ Widget withNotebooks({
 
   return CTBuilder(
     (n, context) {
-      if (r is Loading || r is Pending) {
-        return builder(
-          const Center(child: CircularProgressIndicator()),
-        );
+      switch (r) {
+        case Loading():
+        case Pending():
+          return builder(const Center(child: CircularProgressIndicator()));
+        case Failure(exception: final e):
+          return builder(Text(e.toString()));
+        case Success(value: final v):
+          if (v.body == null) {
+            return builder(const Center(child: Text('Probably invalid token')));
+          }
+
+          final notebook = v.body!;
+
+          final savedDefinitions = notebook.entries
+              .expand((element) => element.definitions)
+              .map((e) => e.definitionId)
+              .toSet();
+
+          n.provideValueAsRef(notebook);
+          n.provideValueAsRef(savedDefinitions);
+
+          return builder(null);
       }
-
-      if (r is Failure) {
-        return builder(
-          Text(r.failure().exception.toString()),
-        );
-      }
-
-      if (r.success().value.body == null) {
-        return builder(
-          const Center(
-            child: Text('Probably invalid token'),
-          ),
-        );
-      }
-
-      final notebook = r.success().value.body!;
-
-      final savedDefinitions = notebook.entries
-          .expand((element) => element.definitions)
-          .map((e) => e.definitionId)
-          .toSet();
-
-      n.provideValueAsRef(notebook);
-      n.provideValueAsRef(savedDefinitions);
-
-      return builder(null);
     },
     dep: [r, token],
     when: (oldDep, newDep) {
