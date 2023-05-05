@@ -35,27 +35,18 @@ class ExerciseOptions extends CTWidget {
     String? selectedOption,
     Maybe<SolutionCheckResult> result,
   ) {
-    if (selectedOption != option) {
-      if (selectedOption != null) {
-        if (result case Just(value: final r)) {
-          if (r is IncorrectResult && r.value == option) {
-            return Colors.green;
-          }
-        }
+    if (result is Nothing && option == selectedOption) return Colors.yellow;
 
-        return Colors.grey;
-      }
+    if (result case Just(value: final r)) {
+      return switch (r) {
+        Correct() => selectedOption == option ? Colors.green : Colors.grey,
+        IncorrectResult(value: final correct) => correct == option
+            ? Colors.green
+            : selectedOption == option
+                ? Colors.red
+                : Colors.grey,
+      };
     }
-
-    if (result is Correct) {
-      return Colors.green;
-    }
-
-    if (result is IncorrectResult) {
-      return Colors.red;
-    }
-
-    if (result is Nothing && selectedOption != null) return Colors.yellow;
 
     return Theme.of(context).colorScheme.primary;
   }
@@ -148,8 +139,8 @@ class KeyboardKey extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 24,
-      height: 24,
+      width: 20,
+      height: 20,
       decoration: BoxDecoration(
         color: color.withAlpha(30),
         borderRadius: BorderRadius.circular(6),
