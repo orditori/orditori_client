@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Chip;
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
+
+import '../widgets/chip.dart';
 
 class DefinitionTile extends StatelessWidget {
   final DefinitionContentItemR def;
@@ -14,10 +16,11 @@ class DefinitionTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Chip(label: Text(def.language.code)),
+          padding: const EdgeInsets.symmetric(vertical: 10.0),
+          child: Chip(label: def.language.code),
         ),
         const SizedBox(width: 8),
         Expanded(

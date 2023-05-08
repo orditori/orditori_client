@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Chip;
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 import 'package:orditori/services.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
+
+import '../widgets/chip.dart';
 
 class DefinitionTile extends CTWidget {
   final DefinitionR definition;
@@ -73,9 +75,11 @@ class DefinitionTile extends CTWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Chip(label: Text(definition.language.code)),
+                Chip(label: definition.language.code),
                 const SizedBox(width: 12),
-                Expanded(child: SelectableText(definition.definition)),
+                Expanded(
+                    child: SelectableText(definition.definition,
+                        style: const TextStyle(height: 1.0))),
                 const SizedBox(width: 16),
                 Stack(
                   children: [
