@@ -11,12 +11,14 @@ class SearchScreen extends CTWidget {
   final VoidCallback? onExit;
   final String initialQuery;
   final ScrollController? scrollController;
+  final bool autofocus;
 
   const SearchScreen({
     super.key,
     required this.onExit,
     this.scrollController,
     this.initialQuery = '',
+    this.autofocus = true,
   });
 
   @override
@@ -55,6 +57,7 @@ class SearchScreen extends CTWidget {
                   child: SearchBar(
                     onExit: onExit,
                     controller: controller,
+                    autofocus: autofocus,
                   ),
                 ),
               ),

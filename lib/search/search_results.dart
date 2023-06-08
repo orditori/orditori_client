@@ -107,6 +107,7 @@ class SearchResults extends CTWidget {
                 onExit: null,
                 scrollController: controller,
                 initialQuery: selectionRef.value,
+                autofocus: false,
               );
             },
           );

@@ -2,7 +2,7 @@ name: orditori
 description: A new Flutter project.
 
 publish_to: "none"
-version: 2.0.2+39
+version: 2.0.3+40
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

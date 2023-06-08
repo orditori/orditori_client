@@ -4,11 +4,13 @@ import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 class SearchBar extends CTWidget {
   final VoidCallback? onExit;
   final TextEditingController controller;
+  final bool autofocus;
 
   const SearchBar({
     super.key,
     this.onExit,
     required this.controller,
+    this.autofocus = true,
   });
 
   @override
@@ -27,7 +29,7 @@ class SearchBar extends CTWidget {
         Expanded(
           child: TextField(
             controller: controller,
-            autofocus: true,
+            autofocus: autofocus,
             onSubmitted: search,
             decoration: const InputDecoration(hintText: 'Search'),
             textInputAction: TextInputAction.search,
