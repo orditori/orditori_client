@@ -8,17 +8,21 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 import 'search_results.dart';
 
 class SearchScreen extends CTWidget {
-  final VoidCallback onExit;
+  final VoidCallback? onExit;
+  final String initialQuery;
+  final ScrollController? scrollController;
 
   const SearchScreen({
     super.key,
     required this.onExit,
+    this.scrollController,
+    this.initialQuery = '',
   });
 
   @override
   Widget build(CTNode n, CTContext context) {
-    final ctrlRef = n.ref(() => TextEditingController());
-    final search = n.trigger.withArg<String>();
+    final ctrlRef = n.ref(() => TextEditingController(text: initialQuery));
+    final search = n.trigger.withArg<String>()..provide();
 
     final r = search.asyncHandler((query) {
       return client.definitionsGet(query: query);
@@ -31,6 +35,12 @@ class SearchScreen extends CTWidget {
 
     final padding = context.ref<EdgeInsets>().subscribe();
     final controller = ctrlRef.value;
+
+    n.invoke(() {
+      if (initialQuery.isNotEmpty) {
+        search(initialQuery);
+      }
+    });
 
     return Scaffold(
       body: SafeArea(
@@ -45,13 +55,13 @@ class SearchScreen extends CTWidget {
                   child: SearchBar(
                     onExit: onExit,
                     controller: controller,
-                    search: search,
                   ),
                 ),
               ),
             ),
             Expanded(
               child: SearchResults(
+                scrollController: scrollController,
                 hasResult: hasResult,
                 items: items,
                 query: controller.text,

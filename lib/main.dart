@@ -89,7 +89,22 @@ class App extends CTWidget {
               : Brightness.dark,
           statusBarColor: Colors.transparent,
         ),
-        child: child,
+        child: CTBuilder(
+          (n, context) {
+            final w = MediaQuery.of(n.context).size.width;
+            final padding = ((w - 700) / 2).clamp(0.0, 600.0);
+
+            final paddingRef = n.ref(
+              () => EdgeInsets.symmetric(horizontal: padding),
+              padding,
+            );
+
+            paddingRef.provide();
+
+            return child;
+          },
+          when: (_, __) => true,
+        ),
       ),
     );
   }
@@ -119,7 +134,7 @@ class AppPages extends CTWidget {
     final mq = MediaQuery.of(n.context);
     const navTypeBreakpoint = 600;
 
-    return Scaffold(
+    final scaffold = Scaffold(
       bottomNavigationBar: mq.size.width < navTypeBreakpoint
           ? NavigationBar(
               selectedIndex: pageIndex.value,
@@ -176,34 +191,22 @@ class AppPages extends CTWidget {
                   ),
                 ),
               ),
-            Expanded(
-              child: LayoutBuilder(builder: (context, constraints) {
-                final w = constraints.biggest.width;
-                final padding = ((w - 700) / 2).clamp(0.0, 600.0);
-
-                return CTBuilder(
-                  (n, context) {
-                    final paddingRef = n.ref(
-                      () => EdgeInsets.symmetric(horizontal: padding),
-                      padding,
-                    );
-
-                    paddingRef.provide();
-                    final selectedPage = children[pageIndex.value];
-
-                    if (selectedPage is SettingsScreen) {
-                      return const SettingsScreen();
-                    }
-
-                    return child ?? children[pageIndex.value];
-                  },
-                  dep: Object.hash(padding, pageIndex.value, child),
-                );
-              }),
-            ),
+            Expanded(child: child ?? children[pageIndex.value]),
           ],
         ),
       ),
+    );
+
+    return Navigator(
+      key: ValueKey(pageIndex.value),
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) {
+            return scaffold;
+          },
+          settings: settings,
+        );
+      },
     );
   }
 }
