@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
+import 'package:orditori/search/search_screen.dart';
 
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
@@ -20,13 +22,15 @@ class SearchResults extends CTWidget {
   final bool hasResult;
   final List<DefinitionsWithSource> items;
   final String query;
+  final ScrollController? scrollController;
 
   const SearchResults({
     super.key,
-    this.error,
-    this.hasResult = false,
     required this.query,
     required this.items,
+    this.error,
+    this.hasResult = false,
+    this.scrollController,
   });
 
   Iterable<Widget> getItems(BuildContext context, CTContext dataContext) sync* {
@@ -87,13 +91,61 @@ class SearchResults extends CTWidget {
 
     final children = getItems(n.context, context).toList();
     final padding = context.ref<EdgeInsets>().subscribe();
+    final selectionRef = n.ref(() => '');
 
-    return ListView.builder(
-      padding: padding,
-      itemCount: children.length,
-      itemBuilder: (context, index) {
-        return children[index];
+    void searchFromSelection(SelectableRegionState state) {
+      showModalBottomSheet(
+        context: n.context,
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder: (_) {
+          return DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.85,
+            builder: (context, controller) {
+              return SearchScreen(
+                onExit: null,
+                scrollController: controller,
+                initialQuery: selectionRef.value,
+              );
+            },
+          );
+        },
+      );
+    }
+
+    return SelectionArea(
+      onSelectionChanged: (value) {
+        selectionRef.value = value?.plainText ?? '';
       },
+      contextMenuBuilder: (context, state) {
+        return AdaptiveTextSelectionToolbar.buttonItems(
+          anchors: state.contextMenuAnchors,
+          buttonItems: [
+            ContextMenuButtonItem(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: selectionRef.value));
+                state.hideToolbar();
+              },
+              label: 'Copy',
+            ),
+            ContextMenuButtonItem(
+              onPressed: () {
+                searchFromSelection(state);
+              },
+              label: 'Search',
+            ),
+          ],
+        );
+      },
+      child: ListView.builder(
+        padding: padding,
+        itemCount: children.length,
+        controller: scrollController,
+        itemBuilder: (context, index) {
+          return children[index];
+        },
+      ),
     );
   }
 }

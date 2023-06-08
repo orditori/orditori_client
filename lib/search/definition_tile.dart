@@ -50,19 +50,20 @@ class DefinitionTile extends CTWidget {
       refreshNotebook();
     });
 
-    final icon = isSaved
-        ? Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(
-              Icons.bookmark_added,
-              color: Theme.of(n.context).colorScheme.primary,
-            ),
-          )
-        : IconButton(
-            icon: const Icon(Icons.bookmark_add_outlined),
+    final icon = switch (isSaved) {
+      true => Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Icon(
+            Icons.bookmark_added,
             color: Theme.of(n.context).colorScheme.primary,
-            onPressed: addDefinition,
-          );
+          ),
+        ),
+      false => IconButton(
+          icon: const Icon(Icons.bookmark_add_outlined),
+          color: Theme.of(n.context).colorScheme.primary,
+          onPressed: addDefinition,
+        ),
+    };
 
     return Card(
       margin: const EdgeInsets.all(16).copyWith(bottom: 8),
@@ -75,7 +76,7 @@ class DefinitionTile extends CTWidget {
               children: [
                 Chip(label: Text(definition.language.code)),
                 const SizedBox(width: 12),
-                Expanded(child: SelectableText(definition.definition)),
+                Expanded(child: Text(definition.definition)),
                 const SizedBox(width: 16),
                 Stack(
                   children: [

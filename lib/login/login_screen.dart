@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends CTWidget {
   final Trigger<String> setToken;
 
   const LoginScreen({
@@ -11,8 +11,9 @@ class LoginScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(CTNode n, CTContext context) {
     final ctrl = TextEditingController();
+    final setToken = context.trigger.withArg<String>();
 
     return Scaffold(
       body: Center(
@@ -37,7 +38,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(n.context).colorScheme.secondary,
                       icon: const Icon(Icons.paste),
                       onPressed: () async {
                         final data = await Clipboard.getData('text/plain');

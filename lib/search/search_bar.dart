@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
-class SearchBar extends StatelessWidget {
-  final VoidCallback onExit;
+class SearchBar extends CTWidget {
+  final VoidCallback? onExit;
   final TextEditingController controller;
-  final Trigger<String> search;
 
   const SearchBar({
     super.key,
-    required this.onExit,
+    this.onExit,
     required this.controller,
-    required this.search,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(CTNode n, CTContext context) {
+    final search = context.trigger.withArg<String>();
+
     return Row(
       children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: onExit,
-        ),
+        if (onExit != null)
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: onExit,
+          )
+        else
+          const SizedBox(width: 16),
         Expanded(
           child: TextField(
             controller: controller,
