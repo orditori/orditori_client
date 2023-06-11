@@ -7,7 +7,14 @@ import 'package:orditori/services.dart';
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 import 'search_results.dart';
 
-class SearchScreen extends CTWidget {
+typedef SearchScreenContext = ({
+  Token<Ref<EdgeInsets>> padding,
+  Token<Ref<NotebookR>> notebook,
+  Token<VoidTrigger> refreshNotebook,
+  Token<Ref<Set<int>>> savedDefinitions,
+});
+
+class SearchScreen extends CTWidget<SearchScreenContext> {
   final VoidCallback? onExit;
   final String initialQuery;
   final ScrollController? scrollController;
@@ -15,6 +22,7 @@ class SearchScreen extends CTWidget {
 
   const SearchScreen({
     super.key,
+    required super.context,
     required this.onExit,
     this.scrollController,
     this.initialQuery = '',
@@ -22,7 +30,7 @@ class SearchScreen extends CTWidget {
   });
 
   @override
-  Widget build(CTNode n, CTContext context) {
+  Widget build(CTNode n, SearchScreenContext context) {
     final ctrlRef = n.ref(() => TextEditingController(text: initialQuery));
     final search = n.trigger.withArg<String>()..provide();
 
@@ -35,7 +43,7 @@ class SearchScreen extends CTWidget {
       _ => (false, const <DefinitionsWithSource>[], null),
     };
 
-    final padding = context.ref<EdgeInsets>().subscribe();
+    final padding = n.consume(context.padding).subscribe();
     final controller = ctrlRef.value;
 
     n.invoke(() {
@@ -58,6 +66,7 @@ class SearchScreen extends CTWidget {
                     onExit: onExit,
                     controller: controller,
                     autofocus: autofocus,
+                    context: (search: search.provide(),),
                   ),
                 ),
               ),
@@ -69,6 +78,7 @@ class SearchScreen extends CTWidget {
                 items: items,
                 query: controller.text,
                 error: error,
+                context: context,
               ),
             ),
             Padding(

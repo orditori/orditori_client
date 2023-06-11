@@ -1,36 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
+import 'package:orditori/auth.dart';
 
-class SettingsScreen extends CTWidget {
+typedef SettingsScreenContext = ({
+  Token<Ref<EdgeInsets>> padding,
+  BrightnessContext brightnessContext,
+  TokenContext tokenContext,
+});
+
+class SettingsScreen extends CTWidget<SettingsScreenContext> {
   @override
   bool get static => true;
 
-  const SettingsScreen({super.key});
+  const SettingsScreen({
+    super.key,
+    required super.context,
+  });
 
   @override
-  Widget build(CTNode n, CTContext context) {
-    final padding = context.ref<EdgeInsets>().subscribe();
+  Widget build(CTNode n, SettingsScreenContext context) {
+    final padding = n.consume(context.padding).subscribe();
 
     return Scaffold(
       body: ListView(
         padding: padding,
-        children: const [
-          BrightnessSettingTile(),
-          TokenSettingTile(),
+        children: [
+          BrightnessSettingTile(
+            context: context.brightnessContext,
+          ),
+          TokenSettingTile(
+            context: context.tokenContext,
+          ),
         ],
       ),
     );
   }
 }
 
-class BrightnessSettingTile extends CTWidget {
-  const BrightnessSettingTile({super.key});
+typedef BrightnessContext = ({
+  Token<Ref<Brightness>> brightness,
+  Token<Trigger<bool>> setIsDarkMode,
+});
+
+class BrightnessSettingTile extends CTWidget<BrightnessContext> {
+  const BrightnessSettingTile({
+    super.key,
+    required super.context,
+  });
 
   @override
-  Widget build(CTNode n, CTContext context) {
-    final brightness = context.ref<Brightness>().subscribe();
-    final setBrightness = context.reducer<Brightness, bool>();
+  Widget build(CTNode n, BrightnessContext context) {
+    final brightness = n.consume(context.brightness).subscribe();
+    final setBrightness = n.consume(context.setIsDarkMode);
 
     final isDarkMode = brightness == Brightness.dark;
     final icon = isDarkMode ? Icons.dark_mode_sharp : Icons.dark_mode_outlined;
@@ -40,7 +62,7 @@ class BrightnessSettingTile extends CTWidget {
       leading: Icon(icon),
       trailing: Switch(
         value: isDarkMode,
-        onChanged: setBrightness,
+        onChanged: setBrightness.call,
       ),
     );
   }
@@ -50,13 +72,16 @@ const _snackbar = SnackBar(
   content: Text('Copied API key to clipboard'),
 );
 
-class TokenSettingTile extends CTWidget {
-  const TokenSettingTile({super.key});
+class TokenSettingTile extends CTWidget<TokenContext> {
+  const TokenSettingTile({
+    super.key,
+    required super.context,
+  });
 
   @override
-  Widget build(CTNode n, CTContext context) {
-    final token = context.ref<String>().subscribe();
-    final deleteToken = context.trigger(VoidTrigger.token<String>());
+  Widget build(CTNode n, TokenContext context) {
+    final token = n.consume(context.token).subscribe();
+    final deleteToken = n.consume(context.deleteToken);
 
     return ListTile(
       title: const Text('API Key'),
@@ -73,7 +98,7 @@ class TokenSettingTile extends CTWidget {
             icon: const Icon(Icons.copy),
           ),
           IconButton(
-            onPressed: deleteToken,
+            onPressed: deleteToken.call,
             icon: const Icon(Icons.delete),
           ),
         ],

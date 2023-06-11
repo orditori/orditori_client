@@ -9,7 +9,7 @@ class NotebookEntryTile extends StatelessWidget {
   final DefinitionContentItemR def;
   final NotebookEntryR entry;
   final Widget leading;
-  final ConsumedVoidTrigger refreshNotebook;
+  final Consumed<VoidTrigger> refreshNotebook;
 
   const NotebookEntryTile({
     super.key,

@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
-class SearchBar extends CTWidget {
+typedef SearchBarContext = ({
+  Token<Trigger<String>> search,
+});
+
+class SearchBar extends CTWidget<SearchBarContext> {
   final VoidCallback? onExit;
   final TextEditingController controller;
   final bool autofocus;
 
   const SearchBar({
     super.key,
+    required super.context,
     this.onExit,
     required this.controller,
     this.autofocus = true,
   });
 
   @override
-  Widget build(CTNode n, CTContext context) {
-    final search = context.trigger.withArg<String>();
+  Widget build(CTNode n, SearchBarContext context) {
+    final search = n.consume(context.search);
 
     return Row(
       children: [
@@ -30,7 +35,7 @@ class SearchBar extends CTWidget {
           child: TextField(
             controller: controller,
             autofocus: autofocus,
-            onSubmitted: search,
+            onSubmitted: search.call,
             decoration: const InputDecoration(hintText: 'Search'),
             textInputAction: TextInputAction.search,
           ),

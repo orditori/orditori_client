@@ -21,26 +21,53 @@ Future<void> main() async {
   runApp(const Root());
 }
 
-class Root extends CTWidget {
-  const Root({super.key});
+class Root extends CTWidget<()> {
+  const Root({super.key, super.context = ()});
 
   @override
-  Widget build(CTNode n, CTContext context) {
-    withBrightness(n);
-    final auth = withAuth(n);
+  Widget build(CTNode n, () context) {
+    final brightnessContext = withBrightness(n);
+    final (:tokenContext, :token, :isAuthenticated) = withAuth(n);
 
-    final firstScreen = auth.isAuthenticated
-        ? withNotebooks(
-            n: n,
-            token: auth.token,
-            setToken: auth.setToken,
-            builder: (child) {
-              return AppPages(child: child);
-            },
-          )
-        : LoginScreen(setToken: auth.setToken);
+    final loginBuilder = n.memo(
+      (_, __) => LoginScreen(
+        context: (setToken: tokenContext.setToken),
+      ),
+    );
 
-    return App(child: firstScreen);
+    if (!isAuthenticated) {
+      return App(
+        context: (brightness: brightnessContext.brightness,),
+        builder: loginBuilder,
+      );
+    }
+
+    final authenticatedBuilder = n.memo((
+      CTNode n,
+      Token<Ref<EdgeInsets>> padding,
+    ) {
+      return withNotebooks(
+        n: n,
+        token: token,
+        padding: padding,
+        builder: (child, [context]) {
+          return AppPages(
+            context: (
+              padding: padding,
+              brightnessContext: brightnessContext,
+              tokenContext: tokenContext,
+              notebooksContext: context,
+            ),
+            child: child,
+          );
+        },
+      );
+    });
+
+    return App(
+      context: (brightness: brightnessContext.brightness,),
+      builder: authenticatedBuilder,
+    );
   }
 }
 
@@ -48,17 +75,21 @@ const borderRadius = BorderRadius.all(Radius.circular(10.0));
 const shape = RoundedRectangleBorder(borderRadius: borderRadius);
 const padding = EdgeInsets.all(20.0);
 
-class App extends CTWidget {
-  final Widget child;
+typedef AppTokens = ({
+  Token<Ref<Brightness>> brightness,
+});
+
+class App extends CTWidget<AppTokens> {
+  final Widget Function(CTNode n, Token<Ref<EdgeInsets>> padding) builder;
 
   const App({
     super.key,
-    required this.child,
+    required super.context,
+    required this.builder,
   });
-
   @override
-  Widget build(CTNode n, CTContext context) {
-    final brightness = context.ref<Brightness>().subscribe();
+  Widget build(CTNode n, AppTokens context) {
+    final brightness = n.consume(context.brightness).subscribe();
 
     return MaterialApp(
       title: 'Orditori',
@@ -96,13 +127,12 @@ class App extends CTWidget {
 
             final paddingRef = n.ref(
               () => EdgeInsets.symmetric(horizontal: padding),
-              padding,
+              (padding,),
             );
 
-            paddingRef.provide();
-
-            return child;
+            return builder(n, paddingRef.provide());
           },
+          context: (),
           when: (_, __) => true,
         ),
       ),
@@ -110,26 +140,69 @@ class App extends CTWidget {
   }
 }
 
-class AppPages extends CTWidget {
+typedef AppPagesTokens = ({
+  Token<Ref<EdgeInsets>> padding,
+  BrightnessContext brightnessContext,
+  TokenContext tokenContext,
+  NotebooksContext? notebooksContext,
+});
+
+class AppPages extends CTWidget<AppPagesTokens> {
   final Widget? child;
 
   const AppPages({
     super.key,
+    required super.context,
     this.child,
   });
 
   @override
-  Widget build(CTNode n, CTContext context) {
+  bool shouldUpdate(CTNode node, AppPages oldWidget, AppPages newWidget) {
+    return oldWidget.context != newWidget.context;
+  }
+
+  @override
+  Widget build(CTNode n, AppPagesTokens context) {
     final pageIndex = n.ref(() => 0);
     final setPage = pageIndex.action.setValue();
     final onExit = n.memo(() => setPage(0));
 
-    final children = [
-      const Notebooks(),
-      SearchScreen(onExit: onExit),
-      ExercisesScreen(onExit: onExit),
-      const SettingsScreen(),
-    ];
+    List<Widget> children = [];
+
+    if (child == null) {
+      final notebooksContext = context.notebooksContext!;
+
+      children = [
+        Notebooks(
+          context: (
+            notebook: notebooksContext.notebook,
+            padding: context.padding,
+            refreshNotebook: notebooksContext.refreshNotebook,
+            savedDefinitions: notebooksContext.savedDefinitions,
+          ),
+        ),
+        SearchScreen(
+          onExit: onExit,
+          context: (
+            padding: context.padding,
+            notebook: notebooksContext.notebook,
+            refreshNotebook: notebooksContext.refreshNotebook,
+            savedDefinitions: notebooksContext.savedDefinitions,
+          ),
+        ),
+        ExercisesScreen(
+          onExit: onExit,
+          context: (padding: context.padding,),
+        ),
+        SettingsScreen(
+          context: (
+            padding: context.padding,
+            brightnessContext: context.brightnessContext,
+            tokenContext: context.tokenContext,
+          ),
+        ),
+      ];
+    }
 
     final mq = MediaQuery.of(n.context);
     const navTypeBreakpoint = 600;

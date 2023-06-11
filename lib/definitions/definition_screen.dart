@@ -7,7 +7,7 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 class DefinitionScreen extends StatelessWidget {
   final DefinitionContentItemR def;
   final NotebookEntryR entry;
-  final ConsumedVoidTrigger refreshNotebook;
+  final Consumed<VoidTrigger> refreshNotebook;
 
   const DefinitionScreen({
     super.key,
@@ -95,7 +95,7 @@ class DefinitionScreen extends StatelessWidget {
                     ],
                   ),
                 );
-              }),
+              }, context: ()),
             ),
           ],
         ),

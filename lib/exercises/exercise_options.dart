@@ -17,13 +17,16 @@ class SelectOptionIntent extends Intent {
   const SelectOptionIntent(this.option);
 }
 
-class ExerciseOptions extends CTWidget {
+typedef ExerciseOptionsContext = ({Token<Ref<String?>> selectedOption});
+
+class ExerciseOptions extends CTWidget<ExerciseOptionsContext> {
   final List<String> options;
   final Trigger<String> selectOption;
   final Maybe<SolutionCheckResult> result;
 
   const ExerciseOptions({
     super.key,
+    required super.context,
     required this.options,
     required this.selectOption,
     required this.result,
@@ -52,8 +55,8 @@ class ExerciseOptions extends CTWidget {
   }
 
   @override
-  Widget build(CTNode n, CTContext context) {
-    final selectedOption = context.ref<String?>().subscribe();
+  Widget build(CTNode n, ExerciseOptionsContext context) {
+    final selectedOption = n.consume(context.selectedOption).subscribe();
 
     return CallbackShortcuts(
       bindings: {

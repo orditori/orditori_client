@@ -11,33 +11,33 @@ import '../overrides.dart';
 import 'exercise_options.dart';
 import 'exercise_result.dart';
 
-class ExerciseControls extends CTWidget {
+class ExerciseControls extends CTWidget<()> {
   final DefinitionExerciseR exercise;
   final VoidTrigger loadExercise;
 
   const ExerciseControls({
     super.key,
+    super.context = (),
     required this.exercise,
     required this.loadExercise,
   });
 
   @override
-  Widget build(CTNode n, CTContext context) {
+  Widget build(CTNode n, () context) {
     final shouldShowOptionsRef = n.ref(
       () => exercise.difficultyScore > 0.3,
-      exercise.id,
+      (exercise.id,),
     );
 
     final showOptions = shouldShowOptionsRef.action((value) => true);
 
-    final ctrlRef = n.ref(() => TextEditingController(), exercise.id);
+    final ctrlRef = n.ref(() => TextEditingController(), (exercise.id,));
     final ctrl = ctrlRef.value;
 
     final submit = n.trigger.withArg<String>();
 
-    final selectedOption = n.ref<String?, int>(() => null, exercise.id);
+    final selectedOption = n.ref<String?, (int,)>(() => null, (exercise.id,));
     final select = selectedOption.action.setValue();
-    selectedOption.provide();
 
     submit.handler(select);
 
@@ -79,6 +79,7 @@ class ExerciseControls extends CTWidget {
             options: exercise.options,
             selectOption: submit,
             result: result,
+            context: (selectedOption: selectedOption.provide(),),
           )
         else ...[
           TextField(

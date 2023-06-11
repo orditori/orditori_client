@@ -1,21 +1,19 @@
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 import 'services.dart' as services;
 
-class AuthNode {
-  final String token;
-  bool get isAuthenticated => token.isNotEmpty;
+typedef TokenContext = ({
+  Token<Ref<String>> token,
+  Token<Trigger<String>> setToken,
+  Token<VoidTrigger> deleteToken,
+});
 
-  final Trigger<String> setToken;
-  final VoidTrigger deleteToken;
+typedef AuthContext = ({
+  bool isAuthenticated,
+  String token,
+  TokenContext tokenContext,
+});
 
-  AuthNode({
-    required this.token,
-    required this.setToken,
-    required this.deleteToken,
-  });
-}
-
-AuthNode withAuth(CTNode n) {
+AuthContext withAuth(CTNode n) {
   final token = n.ref(() => services.prefs.getString(services.kTokenKey) ?? '');
   final setToken = token.action.setValue();
   final deleteToken = token.action((_) => '');
@@ -23,14 +21,17 @@ AuthNode withAuth(CTNode n) {
   n.invoke(() {
     services.token = token.value;
     services.prefs.setString(services.kTokenKey, token.value);
-  }, token.value);
+  }, (token.value,));
 
-  token.provide();
-  deleteToken.provide(VoidTrigger.token<String>());
+  final tokenContext = (
+    token: token.provide(),
+    deleteToken: deleteToken.provide(),
+    setToken: setToken.provide(),
+  );
 
-  return AuthNode(
+  return (
+    isAuthenticated: token.value.isNotEmpty,
     token: token.value,
-    setToken: setToken,
-    deleteToken: deleteToken,
+    tokenContext: tokenContext,
   );
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
+import 'package:orditori/settings/settings_screen.dart';
 
 import 'services.dart';
 
@@ -26,7 +27,7 @@ extension BrightnessCodec on Brightness {
   }
 }
 
-void withBrightness(CTNode n) {
+BrightnessContext withBrightness(CTNode n) {
   final brightness = n.ref(() {
     Brightness brightness;
 
@@ -45,14 +46,14 @@ void withBrightness(CTNode n) {
     return brightness;
   });
 
-  final setBrightness = brightness.action.setValue();
-  final toggleBrightness = brightness.action((value) {
-    if (value == Brightness.light) {
-      return Brightness.dark;
-    } else {
-      return Brightness.light;
-    }
-  });
+  // final setBrightness = brightness.action.setValue();
+  // final toggleBrightness = brightness.action((value) {
+  //   if (value == Brightness.light) {
+  //     return Brightness.dark;
+  //   } else {
+  //     return Brightness.light;
+  //   }
+  // });
 
   final setBrightnessFromBool = brightness.reducer((value, bool isDarkMode) {
     if (isDarkMode) {
@@ -64,11 +65,11 @@ void withBrightness(CTNode n) {
 
   n.invoke(
     () => prefs.setString(_key, brightness.value.encode()),
-    brightness.value,
+    (brightness.value,),
   );
 
-  brightness.provide();
-  setBrightness.provide();
-  toggleBrightness.provide();
-  setBrightnessFromBool.provide();
+  return (
+    brightness: brightness.provide(),
+    setIsDarkMode: setBrightnessFromBool.provide(),
+  );
 }

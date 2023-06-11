@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
+import 'package:orditori/notebooks/notebooks_screen.dart';
 import 'package:orditori/services.dart';
 
-import 'swagger_generated_code/orditori.swagger.dart';
+class RefreshNotebookToken extends Token<VoidTrigger> {
+  const RefreshNotebookToken();
+}
 
 Widget withNotebooks({
   required CTNode n,
   required String token,
-  required Trigger<String> setToken,
-  required Widget Function(Widget? child) builder,
+  required Token<Ref<EdgeInsets>> padding,
+  required Widget Function(Widget? child, [NotebooksContext? context]) builder,
 }) {
   final load = n.trigger();
 
   final r = load.asyncHandler(() {
     return client.notebooksGet(apiKey: token);
   }, invoke: true);
-
-  load.provide(VoidTrigger.token<NotebookR>());
 
   return CTBuilder(
     (n, context) {
@@ -37,12 +38,17 @@ Widget withNotebooks({
               .map((e) => e.definitionId)
               .toSet();
 
-          n.provideValueAsRef(notebook);
           n.provideValueAsRef(savedDefinitions);
 
-          return builder(null);
+          return builder(null, (
+            padding: padding,
+            notebook: n.provideValueAsRef(notebook),
+            refreshNotebook: load.provide(const RefreshNotebookToken()),
+            savedDefinitions: n.provideValueAsRef(savedDefinitions),
+          ));
       }
     },
+    context: (),
     dep: [r, token],
     when: (oldDep, newDep) {
       return newDep[0] is Success ||

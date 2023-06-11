@@ -4,15 +4,19 @@ import 'package:orditori/services.dart';
 
 import 'definition_exercise.dart';
 
-class ExercisesScreen extends CTWidget {
+typedef ExercisesScreenContext = ({Token<Ref<EdgeInsets>> padding});
+
+class ExercisesScreen extends CTWidget<ExercisesScreenContext> {
   final VoidCallback onExit;
+
   const ExercisesScreen({
     super.key,
+    required super.context,
     required this.onExit,
   });
 
   @override
-  Widget build(CTNode n, CTContext context) {
+  Widget build(CTNode n, ExercisesScreenContext context) {
     final loadExercise = n.trigger();
 
     final r = loadExercise.asyncHandler(() {
@@ -26,7 +30,7 @@ class ExercisesScreen extends CTWidget {
         return Text(e.toString());
       case Success(value: final v):
         final exercise = v.body!;
-        final padding = context.ref<EdgeInsets>().subscribe();
+        final padding = n.consume(context.padding).subscribe();
 
         return Stack(
           children: [

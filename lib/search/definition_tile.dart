@@ -5,22 +5,28 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 import '../widgets/chip.dart';
 
-class DefinitionTile extends CTWidget {
+typedef DefinitionTileContext = ({
+  Token<Ref<Set<int>>> savedDefinitions,
+  Token<Ref<NotebookR>> notebook,
+});
+
+class DefinitionTile extends CTWidget<DefinitionTileContext> {
   final DefinitionR definition;
   final DefinitionSource source;
-  final ConsumedVoidTrigger refreshNotebook;
+  final Consumed<VoidTrigger> refreshNotebook;
 
   const DefinitionTile({
     super.key,
+    required super.context,
     required this.definition,
     required this.source,
     required this.refreshNotebook,
   });
 
   @override
-  Widget build(CTNode n, CTContext context) {
-    final savedDefinitions = context.ref<Set<int>>().subscribe();
-    final notebook = context.ref<NotebookR>().subscribe();
+  Widget build(CTNode n, DefinitionTileContext context) {
+    final savedDefinitions = n.consume(context.savedDefinitions).subscribe();
+    final notebook = n.consume(context.notebook).subscribe();
 
     final isSaved = savedDefinitions.contains(definition.id);
     final addDefinition = n.trigger();

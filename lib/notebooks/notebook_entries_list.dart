@@ -10,20 +10,26 @@ String formatDate(DateTime date) {
   return DateFormat.MMMd().format(date);
 }
 
-class NotebookEntriesList extends CTWidget {
+typedef NotebookEntriesListContext = ({
+  Token<Ref<EdgeInsets>> padding,
+  Token<VoidTrigger> refreshNotebook,
+});
+
+class NotebookEntriesList extends CTWidget<NotebookEntriesListContext> {
   final int notebookId;
   final List<NotebookEntryR> entries;
 
   const NotebookEntriesList({
     super.key,
+    required super.context,
     required this.entries,
     required this.notebookId,
   });
 
   @override
-  Widget build(CTNode n, CTContext context) {
-    final padding = context.ref<EdgeInsets>().subscribe();
-    final refreshNotebook = context.trigger(VoidTrigger.token<NotebookR>());
+  Widget build(CTNode n, NotebookEntriesListContext context) {
+    final padding = n.consume(context.padding).subscribe();
+    final refreshNotebook = n.consume(context.refreshNotebook);
 
     return ListView.builder(
       reverse: true,

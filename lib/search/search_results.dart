@@ -17,7 +17,14 @@ class DefinitionWithSource {
   });
 }
 
-class SearchResults extends CTWidget {
+typedef SearchResultsContext = ({
+  Token<Ref<EdgeInsets>> padding,
+  Token<Ref<NotebookR>> notebook,
+  Token<Ref<Set<int>>> savedDefinitions,
+  Token<VoidTrigger> refreshNotebook,
+});
+
+class SearchResults extends CTWidget<SearchResultsContext> {
   final String? error;
   final bool hasResult;
   final List<DefinitionsWithSource> items;
@@ -26,6 +33,7 @@ class SearchResults extends CTWidget {
 
   const SearchResults({
     super.key,
+    required super.context,
     required this.query,
     required this.items,
     this.error,
@@ -33,11 +41,13 @@ class SearchResults extends CTWidget {
     this.scrollController,
   });
 
-  Iterable<Widget> getItems(BuildContext context, CTContext dataContext) sync* {
+  Iterable<Widget> getItems(
+    SearchResultsContext context,
+    Consumed<VoidTrigger> refreshNotebook,
+    TextStyle definitionSourceNameStyle,
+  ) sync* {
     int outerCursor = 0;
     int innerCursor = 0;
-    final refreshNotebook = dataContext.trigger(VoidTrigger.token<NotebookR>());
-
     while (true) {
       if (outerCursor >= items.length) return;
 
@@ -51,10 +61,7 @@ class SearchResults extends CTWidget {
           ),
           child: Text(
             group.definitionSource.name,
-            style: Theme.of(context)
-                .textTheme
-                .labelSmall!
-                .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+            style: definitionSourceNameStyle,
           ),
         );
       }
@@ -71,6 +78,10 @@ class SearchResults extends CTWidget {
         definition: definition,
         refreshNotebook: refreshNotebook,
         source: group.definitionSource,
+        context: (
+          notebook: context.notebook,
+          savedDefinitions: context.savedDefinitions,
+        ),
       );
 
       innerCursor++;
@@ -78,7 +89,7 @@ class SearchResults extends CTWidget {
   }
 
   @override
-  Widget build(CTNode n, CTContext context) {
+  Widget build(CTNode n, SearchResultsContext context) {
     if (error != null) {
       return Center(child: Text(error!));
     }
@@ -89,8 +100,19 @@ class SearchResults extends CTWidget {
       );
     }
 
-    final children = getItems(n.context, context).toList();
-    final padding = context.ref<EdgeInsets>().subscribe();
+    final definitionSourceNameStyle = Theme.of(n.context)
+        .textTheme
+        .labelSmall!
+        .copyWith(fontSize: 18, fontWeight: FontWeight.bold);
+
+    final padding = n.consume(context.padding).subscribe();
+    final refreshNotbeook = n.consume(context.refreshNotebook);
+
+    final children = getItems(
+      context,
+      refreshNotbeook,
+      definitionSourceNameStyle,
+    ).toList();
     final selectionRef = n.ref(() => '');
 
     void searchFromSelection(SelectableRegionState state) {
@@ -102,12 +124,13 @@ class SearchResults extends CTWidget {
           return DraggableScrollableSheet(
             expand: false,
             initialChildSize: 0.85,
-            builder: (context, controller) {
+            builder: (_, controller) {
               return SearchScreen(
                 onExit: null,
                 scrollController: controller,
                 initialQuery: selectionRef.value,
                 autofocus: false,
+                context: context,
               );
             },
           );

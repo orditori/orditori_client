@@ -11,15 +11,25 @@ class DefinitionsDateGroup {
   DefinitionsDateGroup(this.date, this.entries);
 }
 
-class Notebooks extends CTWidget {
+typedef NotebooksContext = ({
+  Token<Ref<EdgeInsets>> padding,
+  Token<Ref<NotebookR>> notebook,
+  Token<VoidTrigger> refreshNotebook,
+  Token<Ref<Set<int>>> savedDefinitions,
+});
+
+class Notebooks extends CTWidget<NotebooksContext> {
   @override
   bool get static => true;
 
-  const Notebooks({super.key});
+  const Notebooks({
+    super.key,
+    required super.context,
+  });
 
   @override
-  Widget build(CTNode n, CTContext context) {
-    final notebook = context.ref<NotebookR>().subscribe();
+  Widget build(CTNode n, NotebooksContext context) {
+    final notebook = n.consume(context.notebook).subscribe();
 
     final g = notebook.entries.fold<List<DefinitionsDateGroup>>([], (acc, v) {
       final date = formatDate(DateTime.parse(v.addedDate));
@@ -49,6 +59,10 @@ class Notebooks extends CTWidget {
         .toList();
 
     return NotebookEntriesList(
+      context: (
+        padding: context.padding,
+        refreshNotebook: context.refreshNotebook,
+      ),
       entries: entries,
       notebookId: notebook.id,
     );

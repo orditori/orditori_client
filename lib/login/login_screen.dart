@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 
-class LoginScreen extends CTWidget {
-  final Trigger<String> setToken;
+typedef LoginScreenContext = ({Token<Trigger<String>> setToken});
 
+class LoginScreen extends CTWidget<LoginScreenContext> {
   const LoginScreen({
     super.key,
-    required this.setToken,
+    required super.context,
   });
 
   @override
-  Widget build(CTNode n, CTContext context) {
+  Widget build(CTNode n, LoginScreenContext context) {
     final ctrl = TextEditingController();
-    final setToken = context.trigger.withArg<String>();
+    final setToken = n.consume(context.setToken);
 
     return Scaffold(
       body: Center(
@@ -34,7 +34,7 @@ class LoginScreen extends CTWidget {
                           hintText: 'API Token',
                           border: InputBorder.none,
                         ),
-                        onSubmitted: setToken,
+                        onSubmitted: setToken.call,
                       ),
                     ),
                     IconButton(
