@@ -69,7 +69,7 @@ class DefinitionTile extends CTWidget<DefinitionTileContext> {
       false => IconButton(
           icon: const Icon(Icons.bookmark_add_outlined),
           color: Theme.of(n.context).colorScheme.primary,
-          onPressed: addDefinition,
+          onPressed: addDefinition.call,
         ),
     };
 

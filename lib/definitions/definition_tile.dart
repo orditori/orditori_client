@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Chip;
 import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
@@ -42,7 +41,7 @@ class DefinitionTile extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(
-                          describeEnum(def.partOfSpeech!),
+                          def.partOfSpeech!.name,
                           style: textTheme.bodySmall!
                               .copyWith(fontStyle: FontStyle.italic),
                         ),

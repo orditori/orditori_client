@@ -216,7 +216,7 @@ class AppPages extends CTWidget<AppPagesTokens> {
               bottomNavigationBar: mq.size.width < navTypeBreakpoint
                   ? NavigationBar(
                       selectedIndex: pageIndex.value,
-                      onDestinationSelected: setPage,
+                      onDestinationSelected: setPage.call,
                       destinations: const [
                         NavigationDestination(
                             icon: Icon(Icons.book), label: 'Notebook'),
@@ -242,7 +242,7 @@ class AppPages extends CTWidget<AppPagesTokens> {
                         child: Card(
                           child: NavigationRail(
                             backgroundColor: Colors.transparent,
-                            onDestinationSelected: setPage,
+                            onDestinationSelected: setPage.call,
                             extended: mq.size.width >= 800,
                             labelType: mq.size.width < 800
                                 ? NavigationRailLabelType.all

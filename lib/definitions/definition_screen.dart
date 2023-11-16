@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 import 'package:orditori/services.dart';
@@ -32,7 +31,7 @@ class DefinitionScreen extends StatelessWidget {
             if (def.partOfSpeech != null)
               ListTile(
                 title: const Text('Part of speech'),
-                subtitle: Text(describeEnum(def.partOfSpeech!)),
+                subtitle: Text(def.partOfSpeech!.name),
               ),
             ListTile(
               title: const Text('Definition'),
@@ -77,7 +76,7 @@ class DefinitionScreen extends StatelessWidget {
                 });
 
                 return ElevatedButton.icon(
-                  onPressed: delete,
+                  onPressed: delete.call,
                   icon: const Icon(Icons.delete),
                   label: Stack(
                     alignment: Alignment.center,

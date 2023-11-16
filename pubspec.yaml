@@ -2,7 +2,7 @@ name: orditori
 description: A new Flutter project.
 
 publish_to: "none"
-version: 2.0.4+41
+version: 2.0.5+42
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -11,29 +11,29 @@ dependencies:
   flutter:
     sdk: flutter
 
-  chopper: ^6.1.4
+  chopper: ^7.0.9
   json_annotation: ^4.8.1
   intl: ^0.18.1
-  flag: ^6.0.0
+  flag: ^7.0.0
 
-  shared_preferences: ^2.1.2
+  shared_preferences: ^2.2.2
   auto_size_text: ^3.0.0
-  http: ^0.13.0
+  http: ^1.1.0
   flutter_compute_tree:
     hosted: https://bartender-c6niljjlfq-uc.a.run.app
     version: ^1.0.0
-  github: ^9.14.0
-  path: ^1.8.2
+  github: ^9.20.0
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: "^0.13.1"
-  flutter_lints: ^2.0.1
-  build_runner: ^2.4.5
-  chopper_generator: ^6.0.1
-  json_serializable: ^6.7.0
-  swagger_dart_code_generator: ^2.11.8
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.6
+  chopper_generator: ^7.0.6
+  json_serializable: ^6.7.1
+  swagger_dart_code_generator: ^2.12.2
 
 flutter_icons:
   android: true

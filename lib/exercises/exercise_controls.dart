@@ -39,7 +39,7 @@ class ExerciseControls extends CTWidget<()> {
     final selectedOption = n.ref<String?, (int,)>(() => null, (exercise.id,));
     final select = selectedOption.action.setValue();
 
-    submit.handler(select);
+    submit.handler(select.call);
 
     final res = submit.asyncHandler((answer) async {
       final solution = ExerciseSolutionDefinitionExercise(
@@ -92,11 +92,11 @@ class ExerciseControls extends CTWidget<()> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            onSubmitted: submit,
+            onSubmitted: submit.call,
           ),
           const SizedBox(height: 16),
           TextButton(
-            onPressed: showOptions,
+            onPressed: showOptions.call,
             child: const Text('Show choices'),
           )
         ],
