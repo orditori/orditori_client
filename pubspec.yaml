@@ -11,29 +11,29 @@ dependencies:
   flutter:
     sdk: flutter
 
-  chopper: ^7.0.9
+  chopper: ^7.1.1+1
   json_annotation: ^4.8.1
-  intl: ^0.18.1
+  intl: ^0.19.0
   flag: ^7.0.0
 
   shared_preferences: ^2.2.2
   auto_size_text: ^3.0.0
-  http: ^1.1.0
+  http: ^1.2.1
   flutter_compute_tree:
     hosted: https://bartender-c6niljjlfq-uc.a.run.app
     version: ^1.0.0
-  github: ^9.20.0
-  path: ^1.8.3
+  github: ^9.24.0
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^3.0.1
-  build_runner: ^2.4.6
-  chopper_generator: ^7.0.6
+  build_runner: ^2.4.8
+  chopper_generator: ^7.1.1
   json_serializable: ^6.7.1
-  swagger_dart_code_generator: ^2.12.2
+  swagger_dart_code_generator: ^2.15.0
 
 flutter_icons:
   android: true

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:collection/collection.dart';
 
 enum PartOfSpeech {
   @JsonValue(null)
@@ -6,8 +7,6 @@ enum PartOfSpeech {
 
   @JsonValue('Noun')
   noun('Noun'),
-  @JsonValue('ProperNoun')
-  propernoun('ProperNoun'),
   @JsonValue('Verb')
   verb('Verb'),
   @JsonValue('Adjective')
@@ -25,7 +24,9 @@ enum PartOfSpeech {
   @JsonValue('Article')
   article('Article'),
   @JsonValue('Determiner')
-  determiner('Determiner');
+  determiner('Determiner'),
+  @JsonValue('Numeral')
+  numeral('Numeral');
 
   final String? value;
 

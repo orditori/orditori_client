@@ -56,7 +56,7 @@ DefinitionContentItemR _$DefinitionContentItemRFromJson(
           [],
       id: json['id'] as int,
       language: Language.fromJson(json['language'] as Map<String, dynamic>),
-      partOfSpeech: partOfSpeechFromJson(json['partOfSpeech']),
+      partOfSpeech: partOfSpeechNullableFromJson(json['partOfSpeech']),
       sourceLink: json['sourceLink'] as String,
       word: json['word'] as String,
     );
@@ -70,7 +70,7 @@ Map<String, dynamic> _$DefinitionContentItemRToJson(
       'examples': instance.examples.map((e) => e.toJson()).toList(),
       'id': instance.id,
       'language': instance.language.toJson(),
-      'partOfSpeech': partOfSpeechToJson(instance.partOfSpeech),
+      'partOfSpeech': partOfSpeechNullableToJson(instance.partOfSpeech),
       'sourceLink': instance.sourceLink,
       'word': instance.word,
     };
@@ -99,6 +99,89 @@ Map<String, dynamic> _$DefinitionExampleToJson(DefinitionExample instance) =>
       'id': instance.id,
       'string': instance.$string,
       'translation': instance.translation,
+    };
+
+PaginatedNotebookQueryResponseYear _$PaginatedNotebookQueryResponseYearFromJson(
+        Map<String, dynamic> json) =>
+    PaginatedNotebookQueryResponseYear(
+      items: (json['items'] as List<dynamic>?)
+              ?.map((e) =>
+                  NotebookQueryResponseYear.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      pageCount: json['pageCount'] as int,
+      pageIndex: json['pageIndex'] as int,
+    );
+
+Map<String, dynamic> _$PaginatedNotebookQueryResponseYearToJson(
+        PaginatedNotebookQueryResponseYear instance) =>
+    <String, dynamic>{
+      'items': instance.items.map((e) => e.toJson()).toList(),
+      'pageCount': instance.pageCount,
+      'pageIndex': instance.pageIndex,
+    };
+
+NotebookQueryResponseYear _$NotebookQueryResponseYearFromJson(
+        Map<String, dynamic> json) =>
+    NotebookQueryResponseYear(
+      months: (json['months'] as List<dynamic>?)
+              ?.map((e) => NotebookQueryResponseMonth.fromJson(
+                  e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      year: json['year'] as int,
+    );
+
+Map<String, dynamic> _$NotebookQueryResponseYearToJson(
+        NotebookQueryResponseYear instance) =>
+    <String, dynamic>{
+      'months': instance.months.map((e) => e.toJson()).toList(),
+      'year': instance.year,
+    };
+
+NotebookQueryResponseMonth _$NotebookQueryResponseMonthFromJson(
+        Map<String, dynamic> json) =>
+    NotebookQueryResponseMonth(
+      days: (json['days'] as List<dynamic>?)
+              ?.map((e) =>
+                  NotebookQueryResponseDay.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      month: json['month'] as int,
+    );
+
+Map<String, dynamic> _$NotebookQueryResponseMonthToJson(
+        NotebookQueryResponseMonth instance) =>
+    <String, dynamic>{
+      'days': instance.days.map((e) => e.toJson()).toList(),
+      'month': instance.month,
+    };
+
+NotebookQueryResponseDay _$NotebookQueryResponseDayFromJson(
+        Map<String, dynamic> json) =>
+    NotebookQueryResponseDay(
+      day: json['day'] as int,
+      entries: (json['entries'] as List<dynamic>?)
+              ?.map((e) => NotebookEntryR.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$NotebookQueryResponseDayToJson(
+        NotebookQueryResponseDay instance) =>
+    <String, dynamic>{
+      'day': instance.day,
+      'entries': instance.entries.map((e) => e.toJson()).toList(),
+    };
+
+NotebookQuery _$NotebookQueryFromJson(Map<String, dynamic> json) =>
+    NotebookQuery(
+      pageIndex: json['pageIndex'] as int,
+    );
+
+Map<String, dynamic> _$NotebookQueryToJson(NotebookQuery instance) =>
+    <String, dynamic>{
+      'pageIndex': instance.pageIndex,
     };
 
 NotebookEntryW _$NotebookEntryWFromJson(Map<String, dynamic> json) =>
@@ -140,7 +223,7 @@ DefinitionR _$DefinitionRFromJson(Map<String, dynamic> json) => DefinitionR(
           [],
       id: json['id'] as int,
       language: Language.fromJson(json['language'] as Map<String, dynamic>),
-      partOfSpeech: partOfSpeechFromJson(json['partOfSpeech']),
+      partOfSpeech: partOfSpeechNullableFromJson(json['partOfSpeech']),
       sourceLink: json['sourceLink'] as String,
       word: json['word'] as String,
     );
@@ -151,7 +234,7 @@ Map<String, dynamic> _$DefinitionRToJson(DefinitionR instance) =>
       'examples': instance.examples.map((e) => e.toJson()).toList(),
       'id': instance.id,
       'language': instance.language.toJson(),
-      'partOfSpeech': partOfSpeechToJson(instance.partOfSpeech),
+      'partOfSpeech': partOfSpeechNullableToJson(instance.partOfSpeech),
       'sourceLink': instance.sourceLink,
       'word': instance.word,
     };
@@ -276,7 +359,7 @@ Definition _$DefinitionFromJson(Map<String, dynamic> json) => Definition(
       id: json['id'] as int,
       language: json['language'] as String,
       page: json['page'] as int,
-      partOfSpeech: partOfSpeechFromJson(json['partOfSpeech']),
+      partOfSpeech: partOfSpeechNullableFromJson(json['partOfSpeech']),
       sourceLink: json['sourceLink'] as String,
       word: json['word'] as String,
     );
@@ -287,7 +370,7 @@ Map<String, dynamic> _$DefinitionToJson(Definition instance) =>
       'id': instance.id,
       'language': instance.language,
       'page': instance.page,
-      'partOfSpeech': partOfSpeechToJson(instance.partOfSpeech),
+      'partOfSpeech': partOfSpeechNullableToJson(instance.partOfSpeech),
       'sourceLink': instance.sourceLink,
       'word': instance.word,
     };

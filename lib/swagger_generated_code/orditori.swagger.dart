@@ -8,6 +8,8 @@ import 'package:chopper/chopper.dart';
 
 import 'client_mapping.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
 import 'orditori.enums.swagger.dart' as enums;
 export 'orditori.enums.swagger.dart';
@@ -23,7 +25,10 @@ part 'orditori.swagger.g.dart';
 abstract class Orditori extends ChopperService {
   static Orditori create({
     ChopperClient? client,
+    http.Client? httpClient,
     Authenticator? authenticator,
+    ErrorConverter? errorConverter,
+    Converter? converter,
     Uri? baseUrl,
     Iterable<dynamic>? interceptors,
   }) {
@@ -33,9 +38,11 @@ abstract class Orditori extends ChopperService {
 
     final newClient = ChopperClient(
         services: [_$Orditori()],
-        converter: $JsonSerializableConverter(),
+        converter: converter ?? $JsonSerializableConverter(),
         interceptors: interceptors ?? [],
+        client: httpClient,
         authenticator: authenticator,
+        errorConverter: errorConverter,
         baseUrl: baseUrl ?? Uri.parse('http://'));
     return _$Orditori(newClient);
   }
@@ -76,6 +83,31 @@ abstract class Orditori extends ChopperService {
   Future<chopper.Response<NotebookR>> _notebooksPost({
     @Query('apiKey') required String? apiKey,
     @Query('adminKey') required String? adminKey,
+  });
+
+  ///
+  ///@param apiKey
+  Future<chopper.Response<PaginatedNotebookQueryResponseYear>>
+      notebooksQueryPost({
+    required String? apiKey,
+    required NotebookQuery? body,
+  }) {
+    generatedMapping.putIfAbsent(PaginatedNotebookQueryResponseYear,
+        () => PaginatedNotebookQueryResponseYear.fromJsonFactory);
+
+    return _notebooksQueryPost(apiKey: apiKey, body: body);
+  }
+
+  ///
+  ///@param apiKey
+  @Post(
+    path: '/notebooks/query',
+    optionalBody: true,
+  )
+  Future<chopper.Response<PaginatedNotebookQueryResponseYear>>
+      _notebooksQueryPost({
+    @Query('apiKey') required String? apiKey,
+    @Body() required NotebookQuery? body,
   });
 
   ///
@@ -151,6 +183,27 @@ abstract class Orditori extends ChopperService {
   Future<chopper.Response<int>> _definitionContentItemsPost({
     @Query('apiKey') required String? apiKey,
     @Body() required DefinitionContentItemW? body,
+  });
+
+  ///
+  ///@param apiKey
+  ///@param definitionContentItemId
+  Future<chopper.Response> definitionContentItemsDefinitionContentItemIdDelete({
+    required String? apiKey,
+    required int? definitionContentItemId,
+  }) {
+    return _definitionContentItemsDefinitionContentItemIdDelete(
+        apiKey: apiKey, definitionContentItemId: definitionContentItemId);
+  }
+
+  ///
+  ///@param apiKey
+  ///@param definitionContentItemId
+  @Delete(path: '/definitionContentItems/{definitionContentItemId}')
+  Future<chopper.Response>
+      _definitionContentItemsDefinitionContentItemIdDelete({
+    @Query('apiKey') required String? apiKey,
+    @Path('definitionContentItemId') required int? definitionContentItemId,
   });
 
   ///
@@ -259,7 +312,7 @@ abstract class Orditori extends ChopperService {
   ///@param apiKey
   Future<
           chopper
-              .Response<List<DefinitionExerciseStatsDefinitionExampleExercise>>>
+          .Response<List<DefinitionExerciseStatsDefinitionExampleExercise>>>
       exercisesExampleScoresGet({required String? apiKey}) {
     generatedMapping.putIfAbsent(
         DefinitionExerciseStatsDefinitionExampleExercise,
@@ -273,7 +326,7 @@ abstract class Orditori extends ChopperService {
   @Get(path: '/exercises/example/scores')
   Future<
           chopper
-              .Response<List<DefinitionExerciseStatsDefinitionExampleExercise>>>
+          .Response<List<DefinitionExerciseStatsDefinitionExampleExercise>>>
       _exercisesExampleScoresGet({@Query('apiKey') required String? apiKey});
 
   ///
@@ -295,7 +348,7 @@ abstract class Orditori extends ChopperService {
 
 @JsonSerializable(explicitToJson: true)
 class NotebookR {
-  NotebookR({
+  const NotebookR({
     required this.apiKey,
     required this.entries,
     required this.formatVersion,
@@ -386,7 +439,7 @@ extension $NotebookRExtension on NotebookR {
 
 @JsonSerializable(explicitToJson: true)
 class NotebookEntryR {
-  NotebookEntryR({
+  const NotebookEntryR({
     required this.addedDate,
     required this.definitions,
     required this.id,
@@ -454,7 +507,7 @@ extension $NotebookEntryRExtension on NotebookEntryR {
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionContentItemR {
-  DefinitionContentItemR({
+  const DefinitionContentItemR({
     required this.definition,
     required this.definitionId,
     required this.definitionSource,
@@ -486,8 +539,8 @@ class DefinitionContentItemR {
   final Language language;
   @JsonKey(
     name: 'partOfSpeech',
-    toJson: partOfSpeechToJson,
-    fromJson: partOfSpeechFromJson,
+    toJson: partOfSpeechNullableToJson,
+    fromJson: partOfSpeechNullableFromJson,
   )
   final enums.PartOfSpeech? partOfSpeech;
   @JsonKey(name: 'sourceLink')
@@ -596,7 +649,7 @@ extension $DefinitionContentItemRExtension on DefinitionContentItemR {
 
 @JsonSerializable(explicitToJson: true)
 class Language {
-  Language({
+  const Language({
     required this.code,
     required this.name,
   });
@@ -647,7 +700,7 @@ extension $LanguageExtension on Language {
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionExample {
-  DefinitionExample({
+  const DefinitionExample({
     required this.definition,
     required this.id,
     required this.$string,
@@ -724,8 +777,285 @@ extension $DefinitionExampleExtension on DefinitionExample {
 }
 
 @JsonSerializable(explicitToJson: true)
+class PaginatedNotebookQueryResponseYear {
+  const PaginatedNotebookQueryResponseYear({
+    required this.items,
+    required this.pageCount,
+    required this.pageIndex,
+  });
+
+  factory PaginatedNotebookQueryResponseYear.fromJson(
+          Map<String, dynamic> json) =>
+      _$PaginatedNotebookQueryResponseYearFromJson(json);
+
+  static const toJsonFactory = _$PaginatedNotebookQueryResponseYearToJson;
+  Map<String, dynamic> toJson() =>
+      _$PaginatedNotebookQueryResponseYearToJson(this);
+
+  @JsonKey(name: 'items', defaultValue: <NotebookQueryResponseYear>[])
+  final List<NotebookQueryResponseYear> items;
+  @JsonKey(name: 'pageCount')
+  final int pageCount;
+  @JsonKey(name: 'pageIndex')
+  final int pageIndex;
+  static const fromJsonFactory = _$PaginatedNotebookQueryResponseYearFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is PaginatedNotebookQueryResponseYear &&
+            (identical(other.items, items) ||
+                const DeepCollectionEquality().equals(other.items, items)) &&
+            (identical(other.pageCount, pageCount) ||
+                const DeepCollectionEquality()
+                    .equals(other.pageCount, pageCount)) &&
+            (identical(other.pageIndex, pageIndex) ||
+                const DeepCollectionEquality()
+                    .equals(other.pageIndex, pageIndex)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(items) ^
+      const DeepCollectionEquality().hash(pageCount) ^
+      const DeepCollectionEquality().hash(pageIndex) ^
+      runtimeType.hashCode;
+}
+
+extension $PaginatedNotebookQueryResponseYearExtension
+    on PaginatedNotebookQueryResponseYear {
+  PaginatedNotebookQueryResponseYear copyWith(
+      {List<NotebookQueryResponseYear>? items,
+      int? pageCount,
+      int? pageIndex}) {
+    return PaginatedNotebookQueryResponseYear(
+        items: items ?? this.items,
+        pageCount: pageCount ?? this.pageCount,
+        pageIndex: pageIndex ?? this.pageIndex);
+  }
+
+  PaginatedNotebookQueryResponseYear copyWithWrapped(
+      {Wrapped<List<NotebookQueryResponseYear>>? items,
+      Wrapped<int>? pageCount,
+      Wrapped<int>? pageIndex}) {
+    return PaginatedNotebookQueryResponseYear(
+        items: (items != null ? items.value : this.items),
+        pageCount: (pageCount != null ? pageCount.value : this.pageCount),
+        pageIndex: (pageIndex != null ? pageIndex.value : this.pageIndex));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class NotebookQueryResponseYear {
+  const NotebookQueryResponseYear({
+    required this.months,
+    required this.year,
+  });
+
+  factory NotebookQueryResponseYear.fromJson(Map<String, dynamic> json) =>
+      _$NotebookQueryResponseYearFromJson(json);
+
+  static const toJsonFactory = _$NotebookQueryResponseYearToJson;
+  Map<String, dynamic> toJson() => _$NotebookQueryResponseYearToJson(this);
+
+  @JsonKey(name: 'months', defaultValue: <NotebookQueryResponseMonth>[])
+  final List<NotebookQueryResponseMonth> months;
+  @JsonKey(name: 'year')
+  final int year;
+  static const fromJsonFactory = _$NotebookQueryResponseYearFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is NotebookQueryResponseYear &&
+            (identical(other.months, months) ||
+                const DeepCollectionEquality().equals(other.months, months)) &&
+            (identical(other.year, year) ||
+                const DeepCollectionEquality().equals(other.year, year)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(months) ^
+      const DeepCollectionEquality().hash(year) ^
+      runtimeType.hashCode;
+}
+
+extension $NotebookQueryResponseYearExtension on NotebookQueryResponseYear {
+  NotebookQueryResponseYear copyWith(
+      {List<NotebookQueryResponseMonth>? months, int? year}) {
+    return NotebookQueryResponseYear(
+        months: months ?? this.months, year: year ?? this.year);
+  }
+
+  NotebookQueryResponseYear copyWithWrapped(
+      {Wrapped<List<NotebookQueryResponseMonth>>? months, Wrapped<int>? year}) {
+    return NotebookQueryResponseYear(
+        months: (months != null ? months.value : this.months),
+        year: (year != null ? year.value : this.year));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class NotebookQueryResponseMonth {
+  const NotebookQueryResponseMonth({
+    required this.days,
+    required this.month,
+  });
+
+  factory NotebookQueryResponseMonth.fromJson(Map<String, dynamic> json) =>
+      _$NotebookQueryResponseMonthFromJson(json);
+
+  static const toJsonFactory = _$NotebookQueryResponseMonthToJson;
+  Map<String, dynamic> toJson() => _$NotebookQueryResponseMonthToJson(this);
+
+  @JsonKey(name: 'days', defaultValue: <NotebookQueryResponseDay>[])
+  final List<NotebookQueryResponseDay> days;
+  @JsonKey(name: 'month')
+  final int month;
+  static const fromJsonFactory = _$NotebookQueryResponseMonthFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is NotebookQueryResponseMonth &&
+            (identical(other.days, days) ||
+                const DeepCollectionEquality().equals(other.days, days)) &&
+            (identical(other.month, month) ||
+                const DeepCollectionEquality().equals(other.month, month)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(days) ^
+      const DeepCollectionEquality().hash(month) ^
+      runtimeType.hashCode;
+}
+
+extension $NotebookQueryResponseMonthExtension on NotebookQueryResponseMonth {
+  NotebookQueryResponseMonth copyWith(
+      {List<NotebookQueryResponseDay>? days, int? month}) {
+    return NotebookQueryResponseMonth(
+        days: days ?? this.days, month: month ?? this.month);
+  }
+
+  NotebookQueryResponseMonth copyWithWrapped(
+      {Wrapped<List<NotebookQueryResponseDay>>? days, Wrapped<int>? month}) {
+    return NotebookQueryResponseMonth(
+        days: (days != null ? days.value : this.days),
+        month: (month != null ? month.value : this.month));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class NotebookQueryResponseDay {
+  const NotebookQueryResponseDay({
+    required this.day,
+    required this.entries,
+  });
+
+  factory NotebookQueryResponseDay.fromJson(Map<String, dynamic> json) =>
+      _$NotebookQueryResponseDayFromJson(json);
+
+  static const toJsonFactory = _$NotebookQueryResponseDayToJson;
+  Map<String, dynamic> toJson() => _$NotebookQueryResponseDayToJson(this);
+
+  @JsonKey(name: 'day')
+  final int day;
+  @JsonKey(name: 'entries', defaultValue: <NotebookEntryR>[])
+  final List<NotebookEntryR> entries;
+  static const fromJsonFactory = _$NotebookQueryResponseDayFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is NotebookQueryResponseDay &&
+            (identical(other.day, day) ||
+                const DeepCollectionEquality().equals(other.day, day)) &&
+            (identical(other.entries, entries) ||
+                const DeepCollectionEquality().equals(other.entries, entries)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(day) ^
+      const DeepCollectionEquality().hash(entries) ^
+      runtimeType.hashCode;
+}
+
+extension $NotebookQueryResponseDayExtension on NotebookQueryResponseDay {
+  NotebookQueryResponseDay copyWith({int? day, List<NotebookEntryR>? entries}) {
+    return NotebookQueryResponseDay(
+        day: day ?? this.day, entries: entries ?? this.entries);
+  }
+
+  NotebookQueryResponseDay copyWithWrapped(
+      {Wrapped<int>? day, Wrapped<List<NotebookEntryR>>? entries}) {
+    return NotebookQueryResponseDay(
+        day: (day != null ? day.value : this.day),
+        entries: (entries != null ? entries.value : this.entries));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class NotebookQuery {
+  const NotebookQuery({
+    required this.pageIndex,
+  });
+
+  factory NotebookQuery.fromJson(Map<String, dynamic> json) =>
+      _$NotebookQueryFromJson(json);
+
+  static const toJsonFactory = _$NotebookQueryToJson;
+  Map<String, dynamic> toJson() => _$NotebookQueryToJson(this);
+
+  @JsonKey(name: 'pageIndex')
+  final int pageIndex;
+  static const fromJsonFactory = _$NotebookQueryFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is NotebookQuery &&
+            (identical(other.pageIndex, pageIndex) ||
+                const DeepCollectionEquality()
+                    .equals(other.pageIndex, pageIndex)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(pageIndex) ^ runtimeType.hashCode;
+}
+
+extension $NotebookQueryExtension on NotebookQuery {
+  NotebookQuery copyWith({int? pageIndex}) {
+    return NotebookQuery(pageIndex: pageIndex ?? this.pageIndex);
+  }
+
+  NotebookQuery copyWithWrapped({Wrapped<int>? pageIndex}) {
+    return NotebookQuery(
+        pageIndex: (pageIndex != null ? pageIndex.value : this.pageIndex));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class NotebookEntryW {
-  NotebookEntryW({
+  const NotebookEntryW({
     required this.addedDate,
     required this.notebook,
   });
@@ -781,7 +1111,7 @@ extension $NotebookEntryWExtension on NotebookEntryW {
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionsWithSource {
-  DefinitionsWithSource({
+  const DefinitionsWithSource({
     required this.definitionSource,
     required this.definitions,
   });
@@ -842,7 +1172,7 @@ extension $DefinitionsWithSourceExtension on DefinitionsWithSource {
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionR {
-  DefinitionR({
+  const DefinitionR({
     required this.definition,
     required this.examples,
     required this.id,
@@ -868,8 +1198,8 @@ class DefinitionR {
   final Language language;
   @JsonKey(
     name: 'partOfSpeech',
-    toJson: partOfSpeechToJson,
-    fromJson: partOfSpeechFromJson,
+    toJson: partOfSpeechNullableToJson,
+    fromJson: partOfSpeechNullableFromJson,
   )
   final enums.PartOfSpeech? partOfSpeech;
   @JsonKey(name: 'sourceLink')
@@ -959,7 +1289,7 @@ extension $DefinitionRExtension on DefinitionR {
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionSource {
-  DefinitionSource({
+  const DefinitionSource({
     required this.description,
     required this.extractorRevision,
     required this.id,
@@ -1052,7 +1382,7 @@ extension $DefinitionSourceExtension on DefinitionSource {
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionContentItemW {
-  DefinitionContentItemW({
+  const DefinitionContentItemW({
     required this.definition,
     required this.entry,
   });
@@ -1106,7 +1436,7 @@ extension $DefinitionContentItemWExtension on DefinitionContentItemW {
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionExerciseR {
-  DefinitionExerciseR({
+  const DefinitionExerciseR({
     required this.definition,
     required this.difficultyScore,
     required this.id,
@@ -1198,7 +1528,7 @@ extension $DefinitionExerciseRExtension on DefinitionExerciseR {
 
 @JsonSerializable(explicitToJson: true)
 class SolutionCheckResult {
-  SolutionCheckResult();
+  const SolutionCheckResult();
 
   factory SolutionCheckResult.fromJson(Map<String, dynamic> json) =>
       _$SolutionCheckResultFromJson(json);
@@ -1217,7 +1547,7 @@ class SolutionCheckResult {
 
 @JsonSerializable(explicitToJson: true)
 class FuzzyCompareToken {
-  FuzzyCompareToken();
+  const FuzzyCompareToken();
 
   factory FuzzyCompareToken.fromJson(Map<String, dynamic> json) =>
       _$FuzzyCompareTokenFromJson(json);
@@ -1236,7 +1566,7 @@ class FuzzyCompareToken {
 
 @JsonSerializable(explicitToJson: true)
 class FuzzyCompareIssue {
-  FuzzyCompareIssue({
+  const FuzzyCompareIssue({
     required this.actual,
     required this.expected,
   });
@@ -1290,7 +1620,7 @@ extension $FuzzyCompareIssueExtension on FuzzyCompareIssue {
 
 @JsonSerializable(explicitToJson: true)
 class ExerciseSolutionDefinitionExercise {
-  ExerciseSolutionDefinitionExercise({
+  const ExerciseSolutionDefinitionExercise({
     required this.exercise,
     required this.input,
   });
@@ -1347,7 +1677,7 @@ extension $ExerciseSolutionDefinitionExerciseExtension
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionExerciseStatsDefinitionExercise {
-  DefinitionExerciseStatsDefinitionExercise({
+  const DefinitionExerciseStatsDefinitionExercise({
     required this.correct,
     required this.definition,
     required this.difficultyScore,
@@ -1445,7 +1775,7 @@ extension $DefinitionExerciseStatsDefinitionExerciseExtension
 
 @JsonSerializable(explicitToJson: true)
 class Definition {
-  Definition({
+  const Definition({
     required this.definition,
     required this.id,
     required this.language,
@@ -1471,8 +1801,8 @@ class Definition {
   final int page;
   @JsonKey(
     name: 'partOfSpeech',
-    toJson: partOfSpeechToJson,
-    fromJson: partOfSpeechFromJson,
+    toJson: partOfSpeechNullableToJson,
+    fromJson: partOfSpeechNullableFromJson,
   )
   final enums.PartOfSpeech? partOfSpeech;
   @JsonKey(name: 'sourceLink')
@@ -1561,7 +1891,7 @@ extension $DefinitionExtension on Definition {
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionExampleExerciseR {
-  DefinitionExampleExerciseR({
+  const DefinitionExampleExerciseR({
     required this.definition,
     required this.difficultyScore,
     required this.example,
@@ -1654,7 +1984,7 @@ extension $DefinitionExampleExerciseRExtension on DefinitionExampleExerciseR {
 
 @JsonSerializable(explicitToJson: true)
 class StringOrGap {
-  StringOrGap();
+  const StringOrGap();
 
   factory StringOrGap.fromJson(Map<String, dynamic> json) =>
       _$StringOrGapFromJson(json);
@@ -1673,7 +2003,7 @@ class StringOrGap {
 
 @JsonSerializable(explicitToJson: true)
 class ExerciseSolutionDefinitionExampleExercise {
-  ExerciseSolutionDefinitionExampleExercise({
+  const ExerciseSolutionDefinitionExampleExercise({
     required this.exercise,
     required this.input,
   });
@@ -1733,7 +2063,7 @@ extension $ExerciseSolutionDefinitionExampleExerciseExtension
 
 @JsonSerializable(explicitToJson: true)
 class DefinitionExerciseStatsDefinitionExampleExercise {
-  DefinitionExerciseStatsDefinitionExampleExercise({
+  const DefinitionExerciseStatsDefinitionExampleExercise({
     required this.correct,
     required this.definition,
     required this.difficultyScore,
@@ -1831,7 +2161,7 @@ extension $DefinitionExerciseStatsDefinitionExampleExerciseExtension
 
 @JsonSerializable(explicitToJson: true)
 class UserStatisticsR {
-  UserStatisticsR({
+  const UserStatisticsR({
     required this.apiKey,
     required this.languages,
   });
@@ -1883,8 +2213,12 @@ extension $UserStatisticsRExtension on UserStatisticsR {
   }
 }
 
-String? partOfSpeechToJson(enums.PartOfSpeech? partOfSpeech) {
+String? partOfSpeechNullableToJson(enums.PartOfSpeech? partOfSpeech) {
   return partOfSpeech?.value;
+}
+
+String? partOfSpeechToJson(enums.PartOfSpeech partOfSpeech) {
+  return partOfSpeech.value;
 }
 
 enums.PartOfSpeech partOfSpeechFromJson(
@@ -1895,6 +2229,22 @@ enums.PartOfSpeech partOfSpeechFromJson(
           .firstWhereOrNull((e) => e.value == partOfSpeech) ??
       defaultValue ??
       enums.PartOfSpeech.swaggerGeneratedUnknown;
+}
+
+enums.PartOfSpeech? partOfSpeechNullableFromJson(
+  Object? partOfSpeech, [
+  enums.PartOfSpeech? defaultValue,
+]) {
+  if (partOfSpeech == null) {
+    return null;
+  }
+  return enums.PartOfSpeech.values
+          .firstWhereOrNull((e) => e.value == partOfSpeech) ??
+      defaultValue;
+}
+
+String partOfSpeechExplodedListToJson(List<enums.PartOfSpeech>? partOfSpeech) {
+  return partOfSpeech?.map((e) => e.value!).join(',') ?? '';
 }
 
 List<String> partOfSpeechListToJson(List<enums.PartOfSpeech>? partOfSpeech) {
@@ -1979,6 +2329,16 @@ class $JsonSerializableConverter extends chopper.JsonConverter {
       // In rare cases, when let's say 204 (no content) is returned -
       // we cannot decode the missing json with the result type specified
       return chopper.Response(response.base, null, error: response.error);
+    }
+
+    if (ResultType == String) {
+      return response.copyWith();
+    }
+
+    if (ResultType == DateTime) {
+      return response.copyWith(
+          body: DateTime.parse((response.body as String).replaceAll('"', ''))
+              as ResultType);
     }
 
     final jsonRes = await super.convertResponse(response);

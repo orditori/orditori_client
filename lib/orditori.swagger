@@ -12,19 +12,26 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "content": {
               "application/json;charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/NotebookR" }
+                "schema": {
+                  "$ref": "#/components/schemas/NotebookR"
+                }
               }
             },
             "description": ""
           },
-          "400": { "description": "Invalid `apiKey`" }
+          "400": {
+            "description": "Invalid `apiKey`"
+          }
         }
       },
       "post": {
@@ -33,25 +40,74 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           },
           {
             "in": "query",
             "name": "adminKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "content": {
               "application/json;charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/NotebookR" }
+                "schema": {
+                  "$ref": "#/components/schemas/NotebookR"
+                }
               }
             },
             "description": ""
           },
-          "400": { "description": "Invalid `adminKey` or `apiKey`" }
+          "400": {
+            "description": "Invalid `adminKey` or `apiKey`"
+          }
+        }
+      }
+    },
+    "/notebooks/query": {
+      "post": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "apiKey",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json;charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/NotebookQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/Paginated_NotebookQueryResponseYear"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid `body` or `apiKey`"
+          }
         }
       }
     },
@@ -62,13 +118,18 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json;charset=utf-8": {
-              "schema": { "$ref": "#/components/schemas/NotebookEntryW" }
+              "schema": {
+                "$ref": "#/components/schemas/NotebookEntryW"
+              }
             }
           }
         },
@@ -85,7 +146,9 @@
             },
             "description": ""
           },
-          "400": { "description": "Invalid `body` or `apiKey`" }
+          "400": {
+            "description": "Invalid `body` or `apiKey`"
+          }
         }
       }
     },
@@ -96,7 +159,10 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           },
           {
             "in": "path",
@@ -123,8 +189,12 @@
             },
             "description": ""
           },
-          "400": { "description": "Invalid `apiKey`" },
-          "404": { "description": "`entryId` not found" }
+          "400": {
+            "description": "Invalid `apiKey`"
+          },
+          "404": {
+            "description": "`entryId` not found"
+          }
         }
       }
     },
@@ -135,7 +205,9 @@
             "in": "query",
             "name": "query",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -152,7 +224,9 @@
             },
             "description": ""
           },
-          "400": { "description": "Invalid `query`" }
+          "400": {
+            "description": "Invalid `query`"
+          }
         }
       }
     },
@@ -163,7 +237,10 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -188,7 +265,55 @@
             },
             "description": ""
           },
-          "400": { "description": "Invalid `body` or `apiKey`" }
+          "400": {
+            "description": "Invalid `body` or `apiKey`"
+          }
+        }
+      }
+    },
+    "/definitionContentItems/{definitionContentItemId}": {
+      "delete": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "apiKey",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "definitionContentItemId",
+            "required": true,
+            "schema": {
+              "maximum": 9223372036854775807,
+              "minimum": -9223372036854775808,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "example": [],
+                  "items": {},
+                  "maxItems": 0,
+                  "type": "array"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid `apiKey`"
+          },
+          "404": {
+            "description": "`definitionContentItemId` not found"
+          }
         }
       }
     },
@@ -199,25 +324,34 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           },
           {
             "in": "query",
             "name": "language",
             "required": false,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "content": {
               "application/json;charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/DefinitionExerciseR" }
+                "schema": {
+                  "$ref": "#/components/schemas/DefinitionExerciseR"
+                }
               }
             },
             "description": ""
           },
-          "400": { "description": "Invalid `language` or `apiKey`" }
+          "400": {
+            "description": "Invalid `language` or `apiKey`"
+          }
         }
       }
     },
@@ -228,7 +362,10 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -244,12 +381,16 @@
           "200": {
             "content": {
               "application/json;charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/SolutionCheckResult" }
+                "schema": {
+                  "$ref": "#/components/schemas/SolutionCheckResult"
+                }
               }
             },
             "description": ""
           },
-          "400": { "description": "Invalid `body` or `apiKey`" }
+          "400": {
+            "description": "Invalid `body` or `apiKey`"
+          }
         }
       }
     },
@@ -260,7 +401,10 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -277,7 +421,9 @@
             },
             "description": ""
           },
-          "400": { "description": "Invalid `apiKey`" }
+          "400": {
+            "description": "Invalid `apiKey`"
+          }
         }
       }
     },
@@ -288,7 +434,10 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -302,7 +451,9 @@
             },
             "description": ""
           },
-          "400": { "description": "Invalid `apiKey`" }
+          "400": {
+            "description": "Invalid `apiKey`"
+          }
         }
       }
     },
@@ -313,7 +464,10 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -329,12 +483,16 @@
           "200": {
             "content": {
               "application/json;charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/SolutionCheckResult" }
+                "schema": {
+                  "$ref": "#/components/schemas/SolutionCheckResult"
+                }
               }
             },
             "description": ""
           },
-          "400": { "description": "Invalid `body` or `apiKey`" }
+          "400": {
+            "description": "Invalid `body` or `apiKey`"
+          }
         }
       }
     },
@@ -345,7 +503,10 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -362,7 +523,9 @@
             },
             "description": ""
           },
-          "400": { "description": "Invalid `apiKey`" }
+          "400": {
+            "description": "Invalid `apiKey`"
+          }
         }
       }
     },
@@ -373,19 +536,26 @@
             "in": "query",
             "name": "apiKey",
             "required": true,
-            "schema": { "format": "uuid", "type": "string" }
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "content": {
               "application/json;charset=utf-8": {
-                "schema": { "$ref": "#/components/schemas/UserStatisticsR" }
+                "schema": {
+                  "$ref": "#/components/schemas/UserStatisticsR"
+                }
               }
             },
             "description": ""
           },
-          "400": { "description": "Invalid `apiKey`" }
+          "400": {
+            "description": "Invalid `apiKey`"
+          }
         }
       }
     }
@@ -395,9 +565,13 @@
       "NotebookR": {
         "description": "A notebook with its entries",
         "properties": {
-          "apiKey": { "$ref": "#/components/schemas/UUID" },
+          "apiKey": {
+            "$ref": "#/components/schemas/UUID"
+          },
           "entries": {
-            "items": { "$ref": "#/components/schemas/NotebookEntryR" },
+            "items": {
+              "$ref": "#/components/schemas/NotebookEntryR"
+            },
             "type": "array"
           },
           "formatVersion": {
@@ -427,9 +601,13 @@
       "NotebookEntryR": {
         "description": "A notebook entry",
         "properties": {
-          "addedDate": { "$ref": "#/components/schemas/UTCTime" },
+          "addedDate": {
+            "$ref": "#/components/schemas/UTCTime"
+          },
           "definitions": {
-            "items": { "$ref": "#/components/schemas/DefinitionContentItemR" },
+            "items": {
+              "$ref": "#/components/schemas/DefinitionContentItemR"
+            },
             "type": "array"
           },
           "id": {
@@ -449,7 +627,9 @@
       "DefinitionContentItemR": {
         "description": "A notebook entry definition item",
         "properties": {
-          "definition": { "type": "string" },
+          "definition": {
+            "type": "string"
+          },
           "definitionId": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
@@ -461,7 +641,9 @@
             "type": "integer"
           },
           "examples": {
-            "items": { "$ref": "#/components/schemas/DefinitionExample" },
+            "items": {
+              "$ref": "#/components/schemas/DefinitionExample"
+            },
             "type": "array"
           },
           "id": {
@@ -469,10 +651,18 @@
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "language": { "$ref": "#/components/schemas/Language" },
-          "partOfSpeech": { "$ref": "#/components/schemas/PartOfSpeech" },
-          "sourceLink": { "type": "string" },
-          "word": { "type": "string" }
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "partOfSpeech": {
+            "$ref": "#/components/schemas/PartOfSpeech"
+          },
+          "sourceLink": {
+            "type": "string"
+          },
+          "word": {
+            "type": "string"
+          }
         },
         "required": [
           "id",
@@ -489,7 +679,6 @@
       "PartOfSpeech": {
         "enum": [
           "Noun",
-          "ProperNoun",
           "Verb",
           "Adjective",
           "Adverb",
@@ -498,15 +687,20 @@
           "Conjunction",
           "Interjection",
           "Article",
-          "Determiner"
+          "Determiner",
+          "Numeral"
         ],
         "type": "string"
       },
       "Language": {
         "description": "A language with its ISO639-3 code and name in English",
         "properties": {
-          "code": { "type": "string" },
-          "name": { "type": "string" }
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
         },
         "required": ["code", "name"],
         "type": "object"
@@ -524,16 +718,112 @@
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "string": { "type": "string" },
-          "translation": { "type": "string" }
+          "string": {
+            "type": "string"
+          },
+          "translation": {
+            "type": "string"
+          }
         },
         "required": ["id", "definition", "string"],
+        "type": "object"
+      },
+      "Paginated_NotebookQueryResponseYear": {
+        "description": "A notebook query response with pagination and filtering",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/NotebookQueryResponseYear"
+            },
+            "type": "array"
+          },
+          "pageCount": {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "type": "integer"
+          },
+          "pageIndex": {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "type": "integer"
+          }
+        },
+        "required": ["pageIndex", "pageCount", "items"],
+        "type": "object"
+      },
+      "NotebookQueryResponseYear": {
+        "description": "A notebook query response year grouping",
+        "properties": {
+          "months": {
+            "items": {
+              "$ref": "#/components/schemas/NotebookQueryResponseMonth"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "year": {
+            "type": "integer"
+          }
+        },
+        "required": ["year", "months"],
+        "type": "object"
+      },
+      "NotebookQueryResponseMonth": {
+        "description": "A notebook query response month grouping",
+        "properties": {
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/NotebookQueryResponseDay"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "month": {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "type": "integer"
+          }
+        },
+        "required": ["month", "days"],
+        "type": "object"
+      },
+      "NotebookQueryResponseDay": {
+        "description": "A notebook query day grouping",
+        "properties": {
+          "day": {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "type": "integer"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/NotebookEntryR"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": ["day", "entries"],
+        "type": "object"
+      },
+      "NotebookQuery": {
+        "description": "A notebook query with pagination and filtering settings",
+        "properties": {
+          "pageIndex": {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "type": "integer"
+          }
+        },
+        "required": ["pageIndex"],
         "type": "object"
       },
       "NotebookEntryW": {
         "description": "A notebook entry payload",
         "properties": {
-          "addedDate": { "$ref": "#/components/schemas/UTCTime" },
+          "addedDate": {
+            "$ref": "#/components/schemas/UTCTime"
+          },
           "notebook": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
@@ -550,7 +840,9 @@
             "$ref": "#/components/schemas/DefinitionSource"
           },
           "definitions": {
-            "items": { "$ref": "#/components/schemas/DefinitionR" },
+            "items": {
+              "$ref": "#/components/schemas/DefinitionR"
+            },
             "type": "array"
           }
         },
@@ -560,9 +852,13 @@
       "DefinitionR": {
         "description": "Definition with examples",
         "properties": {
-          "definition": { "type": "string" },
+          "definition": {
+            "type": "string"
+          },
           "examples": {
-            "items": { "$ref": "#/components/schemas/DefinitionExample" },
+            "items": {
+              "$ref": "#/components/schemas/DefinitionExample"
+            },
             "type": "array"
           },
           "id": {
@@ -570,10 +866,18 @@
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "language": { "$ref": "#/components/schemas/Language" },
-          "partOfSpeech": { "$ref": "#/components/schemas/PartOfSpeech" },
-          "sourceLink": { "type": "string" },
-          "word": { "type": "string" }
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "partOfSpeech": {
+            "$ref": "#/components/schemas/PartOfSpeech"
+          },
+          "sourceLink": {
+            "type": "string"
+          },
+          "word": {
+            "type": "string"
+          }
         },
         "required": [
           "id",
@@ -588,15 +892,23 @@
       "DefinitionSource": {
         "description": "A definition source (e.g. English Wiktionary)",
         "properties": {
-          "description": { "type": "string" },
-          "extractorRevision": { "$ref": "#/components/schemas/UTCTime" },
+          "description": {
+            "type": "string"
+          },
+          "extractorRevision": {
+            "$ref": "#/components/schemas/UTCTime"
+          },
           "id": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "name": { "type": "string" },
-          "scrapeUrl": { "type": "string" }
+          "name": {
+            "type": "string"
+          },
+          "scrapeUrl": {
+            "type": "string"
+          }
         },
         "required": [
           "id",
@@ -630,19 +942,34 @@
           "definition": "later today, shortly, in a moment",
           "difficultyScore": 0.37,
           "id": 0,
-          "language": { "code": "nld", "name": "Dutch" },
+          "language": {
+            "code": "nld",
+            "name": "Dutch"
+          },
           "options": ["strax", "zojuist", "zonet"]
         },
         "properties": {
-          "definition": { "type": "string" },
-          "difficultyScore": { "format": "double", "type": "number" },
+          "definition": {
+            "type": "string"
+          },
+          "difficultyScore": {
+            "format": "double",
+            "type": "number"
+          },
           "id": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "language": { "$ref": "#/components/schemas/Language" },
-          "options": { "items": { "type": "string" }, "type": "array" }
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
         },
         "required": [
           "id",
@@ -658,67 +985,106 @@
         "oneOf": [
           {
             "properties": {
-              "contents": { "type": "string" },
-              "tag": { "enum": ["Incorrect"], "type": "string" }
+              "contents": {
+                "type": "string"
+              },
+              "tag": {
+                "enum": ["Incorrect"],
+                "type": "string"
+              }
             },
             "required": ["tag", "contents"],
+            "title": "Incorrect",
             "type": "object"
           },
           {
             "properties": {
               "contents": {
-                "items": { "$ref": "#/components/schemas/FuzzyCompareToken" },
+                "items": {
+                  "$ref": "#/components/schemas/FuzzyCompareToken"
+                },
                 "type": "array"
               },
-              "tag": { "enum": ["Correct"], "type": "string" }
+              "tag": {
+                "enum": ["Correct"],
+                "type": "string"
+              }
             },
             "required": ["tag", "contents"],
+            "title": "Correct",
             "type": "object"
           }
         ]
       },
       "FuzzyCompareToken": {
         "description": "A result of checking correctness of a solution ",
-        "example": { "contents": "ß", "tag": "Character" },
+        "example": {
+          "contents": "ß",
+          "tag": "Character"
+        },
         "oneOf": [
           {
             "properties": {
-              "contents": { "type": "string" },
-              "tag": { "enum": ["Character"], "type": "string" }
+              "contents": {
+                "type": "string"
+              },
+              "tag": {
+                "enum": ["Character"],
+                "type": "string"
+              }
             },
             "required": ["tag", "contents"],
+            "title": "Character",
             "type": "object"
           },
           {
             "properties": {
-              "contents": { "$ref": "#/components/schemas/FuzzyCompareIssue" },
-              "tag": { "enum": ["Issue"], "type": "string" }
+              "contents": {
+                "$ref": "#/components/schemas/FuzzyCompareIssue"
+              },
+              "tag": {
+                "enum": ["Issue"],
+                "type": "string"
+              }
             },
             "required": ["tag", "contents"],
+            "title": "Issue",
             "type": "object"
           }
         ]
       },
       "FuzzyCompareIssue": {
         "description": "Partial character match when fuzzy-comparing strings",
-        "example": { "actual": "ue", "expected": "Ü" },
+        "example": {
+          "actual": "ue",
+          "expected": "Ü"
+        },
         "properties": {
-          "actual": { "type": "string" },
-          "expected": { "type": "string" }
+          "actual": {
+            "type": "string"
+          },
+          "expected": {
+            "type": "string"
+          }
         },
         "required": ["expected", "actual"],
         "type": "object"
       },
       "ExerciseSolution_DefinitionExercise": {
         "description": "A user's solution to an exercise, text input",
-        "example": { "exercise": 0, "input": "straks" },
+        "example": {
+          "exercise": 0,
+          "input": "straks"
+        },
         "properties": {
           "exercise": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "input": { "type": "string" }
+          "input": {
+            "type": "string"
+          }
         },
         "required": ["exercise", "input"],
         "type": "object"
@@ -731,8 +1097,13 @@
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "definition": { "$ref": "#/components/schemas/Definition" },
-          "difficultyScore": { "format": "double", "type": "number" },
+          "definition": {
+            "$ref": "#/components/schemas/Definition"
+          },
+          "difficultyScore": {
+            "format": "double",
+            "type": "number"
+          },
           "id": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
@@ -756,21 +1127,31 @@
       "Definition": {
         "description": "A dictionary definition of a word",
         "properties": {
-          "definition": { "type": "string" },
+          "definition": {
+            "type": "string"
+          },
           "id": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "language": { "type": "string" },
+          "language": {
+            "type": "string"
+          },
           "page": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "partOfSpeech": { "$ref": "#/components/schemas/PartOfSpeech" },
-          "sourceLink": { "type": "string" },
-          "word": { "type": "string" }
+          "partOfSpeech": {
+            "$ref": "#/components/schemas/PartOfSpeech"
+          },
+          "sourceLink": {
+            "type": "string"
+          },
+          "word": {
+            "type": "string"
+          }
         },
         "required": [
           "id",
@@ -785,10 +1166,17 @@
       "DefinitionExampleExerciseR": {
         "description": "A definition example exercise",
         "properties": {
-          "definition": { "type": "string" },
-          "difficultyScore": { "format": "double", "type": "number" },
+          "definition": {
+            "type": "string"
+          },
+          "difficultyScore": {
+            "format": "double",
+            "type": "number"
+          },
           "example": {
-            "items": { "$ref": "#/components/schemas/StringOrGap" },
+            "items": {
+              "$ref": "#/components/schemas/StringOrGap"
+            },
             "type": "array"
           },
           "id": {
@@ -796,7 +1184,9 @@
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "language": { "$ref": "#/components/schemas/Language" }
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          }
         },
         "required": [
           "id",
@@ -817,31 +1207,46 @@
                 "minimum": -9223372036854775808,
                 "type": "integer"
               },
-              "tag": { "enum": ["Gap"], "type": "string" }
+              "tag": {
+                "enum": ["Gap"],
+                "type": "string"
+              }
             },
             "required": ["tag", "contents"],
+            "title": "Gap",
             "type": "object"
           },
           {
             "properties": {
-              "contents": { "type": "string" },
-              "tag": { "enum": ["String"], "type": "string" }
+              "contents": {
+                "type": "string"
+              },
+              "tag": {
+                "enum": ["String"],
+                "type": "string"
+              }
             },
             "required": ["tag", "contents"],
+            "title": "String",
             "type": "object"
           }
         ]
       },
       "ExerciseSolution_DefinitionExampleExercise": {
         "description": "A user's solution to an exercise, text input",
-        "example": { "exercise": 0, "input": "straks" },
+        "example": {
+          "exercise": 0,
+          "input": "straks"
+        },
         "properties": {
           "exercise": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "input": { "type": "string" }
+          "input": {
+            "type": "string"
+          }
         },
         "required": ["exercise", "input"],
         "type": "object"
@@ -854,8 +1259,13 @@
             "minimum": -9223372036854775808,
             "type": "integer"
           },
-          "definition": { "$ref": "#/components/schemas/Definition" },
-          "difficultyScore": { "format": "double", "type": "number" },
+          "definition": {
+            "$ref": "#/components/schemas/Definition"
+          },
+          "difficultyScore": {
+            "format": "double",
+            "type": "number"
+          },
           "id": {
             "maximum": 9223372036854775807,
             "minimum": -9223372036854775808,
@@ -879,9 +1289,13 @@
       "UserStatisticsR": {
         "description": "User statistics",
         "properties": {
-          "apiKey": { "$ref": "#/components/schemas/UUID" },
+          "apiKey": {
+            "$ref": "#/components/schemas/UUID"
+          },
           "languages": {
-            "items": { "$ref": "#/components/schemas/Language" },
+            "items": {
+              "$ref": "#/components/schemas/Language"
+            },
             "type": "array"
           }
         },

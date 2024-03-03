@@ -6,15 +6,16 @@ part of 'orditori.swagger.dart';
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
-class _$Orditori extends Orditori {
+// coverage:ignore-file
+// ignore_for_file: type=lint
+final class _$Orditori extends Orditori {
   _$Orditori([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
   }
 
   @override
-  final definitionType = Orditori;
+  final Type definitionType = Orditori;
 
   @override
   Future<Response<NotebookR>> _notebooksGet({required String? apiKey}) {
@@ -46,6 +47,25 @@ class _$Orditori extends Orditori {
       parameters: $params,
     );
     return client.send<NotebookR, NotebookR>($request);
+  }
+
+  @override
+  Future<Response<PaginatedNotebookQueryResponseYear>> _notebooksQueryPost({
+    required String? apiKey,
+    required NotebookQuery? body,
+  }) {
+    final Uri $url = Uri.parse('/notebooks/query');
+    final Map<String, dynamic> $params = <String, dynamic>{'apiKey': apiKey};
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+    );
+    return client.send<PaginatedNotebookQueryResponseYear,
+        PaginatedNotebookQueryResponseYear>($request);
   }
 
   @override
@@ -113,6 +133,24 @@ class _$Orditori extends Orditori {
       parameters: $params,
     );
     return client.send<int, int>($request);
+  }
+
+  @override
+  Future<Response<dynamic>>
+      _definitionContentItemsDefinitionContentItemIdDelete({
+    required String? apiKey,
+    required int? definitionContentItemId,
+  }) {
+    final Uri $url =
+        Uri.parse('/definitionContentItems/${definitionContentItemId}');
+    final Map<String, dynamic> $params = <String, dynamic>{'apiKey': apiKey};
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override
