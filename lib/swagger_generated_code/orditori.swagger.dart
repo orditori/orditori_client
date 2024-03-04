@@ -87,13 +87,12 @@ abstract class Orditori extends ChopperService {
 
   ///
   ///@param apiKey
-  Future<chopper.Response<PaginatedNotebookQueryResponseYear>>
-      notebooksQueryPost({
+  Future<chopper.Response<NotebookQueryResponse>> notebooksQueryPost({
     required String? apiKey,
     required NotebookQuery? body,
   }) {
-    generatedMapping.putIfAbsent(PaginatedNotebookQueryResponseYear,
-        () => PaginatedNotebookQueryResponseYear.fromJsonFactory);
+    generatedMapping.putIfAbsent(
+        NotebookQueryResponse, () => NotebookQueryResponse.fromJsonFactory);
 
     return _notebooksQueryPost(apiKey: apiKey, body: body);
   }
@@ -104,8 +103,7 @@ abstract class Orditori extends ChopperService {
     path: '/notebooks/query',
     optionalBody: true,
   )
-  Future<chopper.Response<PaginatedNotebookQueryResponseYear>>
-      _notebooksQueryPost({
+  Future<chopper.Response<NotebookQueryResponse>> _notebooksQueryPost({
     @Query('apiKey') required String? apiKey,
     @Body() required NotebookQuery? body,
   });
@@ -773,6 +771,62 @@ extension $DefinitionExampleExtension on DefinitionExample {
         $string: ($string != null ? $string.value : this.$string),
         translation:
             (translation != null ? translation.value : this.translation));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class NotebookQueryResponse {
+  const NotebookQueryResponse({
+    required this.items,
+    required this.notebookId,
+  });
+
+  factory NotebookQueryResponse.fromJson(Map<String, dynamic> json) =>
+      _$NotebookQueryResponseFromJson(json);
+
+  static const toJsonFactory = _$NotebookQueryResponseToJson;
+  Map<String, dynamic> toJson() => _$NotebookQueryResponseToJson(this);
+
+  @JsonKey(name: 'items')
+  final PaginatedNotebookQueryResponseYear items;
+  @JsonKey(name: 'notebookId')
+  final int notebookId;
+  static const fromJsonFactory = _$NotebookQueryResponseFromJson;
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is NotebookQueryResponse &&
+            (identical(other.items, items) ||
+                const DeepCollectionEquality().equals(other.items, items)) &&
+            (identical(other.notebookId, notebookId) ||
+                const DeepCollectionEquality()
+                    .equals(other.notebookId, notebookId)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(items) ^
+      const DeepCollectionEquality().hash(notebookId) ^
+      runtimeType.hashCode;
+}
+
+extension $NotebookQueryResponseExtension on NotebookQueryResponse {
+  NotebookQueryResponse copyWith(
+      {PaginatedNotebookQueryResponseYear? items, int? notebookId}) {
+    return NotebookQueryResponse(
+        items: items ?? this.items, notebookId: notebookId ?? this.notebookId);
+  }
+
+  NotebookQueryResponse copyWithWrapped(
+      {Wrapped<PaginatedNotebookQueryResponseYear>? items,
+      Wrapped<int>? notebookId}) {
+    return NotebookQueryResponse(
+        items: (items != null ? items.value : this.items),
+        notebookId: (notebookId != null ? notebookId.value : this.notebookId));
   }
 }
 

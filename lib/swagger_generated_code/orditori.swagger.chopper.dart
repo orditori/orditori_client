@@ -50,7 +50,7 @@ final class _$Orditori extends Orditori {
   }
 
   @override
-  Future<Response<PaginatedNotebookQueryResponseYear>> _notebooksQueryPost({
+  Future<Response<NotebookQueryResponse>> _notebooksQueryPost({
     required String? apiKey,
     required NotebookQuery? body,
   }) {
@@ -64,8 +64,7 @@ final class _$Orditori extends Orditori {
       body: $body,
       parameters: $params,
     );
-    return client.send<PaginatedNotebookQueryResponseYear,
-        PaginatedNotebookQueryResponseYear>($request);
+    return client.send<NotebookQueryResponse, NotebookQueryResponse>($request);
   }
 
   @override

@@ -101,6 +101,21 @@ Map<String, dynamic> _$DefinitionExampleToJson(DefinitionExample instance) =>
       'translation': instance.translation,
     };
 
+NotebookQueryResponse _$NotebookQueryResponseFromJson(
+        Map<String, dynamic> json) =>
+    NotebookQueryResponse(
+      items: PaginatedNotebookQueryResponseYear.fromJson(
+          json['items'] as Map<String, dynamic>),
+      notebookId: json['notebookId'] as int,
+    );
+
+Map<String, dynamic> _$NotebookQueryResponseToJson(
+        NotebookQueryResponse instance) =>
+    <String, dynamic>{
+      'items': instance.items.toJson(),
+      'notebookId': instance.notebookId,
+    };
+
 PaginatedNotebookQueryResponseYear _$PaginatedNotebookQueryResponseYearFromJson(
         Map<String, dynamic> json) =>
     PaginatedNotebookQueryResponseYear(
