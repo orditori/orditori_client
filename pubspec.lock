@@ -201,6 +201,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  dart_patterns:
+    dependency: "direct main"
+    description:
+      name: dart_patterns
+      sha256: b8d5923a5f9b762ff54ede68052c74da20325447f3ed4b1bc719ac3ae3da1a77
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   dart_style:
     dependency: transitive
     description:
