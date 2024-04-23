@@ -24,7 +24,7 @@ dependencies:
     version: ^1.0.0
   github: ^9.24.0
   path: ^1.9.0
-  dart_patterns: ^0.2.1
+  dart_patterns: ^0.3.2
 
 dev_dependencies:
   flutter_test:

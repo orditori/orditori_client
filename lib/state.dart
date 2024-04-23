@@ -1,73 +1,40 @@
-import 'dart:math';
-
 import 'package:dart_patterns/result.dart';
 import 'package:flutter/material.dart';
 
-sealed class Mutation<O, A, R> {
-  R get result;
-  void call();
+abstract class QContext implements BuildContext {
+  Query<T> query<T extends Function>(T fn, [Object token = const Object()]);
 }
 
-class SyncMutation<O, A> extends Mutation<O, A, Late<O>> {
-  final Object _token;
-  final QueryWidgetElement _owner;
-
-  @override
-  Late<O> result = Late<O>.pending();
-
-  SyncMutation._(this._owner, this._token);
-
-  @override
-  void call() {
-    final record = _owner._getMutator<O, A>(_token);
-    final ref = _owner._getRef<O>(_token);
-
-    final callback = record.$2 as O Function(O, Object);
-
-    final r = Result.guard(() => callback(ref.current, const Object()));
-
-    switch (r) {
-      case Success(value: final value):
-        _owner._mutations.remove(ValueKey((SyncMutation<O, A>, _token)));
-        ref.current = value;
-        break;
-      case Failure(exception: final e, stackTrace: final s):
-        result = Late.failure(e, s);
-        _owner.markNeedsBuild();
-        break;
-    }
-  }
-}
-
-abstract interface class QueryBuildContext extends BuildContext {
-  Result<T> querySync<T, K extends Object>(
-    T Function(T, K) query, {
-    K? input,
-    Object token,
-  });
-
-  SyncMutation<I, A> syncMutation<I, A extends Object>(
-    I Function(I current, A arg) mutate, {
-    A? input,
-    Object token,
-  });
-}
-
-abstract class QueryWidget extends Widget {
-  const QueryWidget({super.key});
-
-  void init(QueryInitContext context) {}
-  Widget build(QueryBuildContext context);
+abstract class QWidget extends Widget {
+  const QWidget({super.key});
 
   @override
   Element createElement() {
-    return QueryWidgetElement(this);
+    return QElement(this);
   }
+
+  Widget build(QContext context);
 }
 
-class _QueryWidgetMarker extends InheritedWidget {
-  final QueryWidgetElement element;
-  const _QueryWidgetMarker({required super.child, required this.element});
+class Ref<T> {
+  T _value;
+  final Set<QElement> _dependencies = {};
+
+  T get value => _value;
+  set value(T value) {
+    _value = value;
+
+    for (final element in _dependencies) {
+      element.notify(this);
+    }
+  }
+
+  Ref(this._value);
+}
+
+class _QElementMarker extends InheritedWidget {
+  final QElement element;
+  const _QElementMarker({required super.child, required this.element});
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) {
@@ -75,177 +42,152 @@ class _QueryWidgetMarker extends InheritedWidget {
   }
 }
 
-class QueryWidgetElement extends ComponentElement
-    implements QueryBuildContext, QueryInitContext {
-  QueryWidgetElement(QueryWidget super.widget);
+class QElement extends ComponentElement implements QContext {
+  QElement(super.widget);
 
-  final Map<Key, Ref> _refs = {};
-  final Map<Key, (Mutation, Function, Object)> _mutations = {};
+  final Map<Object, Ref> _refs = {};
 
   @override
-  QueryWidget get widget => super.widget as QueryWidget;
-
-  bool initialized = false;
+  QWidget get widget => super.widget as QWidget;
 
   @override
   Widget build() {
-    if (!initialized) {
-      widget.init(this);
-      initialized = true;
-    }
-
-    return _QueryWidgetMarker(
-      element: this,
-      child: widget.build(this),
-    );
+    return widget.build(this);
   }
 
-  @override
-  Ref<T> ref<T>(T Function() createRef, [Object token = const Object()]) {
-    final k = ValueKey((Ref<T>, token));
-    return (_refs[k] ??= Ref<T>(createRef())..dependencies.add(this)) as Ref<T>;
+  void notify(Ref ref) {
+    markNeedsBuild();
   }
 
-  @override
-  SyncMutation<I, A> syncMutation<I, A extends Object>(
-    I Function(I current, A arg) mutate, {
-    A? input,
-    Object token = const Object(),
-  }) {
-    final key = ValueKey((SyncMutation<I, A>, token));
+  Ref<T> _getRef<T>([Object token = const Object()]) {
+    final key = ValueKey((Ref<T>, token));
+    final ref = _refs[key] as Ref<T>?;
 
-    final m = _mutations[key] ??= (
-      SyncMutation<I, A>._(this, token),
-      mutate,
-      token,
-    );
-
-    return m.$1 as SyncMutation<I, A>;
-  }
-
-  Ref<T> _getRef<T>(Object token) {
-    final refKey = ValueKey((Ref<T>, token));
-    final ref = _refs[refKey] as Ref<T>?;
-
-    if (ref == null) {
-      late Element parent;
-      visitAncestorElements((element) {
-        parent = element;
-        return false;
-      });
-
-      final el = parent.getInheritedWidgetOfExactType<_QueryWidgetMarker>();
-      final ref = el!.element._getRef<T>(token);
-
-      _refs[refKey] = ref..dependencies.add(this);
-      return ref;
-    } else {
+    if (ref != null) {
       return ref;
     }
-  }
 
-  (SyncMutation<I, A>, I Function(I, A), Object) _getMutator<I, A>(
-    Object token,
-  ) {
-    final key = ValueKey((SyncMutation<I, A>, token));
-    final r = _mutations[key];
+    late Element parent;
 
-    if (r != null) {
-      return r as (SyncMutation<I, A>, I Function(I, A), Object);
-    } else {
-      late Element parent;
-      visitAncestorElements((element) {
-        parent = element;
-        return false;
-      });
+    visitAncestorElements((element) {
+      parent = element;
+      return false;
+    });
 
-      final el = parent.getInheritedWidgetOfExactType<_QueryWidgetMarker>();
-      return el!.element._getMutator<I, A>(token);
-    }
+    final marker = parent.getInheritedWidgetOfExactType<_QElementMarker>()!;
+    return marker.element._getRef<T>(token);
   }
 
   @override
-  Result<T> querySync<T, A extends Object>(
-    T Function(T current, A arg) query, {
-    A? input,
-    Object token = const Object(),
-  }) {
-    final ref = _getRef<T>(token);
-    final arg = input ?? const Object();
-    return Result.guard(() => query(ref.current, arg as A));
-  }
-
-  @override
-  void unmount() {
-    for (var ref in _refs.values) {
-      ref.dependencies.remove(this);
-    }
-    super.unmount();
+  Query<T> query<T extends Function>(T fn, [Object token = const Object()]) {
+    return Query(fn, token, this);
   }
 }
 
-abstract interface class QueryInitContext {
-  Ref<T> ref<T>(T Function() createRef, [Object token]);
+class Query<T extends Function> {
+  final T _query;
+  final Object _token;
+  final QElement _element;
+  late Object _result;
+
+  Query(this._query, this._token, this._element);
 }
 
-class Ref<T> {
-  final Set<QueryWidgetElement> dependencies = {};
-  T _current;
+extension ExecQueryWithNoArgs<T, K> on Query<QueryFn<T, K>> {
+  void exec() {
+    final ref = _element._getRef<K>(_token);
+    _result = Result.guard(() => _query(ref.value));
+  }
+}
 
-  T get current => _current;
+extension ExecQuery<T, K, A> on Query<QueryFnWithArg<T, K, A>> {
+  void exec(A arg) {
+    final ref = _element._getRef<K>(_token);
+    _result = Result.guard(() => _query(ref.value, arg));
+  }
+}
 
-  set current(T v) {
-    _current = v;
+extension ExecAsyncQueryWithNoArgs<T, K> on Query<AsyncQueryFn<T, K>> {
+  void exec() async {
+    final ref = _element._getRef<K>(_token);
+    _result = LateAsync<T>.pending();
 
-    for (var e in dependencies) {
-      e.markNeedsBuild();
+    try {
+      final value = await _query(ref.value);
+      _result = LateAsync<T>.success(value);
+    } catch (e) {
+      _result = LateAsync<T>.failure(e);
     }
   }
-
-  Ref(this._current);
 }
 
-final r = Random();
+extension ExecAsyncQuery<T, K, A> on Query<AsyncQueryFnWithArg<T, K, A>> {
+  void exec(A arg) async {
+    final ref = _element._getRef<K>(_token);
+    _result = LateAsync<T>.pending();
 
-class CounterApp extends QueryWidget {
-  const CounterApp({super.key});
+    try {
+      final value = await _query(ref.value, arg);
+      _result = LateAsync<T>.success(value);
+    } catch (e) {
+      _result = LateAsync<T>.failure(e);
+    }
+  }
+}
+
+typedef QueryFn<T, K> = T Function(K);
+typedef AsyncQueryFn<T, K> = Future<T> Function(K);
+
+typedef QueryFnWithArg<T, K, A> = T Function(K, A);
+typedef AsyncQueryFnWithArg<T, K, A> = Future<T> Function(K, A);
+
+extension LateResultQuery<T, K> on Query<QueryFn<T, K>> {
+  Late<T> get result {
+    return _result as Late<T>;
+  }
+}
+
+extension LateResultQueryWithArg<T, K, A> on Query<QueryFnWithArg<T, K, A>> {
+  Late<T> get result {
+    return _result as Late<T>;
+  }
+}
+
+extension LateAsyncResultQuery<T, K> on Query<AsyncQueryFn<T, K>> {
+  LateAsync<T> get result {
+    return _result as LateAsync<T>;
+  }
+}
+
+extension LateAsyncResultQueryWithArg<T, K, A>
+    on Query<AsyncQueryFnWithArg<T, K, A>> {
+  LateAsync<T> get result {
+    return _result as LateAsync<T>;
+  }
+}
+
+int getCount(int current) => current;
+
+class Example extends QWidget {
+  const Example({super.key});
 
   @override
-  void init(QueryInitContext context) {
-    context.ref(() => 0);
-  }
-
-  int getCount(int current, _) => current;
-
-  int increment(int current, _) {
-    if (r.nextInt(100) > 70) throw Exception();
-    return current + 1;
-  }
-
-  @override
-  Widget build(QueryBuildContext context) {
-    final count = context.querySync(getCount);
-    final inc = context.syncMutation(increment);
+  Widget build(QContext context) {
+    final countQuery = context.query(getCount)..exec();
 
     return Column(
       children: [
-        Text('Count: ${(count as Success).value}'),
-        Text('${inc.result}'),
-        ElevatedButton(
-          onPressed: inc.call,
-          child: const Text('Increment'),
-        ),
+        if (countQuery.result case Pending())
+          ElevatedButton(
+            onPressed: () => countQuery.exec(),
+            child: const Text('Get count'),
+          ),
+        switch (countQuery.result) {
+          Success(value: final value) => Text('Count: $value'),
+          Failure(exception: final e) => Text('Error: $e'),
+          Pending<int>() => const Text('Something is seriously wrong!'),
+        }
       ],
     );
   }
-}
-
-void main() {
-  runApp(
-    const MaterialApp(
-      home: Scaffold(
-        body: CounterApp(),
-      ),
-    ),
-  );
 }

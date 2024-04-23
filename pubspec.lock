@@ -205,10 +205,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_patterns
-      sha256: b8d5923a5f9b762ff54ede68052c74da20325447f3ed4b1bc719ac3ae3da1a77
+      sha256: "2ca0038d19eb0ef13050616aed8c3f46c2dcf8f56f891b59c0cbec79d4235115"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.1"
+    version: "0.3.2"
   dart_style:
     dependency: transitive
     description:
