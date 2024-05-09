@@ -9,7 +9,7 @@ import 'search_results.dart';
 
 typedef SearchScreenContext = ({
   Token<Ref<EdgeInsets>> padding,
-  Token<Ref<NotebookR>> notebook,
+  Token<Ref<int>> notebookId,
   Token<VoidTrigger> refreshNotebook,
   Token<Ref<Set<int>>> savedDefinitions,
 });

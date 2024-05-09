@@ -175,7 +175,8 @@ class AppPages extends CTWidget<AppPagesTokens> {
       children = [
         Notebooks(
           context: (
-            notebook: notebooksContext.notebook,
+            notebookId: notebooksContext.notebookId,
+            notebookYearGroups: notebooksContext.notebookYearGroups,
             padding: context.padding,
             refreshNotebook: notebooksContext.refreshNotebook,
             savedDefinitions: notebooksContext.savedDefinitions,
@@ -185,7 +186,7 @@ class AppPages extends CTWidget<AppPagesTokens> {
           onExit: onExit,
           context: (
             padding: context.padding,
-            notebook: notebooksContext.notebook,
+            notebookId: notebooksContext.notebookId,
             refreshNotebook: notebooksContext.refreshNotebook,
             savedDefinitions: notebooksContext.savedDefinitions,
           ),

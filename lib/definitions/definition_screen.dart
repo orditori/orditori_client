@@ -5,13 +5,11 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 class DefinitionScreen extends StatelessWidget {
   final DefinitionContentItemR def;
-  final NotebookEntryR entry;
   final Consumed<VoidTrigger> refreshNotebook;
 
   const DefinitionScreen({
     super.key,
     required this.def,
-    required this.entry,
     required this.refreshNotebook,
   });
 
@@ -64,11 +62,10 @@ class DefinitionScreen extends StatelessWidget {
                 final delete = n.trigger();
 
                 final r = delete.asyncHandler(() async {
-                  await client.notebookEntriesEntryIdDelete(
-                    apiKey: null,
-                    entryId: entry.id,
-                  );
-
+                  await client
+                      .definitionContentItemsDefinitionContentItemIdDelete(
+                          apiKey: null,
+                          definitionContentItemId: def.definitionId);
                   refreshNotebook();
 
                   // ignore: use_build_context_synchronously

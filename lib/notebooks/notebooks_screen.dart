@@ -4,16 +4,10 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 import 'notebook_entries_list.dart';
 
-class DefinitionsDateGroup {
-  final String date;
-  final List<NotebookEntryR> entries;
-
-  DefinitionsDateGroup(this.date, this.entries);
-}
-
 typedef NotebooksContext = ({
   Token<Ref<EdgeInsets>> padding,
-  Token<Ref<NotebookR>> notebook,
+  Token<Ref<int>> notebookId,
+  Token<Ref<PaginatedNotebookQueryResponseYear>> notebookYearGroups,
   Token<VoidTrigger> refreshNotebook,
   Token<Ref<Set<int>>> savedDefinitions,
 });
@@ -29,42 +23,42 @@ class Notebooks extends CTWidget<NotebooksContext> {
 
   @override
   Widget build(CTNode n, NotebooksContext context) {
-    final notebook = n.consume(context.notebook).subscribe();
+    final notebookYearGroups =
+        n.consume(context.notebookYearGroups).subscribe();
 
-    final g = notebook.entries.fold<List<DefinitionsDateGroup>>([], (acc, v) {
-      final date = formatDate(DateTime.parse(v.addedDate));
-
-      if (acc.isEmpty) {
-        return [
-          DefinitionsDateGroup(date, [v])
-        ];
-      }
-
-      if (acc.last.date == date) {
-        return [
-          ...acc.take(acc.length - 1),
-          DefinitionsDateGroup(date, [...acc.last.entries, v])
-        ];
-      }
-
+    final notebookListItems = notebookYearGroups.items.expand((yearGroup) {
+      final firstMonth = yearGroup.months.first;
       return [
-        ...acc,
-        DefinitionsDateGroup(date, [v])
+        NotebookEntryListItemYearMonth(yearGroup.year, firstMonth.month),
+        ...firstMonth.days.expand(
+          (dayGroup) => dayGroup.entries.expand(
+            (entry) => entry.definitions.map(
+              (definition) => NotebookEntryListItemDCI(
+                definition,
+                DateTime.parse(entry.addedDate),
+              ),
+            ),
+          ),
+        ),
+        ...yearGroup.months.skip(1).expand((monthGroup) => [
+              NotebookEntryListItemYearMonth(null, monthGroup.month),
+              ...monthGroup.days.expand(
+                (dayGroup) => dayGroup.entries.expand(
+                  (entry) => entry.definitions.map(
+                    (definition) => NotebookEntryListItemDCI(
+                      definition,
+                      DateTime.parse(entry.addedDate),
+                    ),
+                  ),
+                ),
+              )
+            ])
       ];
     });
 
-    final entries = g.reversed
-        .expand((element) => element.entries.reversed)
-        .where((element) => element.definitions.isNotEmpty)
-        .toList();
-
-    return NotebookEntriesList(
-      context: (
-        padding: context.padding,
-        refreshNotebook: context.refreshNotebook,
-      ),
-      entries: entries,
-      notebookId: notebook.id,
-    );
+    return NotebookEntriesList(context: (
+      padding: context.padding,
+      refreshNotebook: context.refreshNotebook,
+    ), items: notebookListItems.toList());
   }
 }

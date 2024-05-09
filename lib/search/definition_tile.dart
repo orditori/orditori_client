@@ -7,7 +7,7 @@ import '../widgets/chip.dart';
 
 typedef DefinitionTileContext = ({
   Token<Ref<Set<int>>> savedDefinitions,
-  Token<Ref<NotebookR>> notebook,
+  Token<Ref<int>> notebookId,
 });
 
 class DefinitionTile extends CTWidget<DefinitionTileContext> {
@@ -26,7 +26,7 @@ class DefinitionTile extends CTWidget<DefinitionTileContext> {
   @override
   Widget build(CTNode n, DefinitionTileContext context) {
     final savedDefinitions = n.consume(context.savedDefinitions).subscribe();
-    final notebook = n.consume(context.notebook).subscribe();
+    final notebookId = n.consume(context.notebookId).subscribe();
 
     final isSaved = savedDefinitions.contains(definition.id);
     final addDefinition = n.trigger();
@@ -35,7 +35,7 @@ class DefinitionTile extends CTWidget<DefinitionTileContext> {
       final addedDate = '${DateTime.now().toIso8601String().substring(0, 23)}Z';
       final entryW = NotebookEntryW(
         addedDate: addedDate,
-        notebook: notebook.id,
+        notebook: notebookId,
       );
 
       final entryRes = await client.notebookEntriesPost(

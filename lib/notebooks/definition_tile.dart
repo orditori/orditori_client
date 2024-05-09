@@ -5,17 +5,15 @@ import 'package:orditori/swagger_generated_code/orditori.swagger.dart';
 
 import '../definitions/definition_screen.dart';
 
-class NotebookEntryTile extends StatelessWidget {
+class DCITile extends StatelessWidget {
   final DefinitionContentItemR def;
-  final NotebookEntryR entry;
   final Widget leading;
   final Consumed<VoidTrigger> refreshNotebook;
 
-  const NotebookEntryTile({
+  const DCITile({
     super.key,
     required this.def,
     required this.leading,
-    required this.entry,
     required this.refreshNotebook,
   });
 
@@ -28,7 +26,6 @@ class NotebookEntryTile extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => DefinitionScreen(
               def: def,
-              entry: entry,
               refreshNotebook: refreshNotebook,
             ),
           ),

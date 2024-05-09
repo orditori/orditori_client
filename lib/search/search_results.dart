@@ -19,7 +19,7 @@ class DefinitionWithSource {
 
 typedef SearchResultsContext = ({
   Token<Ref<EdgeInsets>> padding,
-  Token<Ref<NotebookR>> notebook,
+  Token<Ref<int>> notebookId,
   Token<Ref<Set<int>>> savedDefinitions,
   Token<VoidTrigger> refreshNotebook,
 });
@@ -79,7 +79,7 @@ class SearchResults extends CTWidget<SearchResultsContext> {
         refreshNotebook: refreshNotebook,
         source: group.definitionSource,
         context: (
-          notebook: context.notebook,
+          notebookId: context.notebookId,
           savedDefinitions: context.savedDefinitions,
         ),
       );

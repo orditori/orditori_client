@@ -3,6 +3,8 @@ import 'package:flutter_compute_tree/flutter_compute_tree.dart';
 import 'package:orditori/notebooks/notebooks_screen.dart';
 import 'package:orditori/services.dart';
 
+import 'swagger_generated_code/orditori.swagger.dart';
+
 class RefreshNotebookToken extends Token<VoidTrigger> {
   const RefreshNotebookToken();
 }
@@ -16,7 +18,8 @@ Widget withNotebooks({
   final load = n.trigger();
 
   final r = load.asyncHandler(() {
-    return client.notebooksGet(apiKey: token);
+    return client.notebooksQueryPost(
+        apiKey: token, body: const NotebookQuery(pageIndex: 1));
   }, invoke: true);
 
   return CTBuilder(
@@ -31,9 +34,13 @@ Widget withNotebooks({
             return builder(const Center(child: Text('Probably invalid token')));
           }
 
-          final notebook = v.body!;
+          final notebookQueryResponse = v.body!;
+          final notebookYearGroups = notebookQueryResponse.items;
 
-          final savedDefinitions = notebook.entries
+          final savedDefinitions = notebookYearGroups.items
+              .expand((element) => element.months)
+              .expand((element) => element.days)
+              .expand((element) => element.entries)
               .expand((element) => element.definitions)
               .map((e) => e.definitionId)
               .toSet();
@@ -42,7 +49,8 @@ Widget withNotebooks({
 
           return builder(null, (
             padding: padding,
-            notebook: n.provideValueAsRef(notebook),
+            notebookId: n.provideValueAsRef(notebookQueryResponse.notebookId),
+            notebookYearGroups: n.provideValueAsRef(notebookYearGroups),
             refreshNotebook: load.provide(const RefreshNotebookToken()),
             savedDefinitions: n.provideValueAsRef(savedDefinitions),
           ));
