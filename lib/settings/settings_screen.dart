@@ -1,11 +1,14 @@
+import 'package:brightness_drop/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_compute_tree/flutter_compute_tree.dart';
+
+import 'package:cyclone/cyclone.dart' hide Ref;
+import 'package:brightness_drop/queries.dart' as brightness_queries;
 import 'package:orditori/auth.dart';
 
 typedef SettingsScreenContext = ({
   Token<Ref<EdgeInsets>> padding,
-  BrightnessContext brightnessContext,
   TokenContext tokenContext,
 });
 
@@ -26,9 +29,7 @@ class SettingsScreen extends CTWidget<SettingsScreenContext> {
       body: ListView(
         padding: padding,
         children: [
-          BrightnessSettingTile(
-            context: context.brightnessContext,
-          ),
+          const BrightnessSettingTile(),
           TokenSettingTile(
             context: context.tokenContext,
           ),
@@ -38,32 +39,18 @@ class SettingsScreen extends CTWidget<SettingsScreenContext> {
   }
 }
 
-typedef BrightnessContext = ({
-  Token<Ref<Brightness>> brightness,
-  Token<Trigger<bool>> setIsDarkMode,
-});
-
-class BrightnessSettingTile extends CTWidget<BrightnessContext> {
-  const BrightnessSettingTile({
-    super.key,
-    required super.context,
-  });
+class BrightnessSettingTile extends StatelessWidget {
+  const BrightnessSettingTile({super.key});
 
   @override
-  Widget build(CTNode n, BrightnessContext context) {
-    final brightness = n.consume(context.brightness).subscribe();
-    final setBrightness = n.consume(context.setIsDarkMode);
-
-    final isDarkMode = brightness == Brightness.dark;
+  Widget build(BuildContext context) {
+    final isDarkMode = brightness_queries.isDarkMode.bind(context).watch();
     final icon = isDarkMode ? Icons.dark_mode_sharp : Icons.dark_mode_outlined;
 
     return ListTile(
       title: const Text('Dark Mode'),
       leading: Icon(icon),
-      trailing: Switch(
-        value: isDarkMode,
-        onChanged: setBrightness.call,
-      ),
+      trailing: const Slot<BrightnessToggle>(),
     );
   }
 }
