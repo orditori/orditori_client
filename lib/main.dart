@@ -5,20 +5,27 @@ import 'package:orditori/login/login_screen.dart';
 import 'package:orditori/search/search_screen.dart';
 import 'package:orditori/settings/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:cyclone/cyclone.dart' hide Ref;
+import 'package:brightness_drop/brightness_drop.dart' as brigthness;
+import 'package:brightness_drop/queries.dart' as brightness_queries;
+
 import 'exercises/exercises_screen.dart';
 import 'notebooks.dart';
 import 'notebooks/notebooks_screen.dart';
-
 import 'auth.dart';
-import 'brightness.dart';
-
 import 'services.dart' as services;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   services.prefs = await SharedPreferences.getInstance();
 
-  runApp(const Root());
+  runApp(
+    withFeatures(
+      [brigthness.init(services.prefs)],
+      child: const Root(),
+    ),
+  );
 }
 
 class Root extends CTWidget<()> {
@@ -26,7 +33,6 @@ class Root extends CTWidget<()> {
 
   @override
   Widget build(CTNode n, () context) {
-    final brightnessContext = withBrightness(n);
     final (:tokenContext, :token, :isAuthenticated) = withAuth(n);
 
     final loginBuilder = n.memo(
@@ -37,7 +43,6 @@ class Root extends CTWidget<()> {
 
     if (!isAuthenticated) {
       return App(
-        context: (brightness: brightnessContext.brightness,),
         builder: loginBuilder,
       );
     }
@@ -54,7 +59,6 @@ class Root extends CTWidget<()> {
           return AppPages(
             context: (
               padding: padding,
-              brightnessContext: brightnessContext,
               tokenContext: tokenContext,
               notebooksContext: context,
             ),
@@ -65,7 +69,6 @@ class Root extends CTWidget<()> {
     });
 
     return App(
-      context: (brightness: brightnessContext.brightness,),
       builder: authenticatedBuilder,
     );
   }
@@ -79,17 +82,16 @@ typedef AppTokens = ({
   Token<Ref<Brightness>> brightness,
 });
 
-class App extends CTWidget<AppTokens> {
+class App extends StatelessWidget {
   final Widget Function(CTNode n, Token<Ref<EdgeInsets>> padding) builder;
 
   const App({
     super.key,
-    required super.context,
     required this.builder,
   });
   @override
-  Widget build(CTNode n, AppTokens context) {
-    final brightness = n.consume(context.brightness).subscribe();
+  Widget build(BuildContext context) {
+    final brightness = brightness_queries.brightness.bind(context).watch();
 
     return MaterialApp(
       title: 'Orditori',
@@ -142,7 +144,6 @@ class App extends CTWidget<AppTokens> {
 
 typedef AppPagesTokens = ({
   Token<Ref<EdgeInsets>> padding,
-  BrightnessContext brightnessContext,
   TokenContext tokenContext,
   NotebooksContext? notebooksContext,
 });
@@ -197,7 +198,6 @@ class AppPages extends CTWidget<AppPagesTokens> {
         SettingsScreen(
           context: (
             padding: context.padding,
-            brightnessContext: context.brightnessContext,
             tokenContext: context.tokenContext,
           ),
         ),
